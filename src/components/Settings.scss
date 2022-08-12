@@ -1,0 +1,153 @@
+.settings-component {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	height: 100%;
+	user-select: none;
+
+	&.Mobile {
+		// .settings-header {
+		// 	width: 100%;
+		// }
+		// .settings-main {
+		// 	position: absolute;
+		// 	left: 0;
+		// 	top: 0;
+		// 	background-color: #fff;
+		// }
+		.settings-main {
+			position: relative;
+			.settings-m-list-page {
+				width: 100%;
+			}
+			.settings-m-item-page {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0%;
+				left: 100%;
+				background-color: #fff;
+				transition: left 0.3s;
+        padding: 0 10px;
+				&.active {
+					left: 0%;
+				}
+			}
+		}
+	}
+
+	.settings-header {
+	}
+	.settings-main {
+		display: flex;
+		justify-content: space-between;
+		height: calc(100% - 56px);
+		border-top: 1px solid #eee;
+
+		.settings-m-left {
+			width: 200px;
+			height: 100%;
+			border-right: 1px solid #eee;
+		}
+		.settings-m-main {
+			width: calc(100% - 200px);
+			height: 100%;
+			padding: 10px 0px;
+		}
+	}
+
+	.s-account {
+		.s-a-profile {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: center;
+			.s-a-p-nickname {
+				margin-top: 10px;
+				font-size: 18px;
+				font-weight: 500;
+			}
+			.s-a-p-item {
+				width: 100%;
+			}
+		}
+		.s-a-buttons {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: center;
+		}
+	}
+}
+
+.settings-item-component {
+	padding: 8px 10px;
+	&.border {
+		margin-bottom: 16px;
+		// border: 1px solid var(--default-color);
+		border: 1px solid #eee;
+		border-radius: 10px;
+		padding: 6px 18px 20px;
+	}
+	.pi-title {
+		font-size: 18px;
+		font-weight: 600;
+		margin: 6px 0;
+	}
+	.pi-subtitle {
+		font-size: 16px;
+		font-weight: 500;
+		margin: 6px 0;
+		color: var(--default-color);
+		font-size: 12px;
+	}
+	.pi-main {
+		font-size: 14px;
+		// width: fit-content;
+		width: 100%;
+	}
+	.auto-close-window-after-copy {
+		width: 100%;
+		margin-top: 10px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.s-sync {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.shortcut-item {
+		margin-top: 10px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		.keys {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			.key-item {
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				padding: 6px 8px;
+				margin-left: 6px;
+			}
+		}
+	}
+}
+
+.settings-menu-item {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	.icon {
+		fill: #666;
+		margin-right: 6px;
+		width: 20px;
+		transform: translateY(1px);
+	}
+	.name {
+		font-size: 16px;
+	}
+}

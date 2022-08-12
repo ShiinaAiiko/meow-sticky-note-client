@@ -1,0 +1,24 @@
+.category-list-component {
+  width: 100%;
+	.cl-item {
+		// cursor: pointer;
+		user-select: none;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		font-size: 15px;
+		transition: background-color 0.1s;
+		// &:hover {
+		// 	background-color: var(--default-hover-color);
+		// }
+		// &:active {
+		// 	background-color: var(--default-active-color);
+		// }
+		// &.active {
+		// 	background-color: var(--default-active-color);
+		// }
+		&.add-category {
+			color: var(--default-color);
+		}
+	}
+}
