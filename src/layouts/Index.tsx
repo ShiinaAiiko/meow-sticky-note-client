@@ -64,12 +64,16 @@ const IndexLayout = ({ children }: RouterProps) => {
 			switch (config.deviceType) {
 				case 'Mobile':
 					// console.log('切换至手机版？')
-					history?.('/m')
+					history?.('/m', {
+						replace: true,
+					})
 
 					break
 
 				default:
-					history?.('/')
+					history?.('/', {
+						replace: true,
+					})
 					break
 			}
 		}

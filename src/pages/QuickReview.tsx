@@ -61,6 +61,7 @@ const QuickReviewPage = (props: RouterProps) => {
 	}
 
 	const copy = (content: string) => {
+		content = content.replace(/<\/?.+?>/g, '')
 		navigator.clipboard.writeText(content)
 
 		// showNotification
