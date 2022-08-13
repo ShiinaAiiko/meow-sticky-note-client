@@ -60,16 +60,18 @@ const IndexLayout = ({ children }: RouterProps) => {
 
 	useEffect(() => {
 		// console.log('监听同步开启了', config.deviceType)
-		switch (config.deviceType) {
-			case 'Mobile':
-				// console.log('切换至手机版？')
-				history?.('/m')
+		if (location.pathname === '/' || location.pathname === '/m') {
+			switch (config.deviceType) {
+				case 'Mobile':
+					// console.log('切换至手机版？')
+					history?.('/m')
 
-				break
+					break
 
-			default:
-				history?.('/')
-				break
+				default:
+					history?.('/')
+					break
+			}
 		}
 	}, [config.deviceType])
 

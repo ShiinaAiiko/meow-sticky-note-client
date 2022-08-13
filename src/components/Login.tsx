@@ -88,6 +88,8 @@ const LoginComponent = () => {
 										userInfo: e.detail.userInfo,
 									})
 								)
+								store.dispatch(configSlice.actions.setSync(true))
+								dispatch(methods.notes.Init()).unwrap()
 								store.dispatch(
 									configSlice.actions.setStatus({
 										type: 'loginModalStatus',

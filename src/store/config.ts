@@ -56,7 +56,9 @@ export const configMethods = {
 		async (_, thunkAPI) => {
 			store.dispatch(
 				configSlice.actions.setAutoCloseWindowAfterCopy(
-					(await storage.systemConfig.get('autoCloseWindowAfterCopy')) || false
+					JSON.parse(
+						await storage.systemConfig.get('autoCloseWindowAfterCopy')
+					) || false
 				)
 			)
 		}
@@ -226,7 +228,10 @@ export const configSlice = createSlice({
 		},
 		setAutoCloseWindowAfterCopy: (state, params: ActionParams<boolean>) => {
 			state.general.autoCloseWindowAfterCopy = params.payload
-			storage.systemConfig.setSync('autoCloseWindowAfterCopy', params.payload)
+			storage.systemConfig.setSync(
+				'autoCloseWindowAfterCopy',
+				JSON.stringify(params.payload)
+			)
 		},
 	},
 })
