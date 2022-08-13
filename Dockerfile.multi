@@ -1,0 +1,38 @@
+FROM node:16.15.1 as BUILD_IMAGE
+
+WORKDIR /app
+
+ENV CLIENT_ENV=production
+# ENV NODE_ENV=production
+
+COPY .yarnrc .npmrc /root/
+COPY package.json package-lock.json ./
+
+RUN \
+  npm i
+
+COPY . .
+
+RUN \
+  ls && \
+  cp -r ./config.pro.temp.json ./src/config.temp.json && \
+  yarn protos && \
+  yarn build
+
+FROM node:16.13.1-alpine3.13
+
+ENV CLIENT_ENV=production
+
+WORKDIR /
+
+COPY --from=BUILD_IMAGE \
+  /app/build \
+  /dist
+
+RUN \ 
+  yarn global add spa-http-server --registry https://registry.npmmirror.com/
+
+EXPOSE 16111
+
+CMD ["http-server","./dist","--cors","--silent","-p","16111","--push-state"]
+

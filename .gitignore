@@ -27,3 +27,4 @@ config*.json
 /src/electron/dist
 /src/protos/*.js
 /src/protos/*.d.ts
+/protos_temp

@@ -1,12 +1,25 @@
 import { BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import { NodeFsStorage, electronRouter } from '@nyanyajs/utils/dist/node'
 
-import path from "path"
+import path from 'path'
 
+// 自动获取本机目录
 const cacheRootDir = '/home/shiina_aiiko/.cache'
 const configRootDir = '/home/shiina_aiiko/.config'
 // 'mode' | 'language'
 
+// export const taskIcon = path.join(
+// 	path.join(__dirname, '../../../public'),
+// 	'logo-white-bg.png'
+// )
+export const taskIcon = path.join(
+	path.join(__dirname, '../../../public'),
+	'logo-neko.png'
+)
+export const taskWhiteIcon = path.join(
+	path.join(__dirname, '../../../public'),
+	'logo-neko-white.png'
+)
 export const logo = path.join(
 	path.join(__dirname, '../../../public'),
 	'logo192.png'

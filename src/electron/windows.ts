@@ -64,7 +64,7 @@ export const openMainWindows = () => {
 	let window = windows.get('/')
 	if (window) {
 		window.show()
-		window.focus()
+		// window.focus()
 		window.webContents.send('show')
 		return window
 	}
@@ -76,7 +76,7 @@ export const openMainWindows = () => {
 		y: 0,
 		skipTaskbar: false,
 		hasShadow: true,
-		alwaysOnTop: true,
+		alwaysOnTop: false,
 		fullscreen: false,
 		center: true,
 		// 可以隐藏窗口
@@ -96,7 +96,7 @@ export const openQuickReviewWindows = () => {
 	let window = windows.get('/quickreview')
 	if (window) {
 		window.show()
-		window.focus()
+		// window.focus()
 		window.webContents.send('show')
 		return window
 	}
@@ -105,10 +105,10 @@ export const openQuickReviewWindows = () => {
 		width: 800,
 		height: 600,
 		x: 0,
-		y: 500,
+		y: 500, 
 		skipTaskbar: false,
-		hasShadow: true,
-		alwaysOnTop: true,
+		hasShadow: true, 
+		alwaysOnTop: false,
 		// transparent: true,
 		// fullscreen: false,
 		center: true,

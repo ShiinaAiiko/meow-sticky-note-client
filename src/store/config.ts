@@ -134,7 +134,7 @@ export const configSlice = createSlice({
 			opt: {
 				reconnectionDelay: 2000,
 				reconnectionDelayMax: 5000,
-				secure: true,
+				secure: false,
 				autoConnect: true,
 				rejectUnauthorized: false,
 				transports: ['websocket'],

@@ -102,8 +102,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 			appStatus.sakiUIInitStatus &&
 			appStatus.noteInitStatus &&
 			loadProgressBar &&
-			user.isInit &&
-			user.isLogin
+			user.isInit
 		) {
 			console.log('progressBar', progressBar)
 			progressBar < 1 &&
@@ -115,10 +114,9 @@ const IndexLayout = ({ children }: RouterProps) => {
 		// console.log("progressBar",progressBar)
 	}, [
 		user.isInit,
-    appStatus.noteInitStatus,
-    appStatus.syncStatus,
+		appStatus.noteInitStatus,
+		appStatus.syncStatus,
 		loadProgressBar,
-		user.isLogin,
 		appStatus.sakiUIInitStatus,
 	])
 

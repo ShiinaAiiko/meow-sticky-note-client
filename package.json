@@ -1,8 +1,24 @@
 {
-	"name": "react-ts-electron-starter",
+	"name": "meow-sticky-note",
 	"version": "0.1.0",
 	"private": true,
 	"main": "src/electron/dist/main.js",
+	"scripts": {
+		"cache": "cp ./public/package1.json ./node_modules/@saki-ui/core/package.json",
+		"dc": "sudo rm -rf ./node_modules/.cache",
+		"dev": "cp -r ./config.test.json ./src/config.temp.json && yarn dc && PORT=16111 react-scripts start  --allow-root",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject",
+		"start": "concurrently \"BROWSER=none yarn dev\" \"wait-on http://localhost:3000 && electron .\"",
+		"el:dev": "electron ./src/electron/dist/main.js",
+		"el:watch": "nodemon --exec 'yarn el:dev'",
+		"el:tsc": "rm -rf ./src/electron/dist/ && cd ./src/electron && tsc",
+		"el:build": "yarn build && electron-builder",
+		"protos:build": "pbjs -t static-module -w commonjs -o src/protos/proto.js  ./protos_temp/**/*.proto",
+		"protos:tsc": "pbts -o ./src/protos/proto.d.ts ./src/protos/proto.js",
+		"protos": "yarn protos:build && yarn protos:tsc"
+	},
 	"dependencies": {
 		"@nyanyajs/utils": "^1.0.10",
 		"@reduxjs/toolkit": "^1.8.3",
@@ -17,6 +33,7 @@
 		"buffer": "^6.0.3",
 		"electron-is-dev": "^2.0.0",
 		"electron-reload": "^2.0.0-alpha.1",
+		"protobufjs": "^6.11.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-helmet": "^6.1.0",
@@ -31,22 +48,6 @@
 	"watch": [
 		"src/electron/dist/*"
 	],
-	"scripts": {
-		"cache": "cp ./public/package1.json ./node_modules/@saki-ui/core/package.json",
-		"dc": "sudo rm -rf ./node_modules/.cache",
-		"dev": "cp -r ./config.test.json ./src/config.temp.json && yarn dc && PORT=16111 react-scripts start  --allow-root",
-		"build": "react-scripts build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject",
-		"start": "concurrently \"BROWSER=none yarn dev\" \"wait-on http://localhost:3000 && electron .\"",
-		"el:dev": "electron ./src/electron/dist/main.js",
-		"el:watch": "nodemon --exec 'yarn el:dev'",
-		"el:tsc": "rm -rf ./src/electron/dist/ && cd ./src/electron && tsc",
-		"el:build": "yarn build && electron-builder",
-		"proto:build": "pbjs -t static-module -w commonjs -o src/protos/proto.js  ../protos/**/*.proto",
-		"proto:tsc": "pbts -o ./src/protos/proto.d.ts ./src/protos/proto.js",
-		"proto": "yarn run proto:build && yarn run proto:tsc"
-	},
 	"eslintConfig": {
 		"extends": [
 			"react-app",
