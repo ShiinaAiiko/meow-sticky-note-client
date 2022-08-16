@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { RouterProps, useNavigate, Link } from 'react-router-dom'
+import { RouterProps, useNavigate, Link, useLocation } from 'react-router-dom'
 import logo from '../logo.svg'
 import './NoteList.scss'
 import { Helmet } from 'react-helmet-async'
@@ -32,12 +32,16 @@ const NodeListComponent = ({
 	const dispatch = useDispatch<AppDispatch>()
 	const notes = useSelector((state: RootState) => state.notes)
 	const config = useSelector((state: RootState) => state.config)
+	const user = useSelector((state: RootState) => state.user)
 	const autoCloseWindowAfterCopy = useSelector(
 		(state: RootState) => state.config.general.autoCloseWindowAfterCopy
 	)
 	const [noteContextMenuEl, setNoteContextMenuEl] = useState<any>()
+	const [contentMenuActiveIndex, setContentMenuActiveIndex] =
+		useState<number>(-1)
 
 	let history = useNavigate()
+	let location = useLocation()
 	const [menuEl, setMenuEl] = useState<any>(null)
 	const menuElRef = useRef<any>()
 
@@ -103,19 +107,44 @@ const NodeListComponent = ({
 									ref={bindEvent({
 										opencontextmenu: (e) => {
 											console.log(e)
-											noteContextMenuEl?.show({
-												x: e.detail.pageX,
-												y: e.detail.pageY,
-												label: i.toString(),
-											})
+											if (location.pathname !== '/quickreview') {
+												setContentMenuActiveIndex(i)
+												noteContextMenuEl?.show({
+													x: e.detail.pageX,
+													y: e.detail.pageY,
+													label: i.toString(),
+												})
+											}
 										},
 									})}
 									none-highlight-color
 									padding='4px 18px'
 									value={v.id}
 								>
-									<div className='note-item'>
-										<span className='text-elipsis'>{v.name}</span>
+									<div
+										data-id={v.id}
+										data-author-id={String(v.authorId)}
+										data-current-uid={String(user.userInfo.uid)}
+										className='note-item'
+									>
+										<span className='name text-elipsis'>{v.name}</span>
+										{/* && v.isSync */}
+										{v.authorId === user.userInfo.uid ? (
+											''
+										) : (
+											<svg
+												className='icon'
+												viewBox='0 0 1024 1024'
+												version='1.1'
+												xmlns='http://www.w3.org/2000/svg'
+												p-id='7664'
+											>
+												<path
+													d='M428.8 270.506667L363.52 205.226667a323.84 323.84 0 0 1 80.213333-27.306667 22.613333 22.613333 0 0 1 17.92 4.266667 22.613333 22.613333 0 0 1 7.68 16.64v42.666666a21.76 21.76 0 0 1-16.213333 20.906667c-8.106667 2.986667-16.213333 5.12-24.32 8.106667zM576 384h12.373333a20.906667 20.906667 0 0 0 15.36-6.4L669.866667 311.466667a256 256 0 0 1 85.333333 284.16l65.28 65.28a341.333333 341.333333 0 0 0-88.32-410.453334l73.386667-73.386666a20.906667 20.906667 0 0 0 5.12-15.36V149.333333a21.333333 21.333333 0 0 0-21.333334-21.333333h-213.333333a21.333333 21.333333 0 0 0-21.333333 21.333333v213.333334a21.333333 21.333333 0 0 0 21.333333 21.333333z m313.6 453.12L186.88 134.4a20.48 20.48 0 0 0-29.866667 0l-22.613333 22.613333a20.48 20.48 0 0 0 0 29.866667L246.186667 298.666667a341.333333 341.333333 0 0 0 46.933333 474.453333l-73.386667 73.813333a20.906667 20.906667 0 0 0-6.4 15.36v12.373334a21.333333 21.333333 0 0 0 21.333334 21.333333h213.333333a21.333333 21.333333 0 0 0 21.333333-21.333333v-213.333334a21.333333 21.333333 0 0 0-21.333333-21.333333h-12.373333a20.906667 20.906667 0 0 0-15.36 6.4L354.133333 712.533333a253.44 253.44 0 0 1-46.933333-352.853333l356.693333 357.12a252.586667 252.586667 0 0 1-93.013333 42.666667 21.76 21.76 0 0 0-16.213333 20.906666v42.666667a22.613333 22.613333 0 0 0 7.68 16.64 22.613333 22.613333 0 0 0 17.92 4.266667 338.773333 338.773333 0 0 0 145.066666-66.133334l112.213334 111.786667a20.48 20.48 0 0 0 29.866666 0l22.613334-22.613333a20.48 20.48 0 0 0-0.426667-29.866667z'
+													p-id='7665'
+												></path>
+											</svg>
+										)}
 									</div>
 								</saki-menu-item>
 							</div>
@@ -136,61 +165,6 @@ const NodeListComponent = ({
 						</span>
 					</div>
 				</saki-menu-item>
-				{/* <saki-drag-sort
-					ref={bindEvent({
-						dragdone: (e) => {
-							// console.log(e.detail)
-							dispatch(
-								notesSlice.actions.sortNote({
-									originalIndex: e.detail.originalIndex,
-									targetIndex: e.detail.targetIndex,
-								})
-							)
-						},
-					})}
-					padding='0px'
-				>
-					{notes.list?.map((v, i) => {
-						return (
-							<saki-drag-sort-item key={i}>
-								<saki-menu-item
-									ref={bindEvent({
-										opencontextmenu: (e) => {
-											console.log(e)
-											noteContextMenuEl?.show({
-												x: e.detail.pageX,
-												y: e.detail.pageY,
-												label: i.toString(),
-											})
-										},
-									})}
-									none-highlight-color
-									key={i}
-									padding='4px 18px'
-									value={v.id}
-								>
-									<div className='note-item'>
-										<span className='text-elipsis'>{v.name}</span>
-									</div>
-								</saki-menu-item>
-							</saki-drag-sort-item>
-						)
-					})}
-
-					<saki-menu-item
-						padding='4px 18px'
-						font-size='15px'
-						value={'AddNotebook'}
-					>
-						<div className={'note-item text-elipsis add-note'}>
-							<span className='text-elipsis'>
-								{t('addNotebook', {
-									ns: 'indexPage',
-								})}
-							</span>
-						</div>
-					</saki-menu-item>
-				</saki-drag-sort> */}
 			</saki-menu>
 
 			<saki-context-menu
@@ -271,6 +245,60 @@ const NodeListComponent = ({
 										},
 									}).open()
 									break
+								case 'saveToThisAccount':
+									alert({
+										title: '存储至此帐号',
+										content: '存储至此帐号吗?',
+										cancelText: t('cancel', {
+											ns: 'common',
+										}),
+										confirmText: 'Save',
+										onCancel() {},
+										async onConfirm() {
+											dispatch(
+												notesSlice.actions.saveNoteToThisAccount({
+													noteId: note.id,
+													uid: user.userInfo.uid,
+												})
+											)
+										},
+									}).open()
+									break
+								case 'download':
+									console.log('下载文件')
+									// 创建隐藏的可下载链接
+									const a = document.createElement('a')
+									a.download = note.name.trim() + '.note'
+									a.style.display = 'none'
+									console.log(note)
+									// 字符内容转变成blob地址
+									a.href = URL.createObjectURL(
+										new Blob([JSON.stringify(note, null, 2)])
+									)
+									// 触发点击
+									document.body.appendChild(a)
+									a.click()
+									// 然后移除
+									document.body.removeChild(a)
+									break
+								case 'saveAs':
+									const fileName = note.name.trim() + '.note'
+									api.saveAs(fileName, JSON.stringify(note, null, 2), {
+										extensions: ['note'],
+									})
+									break
+								case 'sync':
+									alert({
+										title: 'Sync',
+										content: '开启同步',
+										cancelText: t('cancel', {
+											ns: 'common',
+										}),
+										confirmText: 'Sync',
+										onCancel() {},
+										async onConfirm() {},
+									}).open()
+									break
 								default:
 									break
 							}
@@ -281,8 +309,73 @@ const NodeListComponent = ({
 					}
 				)}
 			>
+				{/* <saki-context-menu-item
+					width='200px'
+					font-size='13px'
+					padding='12px 10px'
+					value='sync'
+					disabled={
+						notes.list[contentMenuActiveIndex]?.authorId !== user.userInfo.uid
+					}
+				>
+					<div
+						className={
+							'context-menu-item ' +
+							(notes.list[contentMenuActiveIndex]?.authorId !==
+							user.userInfo.uid
+								? 'disabletap'
+								: '')
+						}
+					>
+						<svg
+							className='icon'
+							viewBox='0 0 1024 1024'
+							version='1.1'
+							xmlns='http://www.w3.org/2000/svg'
+							p-id='8580'
+						>
+							<path
+								d='M505.6 57.6a20.906667 20.906667 0 0 1 6.4 15.36V170.666667a341.333333 341.333333 0 0 1 295.253333 512 22.186667 22.186667 0 0 1-15.786666 10.24 21.333333 21.333333 0 0 1-17.92-5.973334l-31.146667-31.146666a21.333333 21.333333 0 0 1-3.84-25.173334A253.44 253.44 0 0 0 768 512a256 256 0 0 0-256-256v100.693333a20.906667 20.906667 0 0 1-6.4 15.36l-8.533333 8.533334a21.333333 21.333333 0 0 1-30.293334 0L315.733333 229.973333a21.76 21.76 0 0 1 0-30.293333l151.04-150.613333a21.333333 21.333333 0 0 1 30.293334 0z m51.626667 585.813333a21.333333 21.333333 0 0 0-30.293334 0l-8.533333 8.533334a20.906667 20.906667 0 0 0-6.4 15.36V768a256 256 0 0 1-256-256 248.746667 248.746667 0 0 1 29.866667-119.04 21.76 21.76 0 0 0-3.84-25.173333l-31.573334-31.573334a21.333333 21.333333 0 0 0-17.92-5.973333 22.186667 22.186667 0 0 0-15.786666 11.093333A341.333333 341.333333 0 0 0 512 853.333333v97.706667a20.906667 20.906667 0 0 0 6.4 15.36l8.533333 8.533333a21.333333 21.333333 0 0 0 30.293334 0l151.04-150.613333a21.76 21.76 0 0 0 0-30.293333z'
+								p-id='8581'
+							></path>
+						</svg>
+						<span>
+							{(notes.list[contentMenuActiveIndex]?.isSync
+								? 'Turn off'
+								: 'Turn on') + ' sync'}
+						</span>
+					</div>
+				</saki-context-menu-item> */}
 				<saki-context-menu-item
-					width='180px'
+					style={{
+						display:
+							notes.list[contentMenuActiveIndex]?.authorId !== user.userInfo.uid
+								? 'block'
+								: 'none',
+					}}
+					width='200px'
+					font-size='13px'
+					padding='12px 10px'
+					value='saveToThisAccount'
+				>
+					<div className='context-menu-item'>
+						<svg
+							className='icon'
+							viewBox='0 0 1024 1024'
+							version='1.1'
+							xmlns='http://www.w3.org/2000/svg'
+							p-id='41162'
+						>
+							<path
+								d='M85.333333 128v320L725.333333 512 85.333333 576V896l853.333334-384L85.333333 128z'
+								p-id='41163'
+							></path>
+						</svg>
+						<span>Save to this account</span>
+					</div>
+				</saki-context-menu-item>
+				<saki-context-menu-item
+					width='200px'
 					font-size='13px'
 					padding='12px 10px'
 					value='rename'
@@ -313,8 +406,72 @@ const NodeListComponent = ({
 						</span>
 					</div>
 				</saki-context-menu-item>
+
+				{config.platform === 'Electron' ? (
+					<saki-context-menu-item
+						width='200px'
+						font-size='13px'
+						padding='12px 10px'
+						value='saveAs'
+					>
+						<div className='context-menu-item'>
+							<svg
+								className='icon'
+								viewBox='0 0 1024 1024'
+								version='1.1'
+								xmlns='http://www.w3.org/2000/svg'
+								p-id='35094'
+							>
+								<path
+									d='M925.6 337.9c-22.6-53.3-54.8-101.2-96-142.3-41.1-41.1-89-73.4-142.3-96C632.1 76.2 573.5 64.4 513 64.4S393.9 76.2 338.7 99.6c-53.3 22.6-101.2 54.8-142.3 96-41.1 41.1-73.4 89-96 142.3C77 393.1 65.2 451.8 65.2 512.2c0 60.4 11.8 119.1 35.2 174.3 22.6 53.3 54.8 101.2 96 142.3 41.1 41.1 89 73.4 142.3 96C393.9 948.2 452.6 960 513 960s119.1-11.8 174.3-35.2c53.3-22.6 101.2-54.8 142.3-96 41.1-41.1 73.4-89 96-142.3 23.4-55.2 35.2-113.9 35.2-174.3 0-60.4-11.8-119.1-35.2-174.3zM513 879.1c-202.3 0-366.9-164.6-366.9-366.9S310.7 145.3 513 145.3c202.3 0 366.9 164.6 366.9 366.9S715.4 879.1 513 879.1z'
+									p-id='35095'
+								></path>
+								<path
+									d='M664.7 520.8c-17.6-15.6-44.7-13.9-60.3 3.7l-49.2 55.7V368.5c0-1.3-0.1-2.7-0.2-4 0.1-1.4 0.2-2.9 0.2-4.4v-30.3c0-23.2-19-42.2-42.2-42.2-23.2 0-42.2 19-42.2 42.2v30.3c0 1.6 0.1 3.1 0.3 4.7-0.1 1.2-0.2 2.4-0.2 3.7v211.6l-49.2-55.6c-15.6-17.6-42.7-19.3-60.3-3.7-17.6 15.6-19.3 42.7-3.7 60.3L481 720.5c4.1 4.7 9 8.2 14.4 10.6 0.1 0 0.2 0.1 0.3 0.1l1.5 0.6c0.2 0.1 0.4 0.2 0.6 0.2 0.4 0.2 0.8 0.3 1.2 0.4 0.3 0.1 0.6 0.2 0.8 0.3 0.3 0.1 0.7 0.2 1 0.3s0.7 0.2 1 0.3 0.6 0.2 0.9 0.2c0.4 0.1 0.8 0.2 1.1 0.3 0.3 0.1 0.6 0.1 0.8 0.2 0.4 0.1 0.8 0.2 1.2 0.2 0.3 0 0.5 0.1 0.8 0.1 0.4 0.1 0.8 0.1 1.2 0.2 0.3 0 0.6 0.1 0.8 0.1 0.4 0 0.8 0.1 1.2 0.1 0.3 0 0.6 0 0.9 0.1h4.2c0.3 0 0.6 0 0.9-0.1 0.4 0 0.8-0.1 1.2-0.1 0.3 0 0.6-0.1 0.8-0.1 0.4 0 0.8-0.1 1.2-0.2 0.3 0 0.5-0.1 0.8-0.1 0.4-0.1 0.8-0.1 1.2-0.2 0.3-0.1 0.6-0.1 0.8-0.2 0.4-0.1 0.8-0.2 1.1-0.3s0.6-0.1 0.9-0.2c0.3-0.1 0.7-0.2 1-0.3s0.7-0.2 1-0.3 0.6-0.2 0.8-0.3c0.4-0.1 0.8-0.3 1.2-0.4 0.2-0.1 0.4-0.2 0.6-0.2l1.5-0.6c0.1 0 0.2-0.1 0.3-0.1 5.3-2.4 10.3-5.9 14.4-10.6L668 581.1c16-17.6 14.3-44.8-3.3-60.3z'
+									p-id='35096'
+								></path>
+							</svg>
+							<span>
+								{t('saveAs', {
+									ns: 'common',
+								})}
+							</span>
+						</div>
+					</saki-context-menu-item>
+				) : (
+					<saki-context-menu-item
+						width='200px'
+						font-size='13px'
+						padding='12px 10px'
+						value='download'
+					>
+						<div className='context-menu-item'>
+							<svg
+								className='icon'
+								viewBox='0 0 1024 1024'
+								version='1.1'
+								xmlns='http://www.w3.org/2000/svg'
+								p-id='35094'
+							>
+								<path
+									d='M925.6 337.9c-22.6-53.3-54.8-101.2-96-142.3-41.1-41.1-89-73.4-142.3-96C632.1 76.2 573.5 64.4 513 64.4S393.9 76.2 338.7 99.6c-53.3 22.6-101.2 54.8-142.3 96-41.1 41.1-73.4 89-96 142.3C77 393.1 65.2 451.8 65.2 512.2c0 60.4 11.8 119.1 35.2 174.3 22.6 53.3 54.8 101.2 96 142.3 41.1 41.1 89 73.4 142.3 96C393.9 948.2 452.6 960 513 960s119.1-11.8 174.3-35.2c53.3-22.6 101.2-54.8 142.3-96 41.1-41.1 73.4-89 96-142.3 23.4-55.2 35.2-113.9 35.2-174.3 0-60.4-11.8-119.1-35.2-174.3zM513 879.1c-202.3 0-366.9-164.6-366.9-366.9S310.7 145.3 513 145.3c202.3 0 366.9 164.6 366.9 366.9S715.4 879.1 513 879.1z'
+									p-id='35095'
+								></path>
+								<path
+									d='M664.7 520.8c-17.6-15.6-44.7-13.9-60.3 3.7l-49.2 55.7V368.5c0-1.3-0.1-2.7-0.2-4 0.1-1.4 0.2-2.9 0.2-4.4v-30.3c0-23.2-19-42.2-42.2-42.2-23.2 0-42.2 19-42.2 42.2v30.3c0 1.6 0.1 3.1 0.3 4.7-0.1 1.2-0.2 2.4-0.2 3.7v211.6l-49.2-55.6c-15.6-17.6-42.7-19.3-60.3-3.7-17.6 15.6-19.3 42.7-3.7 60.3L481 720.5c4.1 4.7 9 8.2 14.4 10.6 0.1 0 0.2 0.1 0.3 0.1l1.5 0.6c0.2 0.1 0.4 0.2 0.6 0.2 0.4 0.2 0.8 0.3 1.2 0.4 0.3 0.1 0.6 0.2 0.8 0.3 0.3 0.1 0.7 0.2 1 0.3s0.7 0.2 1 0.3 0.6 0.2 0.9 0.2c0.4 0.1 0.8 0.2 1.1 0.3 0.3 0.1 0.6 0.1 0.8 0.2 0.4 0.1 0.8 0.2 1.2 0.2 0.3 0 0.5 0.1 0.8 0.1 0.4 0.1 0.8 0.1 1.2 0.2 0.3 0 0.6 0.1 0.8 0.1 0.4 0 0.8 0.1 1.2 0.1 0.3 0 0.6 0 0.9 0.1h4.2c0.3 0 0.6 0 0.9-0.1 0.4 0 0.8-0.1 1.2-0.1 0.3 0 0.6-0.1 0.8-0.1 0.4 0 0.8-0.1 1.2-0.2 0.3 0 0.5-0.1 0.8-0.1 0.4-0.1 0.8-0.1 1.2-0.2 0.3-0.1 0.6-0.1 0.8-0.2 0.4-0.1 0.8-0.2 1.1-0.3s0.6-0.1 0.9-0.2c0.3-0.1 0.7-0.2 1-0.3s0.7-0.2 1-0.3 0.6-0.2 0.8-0.3c0.4-0.1 0.8-0.3 1.2-0.4 0.2-0.1 0.4-0.2 0.6-0.2l1.5-0.6c0.1 0 0.2-0.1 0.3-0.1 5.3-2.4 10.3-5.9 14.4-10.6L668 581.1c16-17.6 14.3-44.8-3.3-60.3z'
+									p-id='35096'
+								></path>
+							</svg>
+							<span>
+								{t('download', {
+									ns: 'common',
+								})}
+							</span>
+						</div>
+					</saki-context-menu-item>
+				)}
 				<saki-context-menu-item
-					width='180px'
+					width='200px'
 					font-size='13px'
 					padding='12px 10px'
 					value='delete'

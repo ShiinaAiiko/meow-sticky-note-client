@@ -28,7 +28,7 @@
 				left: 100%;
 				background-color: #fff;
 				transition: left 0.3s;
-        padding: 0 10px;
+				padding: 0 10px;
 				&.active {
 					left: 0%;
 				}
@@ -117,6 +117,66 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+	}
+	.s-backup {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		.s-b-path {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 12px 0;
+			border-radius: 6px;
+			margin-bottom: 6px;
+			.name {
+				padding-right: 10px;
+				white-space: nowrap;
+			}
+			.content {
+				flex: 1;
+				display: flex;
+				justify-content: flex-end;
+				align-items: center;
+				cursor: pointer;
+				&:hover {
+					.path {
+						color: #777;
+					}
+					.icon {
+						fill: #777;
+					}
+				}
+				&:active {
+					.path {
+						color: #555;
+					}
+					.icon {
+						fill: #555;
+					}
+				}
+				.path {
+					color: #999;
+					flex: 1;
+					text-align: right;
+				}
+				.icon {
+					width: 14px;
+					height: 14px;
+					fill: #999;
+					margin-left: 6px;
+				}
+			}
+		}
+		.s-p-automatically {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 16px;
+		}
+		.s-p-last-backup-time {
+			color: #999;
+		}
 	}
 	.shortcut-item {
 		margin-top: 10px;

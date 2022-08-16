@@ -26,6 +26,7 @@ export const configMethods = {
 		store.dispatch(methods.config.initLanguage())
 		store.dispatch(methods.config.initAutoCloseWindowAfterCopy())
 		store.dispatch(methods.config.initSync())
+		store.dispatch(methods.config.initBackup())
 	}),
 	getDeviceType: createAsyncThunk(
 		modeName + '/getDeviceType',
@@ -66,10 +67,54 @@ export const configMethods = {
 	initSync: createAsyncThunk(modeName + '/initSync', async (_, thunkAPI) => {
 		store.dispatch(
 			configSlice.actions.setSync(
-				(await storage.systemConfig.get('sync')) || false
+				JSON.parse(await storage.systemConfig.get('sync')) || false
 			)
 		)
 	}),
+	initBackup: createAsyncThunk(
+		modeName + '/initBackup',
+		async (_, thunkAPI) => {
+			thunkAPI.dispatch(
+				configSlice.actions.setBackup({
+					type: 'storagePath',
+					v: (await storage.systemConfig.get('backupStoragePath')) || '',
+				})
+			)
+			thunkAPI.dispatch(
+				configSlice.actions.setBackup({
+					type: 'backupAutomatically',
+					v:
+						JSON.parse(await storage.systemConfig.get('backupAutomatically')) ||
+						false,
+				})
+			)
+			thunkAPI.dispatch(
+				configSlice.actions.setBackup({
+					type: 'keepBackups',
+					v: (await storage.systemConfig.get('keepBackups')) || '3784320000',
+				})
+			)
+			thunkAPI.dispatch(
+				configSlice.actions.setBackup({
+					type: 'automaticBackupFrequency',
+					v:
+						(await storage.systemConfig.get('automaticBackupFrequency')) ||
+						'604800',
+				})
+			)
+		}
+	),
+	getLastBackupTime: createAsyncThunk(
+		modeName + '/initBackup',
+		async (_, thunkAPI) => {
+			thunkAPI.dispatch(
+				configSlice.actions.setBackup({
+					type: 'lastBackupTime',
+					v: (await storage.systemConfig.get('lastBackupTime')) || 0,
+				})
+			)
+		}
+	),
 }
 
 export let platform: 'Electron' | 'Web' =
@@ -85,67 +130,78 @@ export let eventTarget = new EventTarget()
 type DeviceType = 'Mobile' | 'Pad' | 'PC'
 export let deviceType: DeviceType | undefined
 
-export const configSlice = createSlice({
-	name: modeName,
-	initialState: {
-		layout: {
-			backIcon: false,
-			showCenter: false,
-			centerTitle: {
-				title: '',
-				subtitle: '',
-			},
-		},
-		saassConfig: {
-			parameters: {
-				imageResize: {
-					normal: '?x-saass-process=image/resize,900,70',
-					avatar: '?x-saass-process=image/resize,160,70',
-					full: '?x-saass-process=image/resize,1920,70',
-				},
-			},
-		},
-		pageConfig: {
-			disableChangeValue: false,
-			settingPage: {
-				settingType: '',
-			},
-			indexPage: {
-				mobile: {
-					showNotesListPage: true,
-					showCategoryListPage: true,
-					showPageListPage: false,
-					showPageContentPage: false,
-				},
-			},
-		},
-		language: '',
-		deviceType,
-		sync: false,
-		platform,
-		status: {
-			noteInitStatus: false,
-			sakiUIInitStatus: false,
-			syncStatus: false,
-			loginModalStatus: false,
-		},
-		sakisso,
-		socketIoConfig: {
-			// uri: 'http://192.168.0.103:15301',
-			uri: nsocketio.url,
-			opt: {
-				reconnectionDelay: 2000,
-				reconnectionDelayMax: 5000,
-				secure: false,
-				autoConnect: true,
-				rejectUnauthorized: false,
-				transports: ['websocket'],
-			},
-		},
-		general: {
-			autoCloseWindowAfterCopy: false,
+let initialState = {
+	layout: {
+		backIcon: false,
+		showCenter: false,
+		centerTitle: {
+			title: '',
+			subtitle: '',
 		},
 	},
+	saassConfig: {
+		parameters: {
+			imageResize: {
+				normal: '?x-saass-process=image/resize,900,70',
+				avatar: '?x-saass-process=image/resize,160,70',
+				full: '?x-saass-process=image/resize,1920,70',
+			},
+		},
+	},
+	pageConfig: {
+		disableChangeValue: false,
+		settingPage: {
+			settingType: '',
+		},
+		indexPage: {
+			mobile: {
+				showNotesListPage: true,
+				showCategoryListPage: true,
+				showPageListPage: false,
+				showPageContentPage: false,
+			},
+		},
+	},
+	dataVersion: 'v1.0.0',
+	language: '',
+	deviceType,
+	sync: false,
+	backup: {
+		storagePath: '',
+		backupAutomatically: false,
+		automaticBackupFrequency: '-1',
+		keepBackups: '-1',
+		maximumStorageSpace: 512 * 1024 * 1024,
+		lastBackupTime: 0,
+	},
+	platform,
+	status: {
+		noteInitStatus: false,
+		sakiUIInitStatus: false,
+		syncStatus: false,
+		loginModalStatus: false,
+	},
+	sakisso,
+	socketIoConfig: {
+		// uri: 'http://192.168.0.103:15301',
+		uri: nsocketio.url,
+		opt: {
+			reconnectionDelay: 2000,
+			reconnectionDelayMax: 5000,
+			secure: false,
+			autoConnect: true,
+			rejectUnauthorized: false,
+			transports: ['websocket'],
+		},
+	},
+	general: {
+		autoCloseWindowAfterCopy: false,
+	},
+}
+
+export const configSlice = createSlice({
+	name: modeName,
+	initialState: initialState,
 	reducers: {
 		setLanguage: (
 			state,
@@ -180,7 +236,7 @@ export const configSlice = createSlice({
 		},
 		setSync: (state, params: ActionParams<boolean>) => {
 			state.sync = params.payload
-			storage.systemConfig.setSync('sync', params.payload)
+			storage.systemConfig.setSync('sync', JSON.stringify(params.payload))
 		},
 		setSettingType: (state, params: ActionParams<string>) => {
 			state.pageConfig.settingPage.settingType = params.payload
@@ -225,6 +281,40 @@ export const configSlice = createSlice({
 			}>
 		) => {
 			state.status[params.payload.type] = params.payload.v
+		},
+		setBackup: (
+			state: any,
+			params: ActionParams<{
+				type: keyof typeof initialState.backup
+				v: any
+			}>
+		) => {
+			state.backup[params.payload.type] = params.payload.v
+			switch (params.payload.type) {
+				case 'storagePath':
+					storage.systemConfig.setSync('backupStoragePath', params.payload.v)
+					break
+				case 'backupAutomatically':
+					storage.systemConfig.setSync(
+						'backupAutomatically',
+						JSON.stringify(params.payload.v)
+					)
+					break
+
+				case 'keepBackups':
+					storage.systemConfig.setSync('keepBackups', params.payload.v)
+					break
+
+				case 'automaticBackupFrequency':
+					storage.systemConfig.setSync(
+						'automaticBackupFrequency',
+						params.payload.v
+					)
+					break
+
+				default:
+					break
+			}
 		},
 		setAutoCloseWindowAfterCopy: (state, params: ActionParams<boolean>) => {
 			state.general.autoCloseWindowAfterCopy = params.payload

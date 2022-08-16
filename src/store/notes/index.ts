@@ -9,7 +9,7 @@ import md5 from 'blueimp-md5'
 import store, { ActionParams, configSlice, RootState } from '../index'
 import { NoteItem, PageItem, CategoryItem } from './typings'
 import { Debounce, deepCopy } from '@nyanyajs/utils'
-import { prompt, snackbar } from '@saki-ui/core'
+import { prompt, snackbar, alert } from '@saki-ui/core'
 import { v5 as uuidv5, v4 as uuidv4 } from 'uuid'
 import { storage } from '../storage'
 import { getI18n } from 'react-i18next'
@@ -146,32 +146,42 @@ export const notesMethods = {
 
 							// // 本地存在\更新
 							if (isExist && note?.lastUpdateTime) {
-								// 更新时间每次和saass同步
-								console.log(
-									'存在,版本是否一致?',
-									Number(v.lastUpdateTime) > note.lastUpdateTime
-								)
-								if (Number(v.lastUpdateTime) > note.lastUpdateTime) {
-									console.log('远程版本大于本地')
-									getNote(v.id)
-								} else if (Number(v.lastUpdateTime) === note?.lastUpdateTime) {
-									console.log('已经是最新版了')
+								// && note.isSync
+								if (note.authorId === user.userInfo.uid) {
+									// 更新时间每次和saass同步
+									console.log(
+										'存在,版本是否一致?',
+										Number(v.lastUpdateTime) > note.lastUpdateTime
+									)
+									if (Number(v.lastUpdateTime) > note.lastUpdateTime) {
+										console.log('远程版本大于本地', note.name)
+										getNote(v.id)
+									} else if (
+										Number(v.lastUpdateTime) === note?.lastUpdateTime
+									) {
+										console.log('已经是最新版了', note.name)
+									} else {
+										console.log('远程版本小于本地', note.name)
+										saveNote({
+											id: note.id,
+											v: note,
+											requestParams: {
+												type: 'Note',
+												methods: 'Add',
+												options: {
+													noteId: note.id,
+												},
+												data: {
+													note: note,
+												},
+											},
+										})
+									}
 								} else {
-									console.log('远程版本小于本地')
-									saveNote({
-										id: note.id,
-										v: note,
-										requestParams: {
-											type: 'Note',
-											methods: 'Add',
-											options: {
-												noteId: note.id,
-											},
-											data: {
-												note: note,
-											},
-										},
-									})
+									if (note.authorId !== user.userInfo.uid) {
+										console.log('这是其他人的日记')
+									}
+									console.log('禁用同步')
 								}
 							}
 							// 本地不存在\添加
@@ -193,6 +203,7 @@ export const notesMethods = {
 						})
 						// 本地存在\远端不存在
 						if (!isExist) {
+							console.log('本地存在远端不存在')
 							api.v1
 								.syncToServer({
 									type: 'Note',
@@ -250,7 +261,7 @@ export const notesMethods = {
 			},
 			onCancel() {},
 			onConfirm() {
-				const { notes } = thunkAPI.getState()
+				const { notes, user, config } = thunkAPI.getState()
 				thunkAPI.dispatch(
 					notesSlice.actions.addNote({
 						v: {
@@ -261,6 +272,8 @@ export const notesMethods = {
 							sort: (notes.list[notes.list?.length - 1]?.sort || 0) + 1,
 							isSync: false,
 							categories: [],
+							authorId: user.userInfo.uid,
+							version: config.dataVersion,
 						},
 					})
 				)
@@ -570,7 +583,7 @@ export const saveNote = (payload: {
 		storage.notes.set(payload.id, note).then(async () => {
 			// console.log('payload.id')
 			// console.log(payload.id)
-
+			// console.log('config.platform', config.platform)
 			switch (config.platform) {
 				case 'Electron':
 					electronApi.api.updateData()
@@ -580,63 +593,77 @@ export const saveNote = (payload: {
 					break
 			}
 
+			store.dispatch(
+				notesSlice.actions.setNoteLastUpdateTime({
+					id: payload.id,
+					lastUpdateTime: Math.floor(new Date().getTime() / 1000),
+				})
+			)
 			if (config.sync) {
-				if (user.isLogin) {
-					console.log('同步远端')
-					console.log(payload.requestParams)
-					if (payload.requestParams) {
-						const res = await api.v1.syncToServer(payload.requestParams)
+				// && note.isSync
+				if (note.authorId === user.userInfo.uid) {
+					if (user.isLogin) {
+						console.log('同步远端')
+						console.log(payload.requestParams)
+						if (payload.requestParams) {
+							const res = await api.v1.syncToServer(payload.requestParams)
 
-						console.log('res', res, payload.requestParams, res.code)
-						if (res.code === 10021) {
-							console.log('添加', payload.id, note)
-							saveNote({
-								id: payload.id,
-								v: note,
-								requestParams: {
-									type: 'Note',
-									methods: 'Add',
-									options: {
-										noteId: payload.id,
+							console.log('res', res, payload.requestParams, res.code)
+							if (res.code === 10021) {
+								console.log('添加', payload.id, note)
+								saveNote({
+									id: payload.id,
+									v: note,
+									requestParams: {
+										type: 'Note',
+										methods: 'Add',
+										options: {
+											noteId: payload.id,
+										},
+										data: {
+											note: note,
+										},
 									},
-									data: {
-										note: note,
-									},
-								},
-							})
-							return
+								})
+								return
+							}
+							if (res.code === 200) {
+								// const lastUpdateTime = new Date().getTime()
+								res.data?.lastUpdateTime &&
+									store.dispatch(
+										notesSlice.actions.setNoteLastUpdateTime({
+											id: payload.id,
+											lastUpdateTime:
+												Number(res.data.lastUpdateTime) || note.lastUpdateTime,
+										})
+									)
+								// note.lastUpdateTime = lastUpdateTime
+								// console.log(res.data.urls)
+								// console.log(
+								// 	(res.data.urls?.domainUrl || '') +
+								// 		(res.data.urls?.encryptionUrl || '')
+								// )
+								// console.log(
+								// 	(res.data.urls?.domainUrl || '') + (res.data.urls?.url || '')
+								// )
+							}
 						}
-						if (res.code === 200) {
-							// const lastUpdateTime = new Date().getTime()
-							res.data?.lastUpdateTime &&
-								store.dispatch(
-									notesSlice.actions.setNoteLastUpdateTime({
-										id: payload.id,
-										lastUpdateTime:
-											Number(res.data.lastUpdateTime) || note.lastUpdateTime,
-									})
-								)
-							// note.lastUpdateTime = lastUpdateTime
-							// console.log(res.data.urls)
-							// console.log(
-							// 	(res.data.urls?.domainUrl || '') +
-							// 		(res.data.urls?.encryptionUrl || '')
-							// )
-							// console.log(
-							// 	(res.data.urls?.domainUrl || '') + (res.data.urls?.url || '')
-							// )
-						}
+
+						syncLoadingDebounce.increase(() => {
+							store.dispatch(
+								configSlice.actions.setStatus({
+									type: 'syncStatus',
+									v: false,
+								})
+							)
+						}, 500)
+						return
 					}
-
-					syncLoadingDebounce.increase(() => {
-						store.dispatch(
-							configSlice.actions.setStatus({
-								type: 'syncStatus',
-								v: false,
-							})
-						)
-					}, 500)
-					return
+				} else {
+					if (note.authorId !== user.userInfo.uid) {
+						console.log('这是其他人的日记')
+					}
+					console.log('禁用同步')
 				}
 				syncLoadingDebounce.increase(() => {
 					store.dispatch(
@@ -647,12 +674,6 @@ export const saveNote = (payload: {
 					)
 				}, 500)
 			}
-			store.dispatch(
-				notesSlice.actions.setNoteLastUpdateTime({
-					id: payload.id,
-					lastUpdateTime: Math.floor(new Date().getTime() / 1000),
-				})
-			)
 		})
 	})
 	// }, 700)
@@ -754,10 +775,14 @@ export const notesSlice = createSlice({
 				lastUpdateTime: number
 			}>
 		) => {
+			// console.log('setNoteLastUpdateTime1')
 			let note: NoteItem | undefined
 			state.list.some((v) => {
 				if (v.id === params.payload.id) {
+					// console.log('setNoteLastUpdateTime2')
 					v.lastUpdateTime = params.payload.lastUpdateTime
+
+					storage.notes.set(v.id, deepCopy(v))
 					return true
 				}
 			})
@@ -804,6 +829,8 @@ export const notesSlice = createSlice({
 				noteId: string
 				note: {
 					name?: string
+					authorId?: number
+					isSync?: boolean
 				}
 				disableSync?: boolean
 			}>
@@ -813,6 +840,8 @@ export const notesSlice = createSlice({
 			state.list.some((v) => {
 				if (v.id === noteId) {
 					v.name = note.name || ''
+					v.authorId = note.authorId || v.authorId
+					v.isSync = note.isSync || v.isSync
 					v.lastUpdateTime = Math.floor(new Date().getTime() / 1000)
 					saveNote({
 						id: v.id,
@@ -826,7 +855,9 @@ export const notesSlice = createSlice({
 									},
 									data: {
 										note: {
-											name: note.name,
+											name: v.name,
+											authorId: v.authorId,
+											isSync: v.isSync,
 											lastUpdateTime: v.lastUpdateTime,
 										},
 									},
@@ -838,6 +869,158 @@ export const notesSlice = createSlice({
 				}
 			})
 		},
+
+		saveNoteToThisAccount: (
+			state,
+			params: ActionParams<{
+				noteId: string
+				uid: number
+			}>
+		) => {
+			console.log('saveNoteToThisAccount')
+			// 存储至本账号的时候，检测是否有同样id的分类，如果有，
+			// 询问用户是否合并两个笔记。不合并就全新创建(分类与页面的id也是新的)
+			// 合并的时候，id用之前的id。
+			// 这样就可以将本来的内容并在一起了,合并采用更新
+
+			const { noteId, uid } = params.payload
+			const note: NoteItem = deepCopy(
+				state.list.filter((v) => v.id === noteId)?.[0]
+			)
+			const categoryIds = note.categories.map((v) => {
+				return v.id
+			})
+			console.log(deepCopy(note))
+			console.log(deepCopy(categoryIds))
+
+			let nindex = -1
+			let cNote: NoteItem
+			state.list.forEach((v, i) => {
+				if (v.authorId === uid) {
+					v.categories.some((sv) => {
+						console.log(categoryIds.includes(sv.id), v.name, sv.id)
+						if (categoryIds.includes(sv.id)) {
+							nindex = i
+							return true
+						}
+					})
+				}
+				return nindex >= 0
+			})
+			console.log('nindex', nindex >= -1, nindex)
+			if (nindex >= 0) {
+				cNote = deepCopy(state.list[nindex])
+			}
+			const saveNote = (merge: boolean) => {
+				setTimeout(() => {
+					console.log('merge', merge)
+					const { user } = store.getState()
+					note.authorId = user.userInfo.uid
+					if (merge) {
+						// note.id = cNote.id
+						// let categories: CategoryItem[] = []
+						// cNote.categories.forEach((v) => {
+						// 	const isExist = note.categories.filter((sv) => {
+						// 		return sv.id === v.id
+						// 	})
+						// 	if (!isExist) {
+						// 		categories.push(v)
+						// 	}
+						// })
+						// console.log(categories)
+						// note.categories = note.categories.concat(categories)
+						// // 更新
+						// store.dispatch(
+						// 	notesSlice.actions.updateNote({
+						// 		noteId: note.id,
+						// 		note: {
+						// 			name: note.name,
+						// 			authorId: note.authorId,
+						// 			isSync: note.isSync,
+						// 		},
+						// 		disableSync: false,
+						// 	})
+						// )
+					} else {
+						note.id = uuidv5(note.name, uuidv4())
+						note.categories.forEach((v) => {
+							v.id = uuidv5(v.name || 'none', uuidv4())
+							v.data.forEach((sv) => {
+								sv.id = uuidv5(sv.title || 'none', uuidv4())
+							})
+						})
+						store.dispatch(
+							notesSlice.actions.addNote({
+								v: note,
+							})
+						)
+						// 另存
+					}
+
+					// 删除原noteId
+					store.dispatch(
+						notesSlice.actions.deleteNote({
+							noteId: noteId,
+						})
+					)
+					console.log(note)
+					console.log(cNote)
+				})
+			}
+			if (nindex >= 0) {
+				// 合并数据以后再说
+
+				// 询问是否合并
+				// alert({
+				// 	title: '合并数据',
+				// 	content:
+				// 		'检测到与「' +
+				// 		state.list[nindex].name +
+				// 		'」可能是同一个数据内容,需要合并数据吗?',
+				// 	cancelText: 'Save as',
+				// 	confirmText: 'Merge',
+				// 	onCancel() {
+				// 		saveNote(false)
+				// 	},
+				// 	async onConfirm() {
+				// 		saveNote(true)
+				// 	},
+				// }).open()
+				saveNote(false)
+				return
+			}
+			saveNote(false)
+			// 无需合并
+			// if (!note.name) return
+			// state.list.some((v) => {
+			// 	if (v.id === noteId) {
+			// 		v.name = note.name || ''
+			// 		v.lastUpdateTime = Math.floor(new Date().getTime() / 1000)
+			// 		saveNote({
+			// 			id: v.id,
+			// 			v,
+			// 			requestParams: !disableSync
+			// 				? {
+			// 						type: 'Note',
+			// 						methods: 'Update',
+			// 						options: {
+			// 							noteId: v.id,
+			// 						},
+			// 						data: {
+			// 							note: {
+			// 								name: note.name,
+			// 								lastUpdateTime: v.lastUpdateTime,
+			// 							},
+			// 						},
+			// 				  }
+			// 				: undefined,
+			// 		})
+
+			// 		return true
+			// 	}
+			// })
+		},
+
 		deleteNote: (
 			state,
 			params: ActionParams<{

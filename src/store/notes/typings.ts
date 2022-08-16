@@ -24,4 +24,6 @@ export interface NoteItem {
 	sort: number
 	isSync: boolean
 	categories: CategoryItem[]
+	authorId: number
+	version: string
 }

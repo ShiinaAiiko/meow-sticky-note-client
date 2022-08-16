@@ -43,11 +43,13 @@ export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
 		{ extraHeaders: 'pragma: no-cache' }
 	)
 	window.webContents.openDevTools()
-	if (options?.webPreferences?.devTools) {
-		window.webContents.openDevTools()
-	} else {
-		window.webContents.closeDevTools()
-	}
+	setTimeout(() => {
+		if (options?.webPreferences?.devTools) {
+			window.webContents.openDevTools()
+		} else {
+			window.webContents.closeDevTools()
+		}
+	})
 	window.on('show', () => {
 		console.log('show')
 	})
@@ -105,9 +107,9 @@ export const openQuickReviewWindows = () => {
 		width: 800,
 		height: 600,
 		x: 0,
-		y: 500, 
+		y: 500,
 		skipTaskbar: false,
-		hasShadow: true, 
+		hasShadow: true,
 		alwaysOnTop: false,
 		// transparent: true,
 		// fullscreen: false,

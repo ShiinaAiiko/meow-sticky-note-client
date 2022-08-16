@@ -5,7 +5,7 @@ import {
 	configureStore,
 } from '@reduxjs/toolkit'
 import md5 from 'blueimp-md5'
-import store, { ActionParams, methods, RootState } from '.'
+import store, { ActionParams, methods, storageSlice, RootState } from '.'
 import { UserAgent } from '@nyanyajs/utils/dist/userAgent'
 import nyanyajs from '@nyanyajs/utils'
 
@@ -87,8 +87,8 @@ export const userMethods = {
 				)
 			} else {
 				// thunkAPI.dispatch(userSlice.actions.logout({}))
-      }
-      return res
+			}
+			return res
 		}
 	),
 }
@@ -166,7 +166,9 @@ export const userSlice = createSlice({
 				storage.global.setSync('deviceId', deviceId)
 				storage.global.setSync('userInfo', userInfo)
 			}
-
+			setTimeout(() => {
+				store.dispatch(storageSlice.actions.init(userInfo.uid))
+			})
 			// store.dispatch(userSlice.actions.init({}))
 		},
 		logout: (state, _) => {

@@ -25,7 +25,7 @@ function App() {
 	const params = useParams()
 	// const location = useLocation();
 	useEffect(() => {
-		store.dispatch(storageSlice.actions.init())
+		store.dispatch(storageSlice.actions.init(0))
 
 		let currentKey: {
 			[key: string]: string
@@ -57,10 +57,7 @@ function App() {
 				<div className='App'>
 					<Helmet>
 						<script type='module' src={sakiui.esmjsurl}></script>
-						<script
-							noModule
-							src={sakiui.jsurl}
-						></script>
+						<script noModule src={sakiui.jsurl}></script>
 						<title></title>
 					</Helmet>
 					{RenderRoutes(routes)}

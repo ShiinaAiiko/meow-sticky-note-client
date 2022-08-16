@@ -15,8 +15,10 @@ import './Login.scss'
 import { api } from '../modules/electron/api'
 import { useTranslation } from 'react-i18next'
 import { prompt, alert } from '@saki-ui/core'
+import { Debounce } from '@nyanyajs/utils'
 import { sakisso } from '../config'
 
+const loginDebounce = new Debounce()
 const LoginComponent = () => {
 	const { t, i18n } = useTranslation()
 	const notes = useSelector((state: RootState) => state.notes)
@@ -81,21 +83,23 @@ const LoginComponent = () => {
 					<saki-sso
 						ref={bindEvent({
 							login: (e) => {
-								store.dispatch(
-									userSlice.actions.login({
-										token: e.detail.token,
-										deviceId: e.detail.deviceId,
-										userInfo: e.detail.userInfo,
-									})
-								)
-								store.dispatch(configSlice.actions.setSync(true))
-								dispatch(methods.notes.Init()).unwrap()
-								store.dispatch(
-									configSlice.actions.setStatus({
-										type: 'loginModalStatus',
-										v: false,
-									})
-								)
+								loginDebounce.increase(() => {
+									store.dispatch(
+										userSlice.actions.login({
+											token: e.detail.token,
+											deviceId: e.detail.deviceId,
+											userInfo: e.detail.userInfo,
+										})
+									)
+									store.dispatch(configSlice.actions.setSync(true))
+									dispatch(methods.notes.Init()).unwrap()
+									store.dispatch(
+										configSlice.actions.setStatus({
+											type: 'loginModalStatus',
+											v: false,
+										})
+									)
+								}, 100)
 							},
 						})}
 						style={{

@@ -83,7 +83,7 @@
 		}
 		.loading-logo {
 			width: 160px;
-      height: 160px;
+			height: 160px;
 			img {
 				width: 100%;
 				height: 100%;
@@ -163,6 +163,11 @@
 		width: 16px;
 		height: 16px;
 		margin-right: 6px;
+	}
+	&.disabletap {
+		.icon {
+			fill: #aaa;
+		}
 	}
 }
 

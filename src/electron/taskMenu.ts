@@ -56,27 +56,27 @@ const contextMenu = Menu.buildFromTemplate([
 			},
 		]),
 	},
-	{
-		label: 'Clear cache',
-		accelerator: 'CmdOrCtrl+Shift+Delete',
-		click: (item: any, focusedWindow: any) => {
-			if (focusedWindow) {
-				const clearObj = {
-					storages: [
-						'appcache',
-						'filesystem',
-						// 'indexdb',
-						'localstorage',
-						'shadercache',
-						'websql',
-						'serviceworkers',
-						'cachestorage',
-					],
-				}
-				focusedWindow.webContents.session.clearStorageData(clearObj)
-			}
-		},
-	},
+	// {
+	// 	label: 'Clear cache',
+	// 	accelerator: 'CmdOrCtrl+Shift+Delete',
+	// 	click: (item: any, focusedWindow: any) => {
+	// 		if (focusedWindow) {
+	// 			const clearObj = {
+	// 				storages: [
+	// 					'appcache',
+	// 					'filesystem',
+	// 					// 'indexdb',
+	// 					'localstorage',
+	// 					'shadercache',
+	// 					'websql',
+	// 					'serviceworkers',
+	// 					'cachestorage',
+	// 				],
+	// 			}
+	// 			focusedWindow.webContents.session.clearStorageData(clearObj)
+	// 		}
+	// 	},
+	// },
 	{
 		label: 'Quit',
 		click() {

@@ -64,6 +64,34 @@ export const api = {
 			})
 		)
 	},
+	saveAs(
+		fileName: string,
+		file: string,
+		options: {
+			extensions: string[]
+		}
+	) {
+		ipcRenderer?.send?.(
+			'saveAs',
+			PARAMS('saveAs', {
+				fileName,
+				file,
+				options,
+			})
+		)
+	},
+	openFolder(lastFolderPath: string, type: 'BackupPath') {
+		ipcRenderer?.send?.(
+			'openFolder',
+			PARAMS('openFolder', {
+				lastFolderPath,
+				type,
+			})
+		)
+	},
+	backup() {
+		ipcRenderer?.send?.('backup', PARAMS('backup', {}))
+	},
 }
 
 export default {

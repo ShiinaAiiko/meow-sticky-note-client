@@ -10,6 +10,7 @@ import store, {
 	userSlice,
 } from '../../store'
 import { Debounce, deepCopy } from '@nyanyajs/utils'
+import { storage } from '../../store/storage'
 const createRouterDebounce = new Debounce()
 export const init = () => {
 	console.log('store', store.getState())
@@ -65,6 +66,26 @@ export const init = () => {
 					break
 				case 'sync':
 					store.dispatch(methods.config.initSync())
+					break
+
+				default:
+					break
+			}
+			// store.dispatch(methods.notes.Init()).unwrap()
+		})
+
+		ipcRenderer.on('openFolder', (event, ...arg) => {
+			switch (arg?.[0]?.type) {
+				case 'BackupPath':
+					console.log(arg?.[0]?.path)
+					if (arg?.[0]?.path) {
+						store.dispatch(
+							configSlice.actions.setBackup({
+								type: 'storagePath',
+								v: arg?.[0]?.path,
+							})
+						)
+					}
 					break
 
 				default:

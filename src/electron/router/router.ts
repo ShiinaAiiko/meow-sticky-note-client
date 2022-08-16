@@ -5,13 +5,17 @@ import {
 	Notification,
 	nativeTheme,
 	globalShortcut,
+	dialog,
 } from 'electron'
 import { APIParams } from '../typings/api'
-import path from 'path'
 
 import { windows, openMainWindows } from '../windows'
 import { mode, setMode } from '../appearance'
-import { logo } from '../config'
+import { logo, systemConfig } from '../config'
+import { saveAs, openFolder, backup } from '../modules/methods'
+;(async () => {
+	setTimeout(async () => {}, 2000)
+})()
 
 export const R = (
 	func: (options: {
@@ -135,6 +139,34 @@ export const initRouter = () => {
 					})
 				}
 			})
+		})
+	)
+
+	ipcMain.on(
+		'saveAs',
+		R(({ window, data }) => {
+			saveAs(data.data.fileName, data.data.file, {
+				filters: [{ name: 'Files', extensions: [data.data.extensions] }],
+			})
+		})
+	)
+
+	ipcMain.on(
+		'openFolder',
+		R(({ window, data }) => {
+			openFolder(data.data.lastFolderPath, {}).then((v) => {
+				window.webContents.send('openFolder', {
+					type: data.data.type,
+					path: v,
+				})
+			})
+		})
+	)
+
+	ipcMain.on(
+		'backup',
+		R(({ window, data }) => {
+			backup()
 		})
 	)
 }

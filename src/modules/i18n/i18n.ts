@@ -34,6 +34,9 @@ const resources = {
 			categories: '分类',
 			pages: '页面',
 			notes: '笔记',
+
+			saveAs: '另存',
+			download: '下载',
 		},
 		indexHeader: {},
 		indexPage: {
@@ -64,6 +67,8 @@ const resources = {
 			language: '多语言',
 			appearance: '外表',
 			sync: '同步',
+			backup: '备份',
+			syncAndBackup: '同步与备份',
 			syncTo: '同步至',
 			syncingTo: '正在同步至',
 			syncPromptForNotLoggedIn: '启用同步功能前需要先登陆帐号',
@@ -76,6 +81,21 @@ const resources = {
 			switchSuccessfully: '已切换为 ',
 
 			shortcut: '快捷键',
+
+			storagePath: '存储路径',
+			automaticBackupFrequency: '自动备份频率',
+			backupAutomatically: '自动备份',
+			keepBackups: '保留备份',
+			chooseStoragePath: '选择存储路径',
+
+			atLeastOneMonths: '至少一个月',
+			atLeastThreeMonths: '至少三个月',
+			forever: '永久',
+
+			daily: '每日',
+			weekly: '每周',
+
+			lastBackupTime: '上次备份时间',
 		},
 	},
 	'zh-TW': {
@@ -110,6 +130,9 @@ const resources = {
 			categories: '類別',
 			pages: '頁面',
 			notes: '筆記',
+
+			saveAs: '另存',
+			download: '下載',
 		},
 		indexHeader: {},
 		indexPage: {
@@ -140,6 +163,8 @@ const resources = {
 			language: '多語言',
 			appearance: '外表',
 			sync: '同步',
+			backup: '備份',
+			syncAndBackup: '同步和備份',
 			syncTo: '同步至',
 			syncingTo: '正在同步至',
 			syncPromptForNotLoggedIn: '啟用同步功能前需要先登陸帳號',
@@ -152,6 +177,21 @@ const resources = {
 			switchSuccessfully: '已切換為 ',
 
 			shortcut: '快捷鍵',
+
+			storagePath: '存儲路徑',
+			automaticBackupFrequency: '自動備份頻率',
+			backupAutomatically: '自動備份',
+			keepBackups: '保留備份',
+			chooseStoragePath: '選擇一個存儲路徑',
+
+			atLeastOneMonths: '至少一個月',
+			atLeastThreeMonths: '至少三個月',
+			forever: '永遠',
+
+			daily: '每日',
+			weekly: '每週',
+
+			lastBackupTime: '上次備份時間',
 		},
 	},
 	'en-US': {
@@ -186,6 +226,9 @@ const resources = {
 			categories: 'CATEGORIES',
 			pages: 'PAGES',
 			notes: 'NOTES',
+
+			saveAs: 'Save as',
+			download: 'Download',
 		},
 		indexHeader: {},
 		indexPage: {
@@ -216,6 +259,8 @@ const resources = {
 			language: 'Language',
 			appearance: 'Appearance',
 			sync: 'Sync',
+			backup: 'Backup',
+			syncAndBackup: 'Sync and Backup',
 			syncTo: 'Sync to ',
 			syncingTo: 'Syncing to ',
 			syncPromptForNotLoggedIn:
@@ -229,6 +274,21 @@ const resources = {
 			switchSuccessfully: 'Switched to ',
 
 			shortcut: 'Keyboard Shortcut',
+
+			storagePath: 'Storage path',
+			automaticBackupFrequency: 'Automatic Backup Frequency',
+			backupAutomatically: 'Backup automatically',
+			keepBackups: 'Keep Backups',
+			chooseStoragePath: 'Choose a storage path',
+
+			atLeastOneMonths: 'At least one months',
+			atLeastThreeMonths: 'At least three months',
+			forever: 'Forever',
+
+			daily: 'Daily',
+			weekly: 'Weekly',
+
+			lastBackupTime: 'Last backup time',
 		},
 	},
 }

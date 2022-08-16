@@ -15,11 +15,11 @@ import isDev from 'electron-is-dev'
 
 import { initShortcut } from './shortcut'
 
-
 import { initAppearance } from './appearance'
 import { initConfig, systemConfig, logo, taskIcon } from './config'
 import { createTaskMenu } from './taskMenu'
 import { initRouter } from './router/router'
+import { backup } from './modules/methods'
 
 console.log('启动')
 
@@ -31,8 +31,12 @@ const ready = async () => {
 	initRouter()
 	initShortcut()
 	await createTaskMenu()
+	await backup()
+	setInterval(async () => {
+		await backup()
+	}, 3600 * 1000)
 }
-
+ 
 app.on('ready', ready)
 
 ipcMain.on('quit', () => {

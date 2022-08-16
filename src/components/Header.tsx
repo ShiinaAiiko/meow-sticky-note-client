@@ -174,7 +174,12 @@ const HeaderComponent = ({
 									></path>
 								</svg>
 							</div>
-							<div slot='main'>
+							<div
+								style={{
+									width: '200px',
+								}}
+								slot='main'
+							>
 								<NodeList
 									onClose={() => {
 										setOpenDropDownMenu(false)

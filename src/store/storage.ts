@@ -59,10 +59,10 @@ export const storageSlice = createSlice({
 		// 未来改nodefs
 	},
 	reducers: {
-		init: (state) => {
-			let uid = 0
-			storage.notes.setLabel(storage.notes.getBaseLabel() + '_' + uid)
-			storage.global.setLabel(storage.global.getBaseLabel() + '_' + uid)
+		init: (state, params: ActionParams<number>) => {
+			// let uid = params.payload || 0
+			// storage.notes.setLabel(storage.notes.getBaseLabel() + '_' + uid)
+			// storage.global.setLabel(storage.global.getBaseLabel() + '_' + uid)
 		},
 	},
 })
