@@ -2,6 +2,7 @@
 	"name": "meow-sticky-note",
 	"version": "1.0.1",
 	"private": true,
+	"description": "一个简单易用的跨平台笔记",
 	"main": "./src/electron/dist/main.js",
 	"author": "Shiina Aiiko <shiina@aiiko.club>",
 	"homepage": ".",
@@ -23,7 +24,8 @@
 	},
 	"build": {
 		"productName": "Meow Sticky Note",
-		"appId": "com.xxx.xxx",
+		"appId": "com.meow.sticky.note",
+		"copyright": "©2022 Shiina Aiiko",
 		"directories": {
 			"output": "el-build"
 		},
@@ -106,7 +108,6 @@
 		"concurrently": "^7.2.2",
 		"electron": "^19.0.7",
 		"electron-builder": "^23.1.0",
-		"electron-icon-builder": "^2.0.1",
 		"sass": "^1.53.0",
 		"typescript": "^4.7.4",
 		"wait-on": "^6.0.1"
