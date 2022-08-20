@@ -98,11 +98,12 @@ logs() {
 elbuild() {
   sudo cd ./
   yarn el:icon
-  yarn build
+  cp -r ./$configFilePath ./src/config.temp.json
+    yarn build
   rm -rf ./el-build/linux-unpacked
   rm -rf ./el-build/*.AppImage
   electron-builder --linux --x64 --icon=./build/icons/1024x1024.png
-  sudo apt install -y ./el-build/meow-sticky-note_1.0.1_amd64.deb
+  # sudo apt install -y ./el-build/meow-sticky-note_1.0.1_amd64.deb
   # AppImage deb
   # run
 }
