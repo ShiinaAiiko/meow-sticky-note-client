@@ -12,6 +12,18 @@ import path from 'path'
 import isDev from 'electron-is-dev'
 
 import { Route } from './typings/api'
+import {
+	logoWhiteBg,
+	logoCircleIcon1024,
+	logoCircleIcon512,
+	logoCircleIcon256,
+	logoCircleIcon128,
+	logoCircleIcon64,
+	logoCircleIcon32,
+	logoWhiteBg2,
+	taskIcon,
+	logo,
+} from './config'
 
 export const windows = new Map<Route, BrowserWindow>()
 
@@ -26,7 +38,13 @@ export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
 			...options.webPreferences,
 			devTools: true,
 		},
+		icon: logoCircleIcon1024,
 	})
+
+	if (process.platform === 'darwin') {
+		app.dock.setIcon(logoCircleIcon1024)
+	}
+
 	if (options.center) {
 		window.center()
 	}
@@ -36,10 +54,21 @@ export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
 		window.hide()
 	}
 	const queryStr = '?route=' + route + '&time=' + new Date().getTime()
+	let dev = isDev
+	// dev = false
+	// window.loadURL('http://localhost:16111' + route + queryStr)
+	// window.loadURL(
+	// 	dev
+	// 		? 'http://localhost:16111' + route + queryStr
+	// 		: `file://${path.join(__dirname, '../build/index.html')}` + queryStr,
+	// 	{ extraHeaders: 'pragma: no-cache' }
+	// )
+	console.log(`file://${path.join(__dirname, '../../../build/index.html')}`)
 	window.loadURL(
-		isDev
+		dev
 			? 'http://localhost:16111' + route + queryStr
-			: `file://${path.join(__dirname, '../build/index.html')}` + queryStr,
+			: `file://${path.join(__dirname, '../../../build/index.html')}` +
+					queryStr,
 		{ extraHeaders: 'pragma: no-cache' }
 	)
 	window.webContents.openDevTools()
@@ -61,6 +90,22 @@ export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
 	windows.set(route, window)
 	return window
 }
+const menu = new Menu()
+menu.append(
+	new MenuItem({
+		label: 'Electron',
+		submenu: [
+			{
+				role: 'help',
+				accelerator:
+					process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Alt+Shift+I',
+				click: () => {
+					console.log('Electron rocks!')
+				},
+			},
+		],
+	})
+)
 
 export const openMainWindows = () => {
 	let window = windows.get('/')
@@ -71,7 +116,7 @@ export const openMainWindows = () => {
 		return window
 	}
 	return createWindow('/', {
-		title: ' ',
+		title: 'Meow Sticky Note',
 		width: 1200,
 		height: 780,
 		x: 0,
@@ -103,7 +148,7 @@ export const openQuickReviewWindows = () => {
 		return window
 	}
 	return createWindow('/quickreview', {
-		title: ' ',
+		title: 'Quick Review',
 		width: 800,
 		height: 600,
 		x: 0,

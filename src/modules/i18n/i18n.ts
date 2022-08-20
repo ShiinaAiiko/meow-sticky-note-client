@@ -96,6 +96,10 @@ const resources = {
 			weekly: '每周',
 
 			lastBackupTime: '上次备份时间',
+
+			backUpNow: '立即备份',
+
+			about: '关于',
 		},
 	},
 	'zh-TW': {
@@ -192,6 +196,10 @@ const resources = {
 			weekly: '每週',
 
 			lastBackupTime: '上次備份時間',
+
+			backUpNow: '立即備份',
+
+			about: '關於',
 		},
 	},
 	'en-US': {
@@ -289,6 +297,10 @@ const resources = {
 			weekly: 'Weekly',
 
 			lastBackupTime: 'Last backup time',
+
+			backUpNow: 'Back Up Now',
+
+			about: 'About ',
 		},
 	},
 }

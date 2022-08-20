@@ -79,6 +79,22 @@
 		}
 	}
 }
+.setting-about-page {
+	.version-info {
+		display: flex;
+		justify-content: flex-start;
+		flex-direction: column;
+		align-items: center;
+		img {
+			width: 80px;
+			height: 80px;
+			margin: 10px 0;
+		}
+		.version-code {
+			color: #666;
+		}
+	}
+}
 
 .settings-item-component {
 	padding: 8px 10px;
@@ -128,7 +144,7 @@
 			align-items: center;
 			padding: 12px 0;
 			border-radius: 6px;
-			margin-bottom: 6px;
+			margin-bottom: 10px;
 			.name {
 				padding-right: 10px;
 				white-space: nowrap;
@@ -172,10 +188,17 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-bottom: 16px;
+			margin: 12px 0 8px;
+		}
+		.s-p-buttons {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
 		}
 		.s-p-last-backup-time {
-			color: #999;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
 		}
 	}
 	.shortcut-item {
@@ -209,5 +232,27 @@
 	}
 	.name {
 		font-size: 16px;
+	}
+}
+
+.about-links {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	.settings-link {
+		margin: 12px 0;
+		color: #000;
+		cursor: pointer;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		span {
+			margin-left: 8px;
+		}
+		&:hover {
+			span {
+				color: #555;
+			}
+		}
 	}
 }

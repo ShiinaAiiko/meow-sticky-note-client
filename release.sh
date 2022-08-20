@@ -6,7 +6,7 @@ branch="main"
 configFilePath="config.test.json"
 registryUrl="https://registry.npmmirror.com/"
 DIR=$(cd $(dirname $0) && pwd)
-allowMethods=("protos stop npmconfig install gitpull dockerremove start logs")
+allowMethods=("elgenerateicon elbuild run protos stop npmconfig install gitpull dockerremove start logs")
 
 # npm i --registry https://registry.npmmirror.com/
 # npm i @nyanyajs/utils @saki-ui/core
@@ -67,7 +67,6 @@ start() {
   rm -rf $DIR/protos_temp
   rm -rf $DIR/config.pro.temp.json
 
-
   echo "-> 准备运行Docker"
   docker stop $name
   docker rm $name
@@ -96,6 +95,28 @@ logs() {
   docker logs -f $name
 }
 
+elbuild() {
+  sudo cd ./
+  yarn el:icon
+  yarn build
+  rm -rf ./el-build/linux-unpacked
+  rm -rf ./el-build/*.AppImage
+  electron-builder --linux --x64 --icon=./build/icons/1024x1024.png
+  sudo apt install -y ./el-build/meow-sticky-note_1.0.1_amd64.deb
+  # AppImage deb
+  # run
+}
+
+elgenerateicon() {
+  electron-icon-builder --input=./public/logo-neko-circle-white1500.png --output=public/icons --flatten
+}
+
+run() {
+  # chmod a+x ./*.AppImage
+  chmod a+x ./el-build/*.AppImage
+  ./el-build/*.AppImage
+}
+
 main() {
   if echo "${allowMethods[@]}" | grep -wq "$1"; then
     "$1"
@@ -105,3 +126,25 @@ main() {
 }
 
 main "$1"
+
+#  "dmg": {
+#  	"contents": [
+#  		{
+#  			"x": 410,
+#  			"y": 150,
+#  			"type": "link",
+#  			"path": "/Applications"
+#  		},
+#  		{
+#  			"x": 130,
+#  			"y": 150,
+#  			"type": "file"
+#  		}
+#  	]
+#  },
+#  "mac": {
+#  	"icon": "build/icons/icon.icns"
+#  },
+#  "win": {
+#  	"icon": "build/icons/icon.ico"
+#  },

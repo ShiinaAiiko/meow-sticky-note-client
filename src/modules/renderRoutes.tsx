@@ -12,6 +12,7 @@ import {
 	Route,
 	RouterProps,
 	useLocation,
+	HashRouter,
 	// Switch,
 	// Link,
 	// withRouter,
@@ -44,8 +45,8 @@ const RenderRoutesComponent = (routes: Routers[]) => {
 					console.log(location, route)
 					console.log('nodeRef', nodeRef)
 					return (
-            <saki-transition
-              class="router-transition"
+						<saki-transition
+							class='router-transition'
 							animation-duration={500}
 							in={location.pathname === route.path}
 							class-name={route.CSSTransitionClassName || 'router-transition'}
@@ -108,13 +109,27 @@ const RenderRoutesComponent = (routes: Routers[]) => {
 		: ''
 }
 
-export const RenderRoutes = (routes: Routers[]) => {
-	return (
+export const RenderRoutes = ({
+	routerType,
+	routes,
+}: {
+	routerType: 'Hash' | 'History'
+	routes: Routers[]
+}) => {
+	return routerType === 'History' ? (
 		<BrowserRouter>
 			{/* <TransitionGroup className={'transition-group-class'}> */}
-				<Routes>{RenderRoutesComponent(routes)}</Routes>
+			<Routes>{RenderRoutesComponent(routes)}</Routes>
 			{/* </TransitionGroup> */}
 		</BrowserRouter>
+	) : routerType === 'Hash' ? (
+		<HashRouter>
+			{/* <TransitionGroup className={'transition-group-class'}> */}
+			<Routes>{RenderRoutesComponent(routes)}</Routes>
+			{/* </TransitionGroup> */}
+		</HashRouter>
+	) : (
+		<></>
 	)
 }
 

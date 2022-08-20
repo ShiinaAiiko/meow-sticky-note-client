@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { prompt, alert, snackbar } from '@saki-ui/core'
 import { eventTarget } from '../store/config'
 import NodeList from '../components/NoteList'
+import { SyncOff } from './Icon'
 
 const HeaderComponent = ({
 	onSettings,
@@ -41,6 +42,18 @@ const HeaderComponent = ({
 
 	const location = useLocation()
 	const history = useNavigate()
+
+	const [activeNote, setActiveNote] = useState(
+		notes.list?.filter((v) => {
+			return (
+				v.id ===
+				(location.pathname === '/'
+					? notes.noteId
+					: notes.quickReviewelect.noteId)
+			)
+		})?.[0]
+	)
+
 	useEffect(() => {
 		console.log(
 			'location',
@@ -64,6 +77,19 @@ const HeaderComponent = ({
 			setShowBackIcon(false)
 		}
 	}, [location])
+
+	useEffect(() => {
+		setActiveNote(
+			notes.list?.filter((v) => {
+				return (
+					v.id ===
+					(location.pathname === '/'
+						? notes.noteId
+						: notes.quickReviewelect.noteId)
+				)
+			})?.[0]
+		)
+	}, [notes.list, notes.noteId])
 	return (
 		<div className='header-component'>
 			<div className='qv-h-left'>
@@ -151,16 +177,13 @@ const HeaderComponent = ({
 								}}
 								className='qv-h-c-name'
 							>
-								<span className='name'>
-									{notes.list?.filter((v) => {
-										return (
-											v.id ===
-											(location.pathname === '/'
-												? notes.noteId
-												: notes.quickReviewelect.noteId)
-										)
-									})?.[0]?.name || 'Add a note'}
-								</span>
+								<span className='name'>{activeNote?.name || 'Add a note'}</span>
+								{/* {activeNote.authorId === user.userInfo.uid &&
+								activeNote.isSync ? (
+									''
+								) : (
+									<SyncOff />
+								)} */}
 								<svg
 									className='icon'
 									viewBox='0 0 1024 1024'

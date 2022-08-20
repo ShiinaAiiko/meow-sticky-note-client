@@ -12,6 +12,7 @@ import {
 import path from 'path'
 import fs from 'fs'
 import moment from 'moment'
+import * as nyanyalog from 'nyanyajs-log'
 
 import { logo, systemConfig, notes } from '../config'
 interface SaveAsOptions extends SaveDialogOptions {
@@ -40,8 +41,8 @@ export const saveAs = async (
 			'lastOpenFolderPath',
 			path.dirname(savePath.filePath)
 		)
-		// console.log(savePath.canceled, savePath.filePath)
-		// console.log(path.dirname(savePath.filePath))
+		// nyanyalog.info(savePath.canceled, savePath.filePath)
+		// nyanyalog.info(path.dirname(savePath.filePath))
 		fs.writeFileSync(savePath?.filePath, data)
 	}
 }
@@ -61,8 +62,8 @@ export const openFolder = async (path: string, options?: OpenFolderOptions) => {
 	return ''
 }
 
-export const backup = async () => {
-	console.log('backup')
+export const backup = async (backupNow: boolean = false) => {
+	nyanyalog.info('backup')
 	clearBackup()
 	const backupAutomatically = JSON.parse(
 		(await systemConfig.get('backupAutomatically')) || 'false'
@@ -75,16 +76,16 @@ export const backup = async () => {
 
 	// lastBackupTime = 0
 
-	console.log(backupAutomatically, storagePath)
+	nyanyalog.info(backupAutomatically, storagePath)
 	if (backupAutomatically && storagePath) {
-		console.log('开始备份')
+		nyanyalog.info('开始备份')
 		const timestamp = Math.floor(new Date().getTime() / 1000)
 
-		if (timestamp > lastBackupTime + automaticBackupFrequency) {
+		if (backupNow || timestamp > lastBackupTime + automaticBackupFrequency) {
 			const noteList = await notes.getAll()
 
-			console.log(noteList.length)
-			console.log('该备份了')
+			nyanyalog.info(noteList.length)
+			nyanyalog.info('该备份了')
 
 			const backupPath =
 				storagePath + '/backup_' + moment().format('YYYY-MM-DD_hh:mm:ss')
@@ -93,28 +94,28 @@ export const backup = async () => {
 			noteList.forEach((v) => {
 				fs.writeFileSync(
 					backupPath + '/' + v.value.id + '.note',
-					JSON.stringify(v, null, 2)
+					JSON.stringify(v.value, null, 2)
 				)
 			})
 
 			await systemConfig.set('lastBackupTime', timestamp)
 		} else {
-			console.log('还没到时间')
+			nyanyalog.info('还没到时间')
 		}
 	}
 }
 
 const clearBackup = async () => {
 	// keepBackups
-	console.log('-----clearBackup-----')
+	nyanyalog.info('-----clearBackup-----')
 	let keepBackups = Number(
 		(await systemConfig.get('keepBackups')) || 120 * 365 * 24 * 3600
 	)
 
 	const storagePath = await systemConfig.get('backupStoragePath')
-	// console.log('keepBackups', storagePath, keepBackups)
+	// nyanyalog.info('keepBackups', storagePath, keepBackups)
 	const files = fs.readdirSync(storagePath)
-	// console.log(files)
+	// nyanyalog.info(files)
 	const timestamp = Math.floor(new Date().getTime() / 1000)
 
 	files.forEach((v) => {
@@ -122,15 +123,15 @@ const clearBackup = async () => {
 			const createTime = Math.floor(
 				new Date(v.replace('backup_', '').replace('_', ' ')).getTime() / 1000
 			)
-			// console.log(createTime)
+			// nyanyalog.info(createTime)
 			const filePath = storagePath + '/' + v
-			// console.log(filePath)
+			// nyanyalog.info(filePath)
 
 			if (timestamp - createTime >= keepBackups) {
-				console.log(filePath, ' => 该删除了')
+				nyanyalog.info(filePath, ' => 该删除了')
 				removeDir(filePath)
 			} else {
-				console.log(filePath, ' => 不需要删除')
+				// nyanyalog.info(filePath, ' => 不需要删除')
 			}
 		}
 	})

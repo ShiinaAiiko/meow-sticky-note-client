@@ -140,7 +140,10 @@ const QuickReviewPage = (props: RouterProps) => {
 														className='qc-m-t-m-item'
 													>
 														<span className='item-name'>
-															{sv.title || t('untitledPage')}
+															{sv.title ||
+																t('untitledPage', {
+																	ns: 'indexPage',
+																})}
 														</span>
 
 														<svg

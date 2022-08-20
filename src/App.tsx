@@ -23,28 +23,52 @@ import { useSelector, useDispatch } from 'react-redux'
 
 function App() {
 	const params = useParams()
-	// const location = useLocation();
+	// const location = useLocation()
+	const isDev = process.env.NODE_ENV === 'development'
+	let isElectron = !!(
+		window &&
+		window.process &&
+		window.process.versions &&
+		window.process.versions['electron']
+	)
+	// isElectron = true
+	console.log('isElectron', isElectron)
+	console.log('isDev', isDev)
+
 	useEffect(() => {
 		store.dispatch(storageSlice.actions.init(0))
+		console.log('process.env.NODE_ENV', process.env.NODE_ENV)
+		if (
+			window &&
+			window.process &&
+			window.process.versions &&
+			window.process.versions['electron']
+		) {
+			console.log(window.location)
+			console.log('electronelectron', window.require('electron'))
+		}
 
-		let currentKey: {
-			[key: string]: string
-		} = {}
-		window.addEventListener('keydown', (e) => {
-			if (e.key === 'r' || e.key === 'Control') {
-				currentKey[e.key] = e.key
-			}
-			if (currentKey['r'] && currentKey['Control']) {
-				window.location.reload()
-				delete currentKey['r']
-				delete currentKey['Control']
-			}
-		})
-		window.addEventListener('keyup', (e) => {
-			if (e.key === 'r' || e.key === 'Control') {
-				delete currentKey[e.key]
-			}
-		})
+		if (isDev) {
+			let currentKey: {
+				[key: string]: string
+			} = {}
+
+			window.addEventListener('keydown', (e) => {
+				if (e.key === 'r' || e.key === 'Control') {
+					currentKey[e.key] = e.key
+				}
+				if (currentKey['r'] && currentKey['Control']) {
+					window.location.reload()
+					delete currentKey['r']
+					delete currentKey['Control']
+				}
+			})
+			window.addEventListener('keyup', (e) => {
+				if (e.key === 'r' || e.key === 'Control') {
+					delete currentKey[e.key]
+				}
+			})
+		}
 
 		window.addEventListener('resize', () => {
 			store.dispatch(methods.config.getDeviceType())
@@ -60,7 +84,10 @@ function App() {
 						<script noModule src={sakiui.jsurl}></script>
 						<title></title>
 					</Helmet>
-					{RenderRoutes(routes)}
+					<RenderRoutes
+						routerType={isElectron ? 'Hash' : 'History'}
+						routes={routes}
+					/>
 				</div>
 			</HelmetProvider>
 		</Provider>

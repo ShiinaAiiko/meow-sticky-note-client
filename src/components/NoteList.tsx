@@ -4,12 +4,13 @@ import logo from '../logo.svg'
 import './NoteList.scss'
 import { Helmet } from 'react-helmet-async'
 import SideMenu from '../components/SideMenu'
-import {
+import store, {
 	RootState,
 	AppDispatch,
 	useAppDispatch,
 	notesSlice,
 	methods,
+	userSlice,
 } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import { bindEvent } from '../modules/bindEvent'
@@ -20,6 +21,7 @@ import { Header } from '../components'
 import { api } from '../modules/electron/api'
 import { NoteItem } from '../store/notes/typings'
 import { ReaderRouterProps } from '../modules/renderRoutes'
+import { SyncOff } from './Icon'
 
 const NodeListComponent = ({
 	onClick,
@@ -128,22 +130,10 @@ const NodeListComponent = ({
 										className='note-item'
 									>
 										<span className='name text-elipsis'>{v.name}</span>
-										{/* && v.isSync */}
-										{v.authorId === user.userInfo.uid ? (
+										{v.authorId === user.userInfo.uid && v.isSync ? (
 											''
 										) : (
-											<svg
-												className='icon'
-												viewBox='0 0 1024 1024'
-												version='1.1'
-												xmlns='http://www.w3.org/2000/svg'
-												p-id='7664'
-											>
-												<path
-													d='M428.8 270.506667L363.52 205.226667a323.84 323.84 0 0 1 80.213333-27.306667 22.613333 22.613333 0 0 1 17.92 4.266667 22.613333 22.613333 0 0 1 7.68 16.64v42.666666a21.76 21.76 0 0 1-16.213333 20.906667c-8.106667 2.986667-16.213333 5.12-24.32 8.106667zM576 384h12.373333a20.906667 20.906667 0 0 0 15.36-6.4L669.866667 311.466667a256 256 0 0 1 85.333333 284.16l65.28 65.28a341.333333 341.333333 0 0 0-88.32-410.453334l73.386667-73.386666a20.906667 20.906667 0 0 0 5.12-15.36V149.333333a21.333333 21.333333 0 0 0-21.333334-21.333333h-213.333333a21.333333 21.333333 0 0 0-21.333333 21.333333v213.333334a21.333333 21.333333 0 0 0 21.333333 21.333333z m313.6 453.12L186.88 134.4a20.48 20.48 0 0 0-29.866667 0l-22.613333 22.613333a20.48 20.48 0 0 0 0 29.866667L246.186667 298.666667a341.333333 341.333333 0 0 0 46.933333 474.453333l-73.386667 73.813333a20.906667 20.906667 0 0 0-6.4 15.36v12.373334a21.333333 21.333333 0 0 0 21.333334 21.333333h213.333333a21.333333 21.333333 0 0 0 21.333333-21.333333v-213.333334a21.333333 21.333333 0 0 0-21.333333-21.333333h-12.373333a20.906667 20.906667 0 0 0-15.36 6.4L354.133333 712.533333a253.44 253.44 0 0 1-46.933333-352.853333l356.693333 357.12a252.586667 252.586667 0 0 1-93.013333 42.666667 21.76 21.76 0 0 0-16.213333 20.906666v42.666667a22.613333 22.613333 0 0 0 7.68 16.64 22.613333 22.613333 0 0 0 17.92 4.266667 338.773333 338.773333 0 0 0 145.066666-66.133334l112.213334 111.786667a20.48 20.48 0 0 0 29.866666 0l22.613334-22.613333a20.48 20.48 0 0 0-0.426667-29.866667z'
-													p-id='7665'
-												></path>
-											</svg>
+											<SyncOff />
 										)}
 									</div>
 								</saki-menu-item>
@@ -172,8 +162,8 @@ const NodeListComponent = ({
 				ref={bindEvent(
 					{
 						selectvalue: async (e) => {
-							onClose?.()
 							const note = notes.list[Number(e.detail.label)]
+							// onClose?.()
 							switch (e.detail.value) {
 								case 'rename':
 									let name = ''
@@ -290,13 +280,20 @@ const NodeListComponent = ({
 								case 'sync':
 									alert({
 										title: 'Sync',
-										content: '开启同步',
+										content: note.isSync ? '关闭同步' : '开启同步',
 										cancelText: t('cancel', {
 											ns: 'common',
 										}),
-										confirmText: 'Sync',
+										confirmText: note.isSync ? 'Turn off' : 'Turn on',
 										onCancel() {},
-										async onConfirm() {},
+										async onConfirm() {
+											store.dispatch(
+												notesSlice.actions.enableSyncNote({
+													noteId: note.id,
+													isSync: !note.isSync,
+												})
+											)
+										},
 									}).open()
 									break
 								default:
@@ -309,7 +306,7 @@ const NodeListComponent = ({
 					}
 				)}
 			>
-				{/* <saki-context-menu-item
+				<saki-context-menu-item
 					width='200px'
 					font-size='13px'
 					padding='12px 10px'
@@ -345,7 +342,7 @@ const NodeListComponent = ({
 								: 'Turn on') + ' sync'}
 						</span>
 					</div>
-				</saki-context-menu-item> */}
+				</saki-context-menu-item>
 				<saki-context-menu-item
 					style={{
 						display:

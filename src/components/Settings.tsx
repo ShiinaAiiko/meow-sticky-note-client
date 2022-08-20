@@ -23,7 +23,6 @@ import { alert, snackbar } from '@saki-ui/core'
 // console.log(sakiui.bindEvent)
 import { storage } from '../store/storage'
 import { useTranslation } from 'react-i18next'
-import { systemConfig } from '../electron/dist/config'
 
 const SettingsComponent = ({
 	visible,
@@ -164,6 +163,7 @@ const SettingsItemList = ({ menuType }: { menuType: string }) => {
 			<Appearance show={menuType === 'Appearance'} />
 			<General show={menuType === 'General'} />
 			<SyncAndBackup show={menuType === 'SyncAndBackup'} />
+			<About show={menuType === 'About'} />
 		</>
 	)
 }
@@ -270,12 +270,12 @@ const SettingsNavList = ({
 				<div className='settings-menu-item'>
 					<svg
 						className='icon'
+						width={'16px'}
+						height={'16px'}
 						viewBox='0 0 1024 1024'
 						version='1.1'
 						xmlns='http://www.w3.org/2000/svg'
 						p-id='5208'
-						width={'16px'}
-						height={'16px'}
 					>
 						<path
 							d='M106.096424 807.407299c1.399953 1.099963 3.599879 0.199993 3.799872-1.599946 0.29999-3.099896 0.59998-6.299788 0.699977-9.49968 0.499983-10.699639 1.899936-21.399279 4.299855-31.998921 0.199993-0.89997-0.199993-1.899936-0.89997-2.399919-11.499612-7.799737-19.199353-23.999191-18.299383-40.898622 1.19996-21.699269 13.799535-49.298339 27.699066-61.397931 11.499612-9.899666 29.399009-9.299687 43.598531 0.199994 0.999966 0.699976 2.299922 0.499983 2.999899-0.399987 7.299754-8.499714 15.299484-16.89943 23.899195-25.099154 36.598767-34.798827 71.597587-54.198173 75.497455-56.298103l19.099357-10.399649c0.699976-0.399987 1.099963-1.099963 1.199959-1.899936 1.299956-16.299451 7.799737-31.198949 18.899363-42.598565 15.899464-16.299451 39.098682-23.499208 63.697853-19.699336 5.199825 0.799973 10.39965 2.099929 15.599475 3.899869 1.499949 0.499983 3.099896-0.699976 3.099895-2.299923-0.799973-25.099154 11.999596-42.198578 19.59934-52.298237l1.399953-1.899936c0.099997-0.099997 0.099997-0.199993 0.199993-0.199993l1.599946-1.699943C461.884434 399.221056 539.981802 321.223684 619.979106 243.126316c1.499949-1.499949 0.399987-4.099862-1.699943-3.999865-18.499377 1.19996-40.398639-4.199858-57.298069-15.399481-25.699134-17.099424-45.898453-46.798423-44.698493-66.097772 1.299956-19.399346 32.098918-43.898521 68.397695-54.398167 36.398773-10.599643 71.49759-2.899902 77.997371 17.099424 6.499781 20.099323 12.699572 47.998382 14.099525 62.2979v0.099997c0.199993 1.999933 2.499916 2.899902 3.899868 1.499949 69.197668-66.897745 134.295474-128.49567 176.194062-165.994406 1.399953-1.19996 0.89997-3.399885-0.899969-3.999865-127.795693-38.398706-311.889489 4.899835-493.783359 81.89724C92.696876 210.427418-38.298709 451.519293 9.79967 652.312526c15.899464 66.297766 49.198342 117.596037 96.296754 155.094773z m235.292071-588.080181c16.799434-12.999562 48.498366-14.999494 70.297631-4.599845 21.799265 10.499646 39.798659 31.898925 40.198645 47.698393 0.199993 15.699471-13.599542 33.098885-30.598969 38.598699-17.099424 5.499815-38.698696 9.49968-48.198375 8.699707-9.49968-0.799973-27.399077-16.199454-39.798659-33.998854-12.399582-17.899397-8.699707-43.398537 8.099727-56.3981z m-171.894207 74.597486c0.499983-0.29999 1.099963-0.499983 1.599946-0.399986l7.799737 0.999966 8.099727 0.999966c0.399987 0.099997 0.799973 0.199993 1.099963 0.499984 30.898959 23.999191 55.298136 53.798187 54.098177 66.697752-1.099963 12.999562-12.799569 28.899026-25.899127 35.398807-13.099559 6.499781-35.398807 5.499815-49.498332-2.199926-14.299518-7.699741-25.899127-29.499006-25.899127-48.298372 0-18.599373 12.799569-42.398571 28.599036-53.698191z m-91.39692 183.9938c11.099626-18.39938 33.998854-28.099053 50.498298-21.599272s25.999124 40.298642 20.899296 74.997472c-5.199825 34.698831-20.699302 61.097941-34.398841 58.598025-13.899532-2.499916-32.398908-21.099289-41.198611-41.498601-8.799703-20.399313-6.899767-52.098244 4.199858-70.497624zM830.772002 444.119543c-2.499916-2.599912-4.699842-5.099828-6.699774-7.599744-0.999966-1.19996-2.799906-1.19996-3.699876 0.099996-10.09966 13.799535-20.099323 27.399077-29.998989 40.698629-0.799973 1.099963-0.499983 2.699909 0.699977 3.399885 14.299518 8.29972 25.199151 19.999326 30.798962 34.498838 18.499377 47.798389-25.299147 109.096323-97.796704 136.995383-29.798996 11.499612-59.797985 15.499478-85.997102 12.999562-0.59998-0.099997-1.099963 0.099997-1.599946 0.399986-12.999562 9.19969-29.998989 18.09939-51.098278 19.59934-1.699943 0.099997-2.699909 1.899936-1.899936 3.399885 6.199791 11.699606 9.79967 23.899195 10.799636 35.89879 0.099997 0.999966 0.699976 1.799939 1.599946 1.999933 17.49941 5.599811 29.299013 15.599474 23.199218 31.398942-1.099963 2.799906 0 0-5.499814 10.399649l-5.399818 10.299653s0 0.099997-0.099997 0.099997c-7.899734 18.299383-24.499174 34.098851-37.198746 35.698797-11.299619 1.299956-28.299046-1.099963-39.898656-5.399818-1.599946-0.59998-3.199892 0.59998-3.099895 2.299922 1.099963 21.999259-1.799939 43.098548-8.8997 62.89788-0.59998 1.599946 0.799973 3.299889 2.499915 3.099896 3.999865-0.59998 8.099727-1.19996 12.199589-1.79994C817.272457 832.00647 1003.966165 645.912742 1019.26565 585.114791c6.299788-25.099154 12.999562-56.798086-27.999057-99.496647-40.898622-42.398571-109.296317 11.599609-160.494591-41.498601z'
@@ -297,23 +297,46 @@ const SettingsNavList = ({
 				<div className='settings-menu-item'>
 					<svg
 						className='icon'
+						width={'17px'}
+						height={'17px'}
 						viewBox='0 0 1024 1024'
 						version='1.1'
 						xmlns='http://www.w3.org/2000/svg'
-						p-id='5208'
-						width={'16px'}
-						height={'16px'}
+						p-id='16847'
 					>
 						<path
-							d='M106.096424 807.407299c1.399953 1.099963 3.599879 0.199993 3.799872-1.599946 0.29999-3.099896 0.59998-6.299788 0.699977-9.49968 0.499983-10.699639 1.899936-21.399279 4.299855-31.998921 0.199993-0.89997-0.199993-1.899936-0.89997-2.399919-11.499612-7.799737-19.199353-23.999191-18.299383-40.898622 1.19996-21.699269 13.799535-49.298339 27.699066-61.397931 11.499612-9.899666 29.399009-9.299687 43.598531 0.199994 0.999966 0.699976 2.299922 0.499983 2.999899-0.399987 7.299754-8.499714 15.299484-16.89943 23.899195-25.099154 36.598767-34.798827 71.597587-54.198173 75.497455-56.298103l19.099357-10.399649c0.699976-0.399987 1.099963-1.099963 1.199959-1.899936 1.299956-16.299451 7.799737-31.198949 18.899363-42.598565 15.899464-16.299451 39.098682-23.499208 63.697853-19.699336 5.199825 0.799973 10.39965 2.099929 15.599475 3.899869 1.499949 0.499983 3.099896-0.699976 3.099895-2.299923-0.799973-25.099154 11.999596-42.198578 19.59934-52.298237l1.399953-1.899936c0.099997-0.099997 0.099997-0.199993 0.199993-0.199993l1.599946-1.699943C461.884434 399.221056 539.981802 321.223684 619.979106 243.126316c1.499949-1.499949 0.399987-4.099862-1.699943-3.999865-18.499377 1.19996-40.398639-4.199858-57.298069-15.399481-25.699134-17.099424-45.898453-46.798423-44.698493-66.097772 1.299956-19.399346 32.098918-43.898521 68.397695-54.398167 36.398773-10.599643 71.49759-2.899902 77.997371 17.099424 6.499781 20.099323 12.699572 47.998382 14.099525 62.2979v0.099997c0.199993 1.999933 2.499916 2.899902 3.899868 1.499949 69.197668-66.897745 134.295474-128.49567 176.194062-165.994406 1.399953-1.19996 0.89997-3.399885-0.899969-3.999865-127.795693-38.398706-311.889489 4.899835-493.783359 81.89724C92.696876 210.427418-38.298709 451.519293 9.79967 652.312526c15.899464 66.297766 49.198342 117.596037 96.296754 155.094773z m235.292071-588.080181c16.799434-12.999562 48.498366-14.999494 70.297631-4.599845 21.799265 10.499646 39.798659 31.898925 40.198645 47.698393 0.199993 15.699471-13.599542 33.098885-30.598969 38.598699-17.099424 5.499815-38.698696 9.49968-48.198375 8.699707-9.49968-0.799973-27.399077-16.199454-39.798659-33.998854-12.399582-17.899397-8.699707-43.398537 8.099727-56.3981z m-171.894207 74.597486c0.499983-0.29999 1.099963-0.499983 1.599946-0.399986l7.799737 0.999966 8.099727 0.999966c0.399987 0.099997 0.799973 0.199993 1.099963 0.499984 30.898959 23.999191 55.298136 53.798187 54.098177 66.697752-1.099963 12.999562-12.799569 28.899026-25.899127 35.398807-13.099559 6.499781-35.398807 5.499815-49.498332-2.199926-14.299518-7.699741-25.899127-29.499006-25.899127-48.298372 0-18.599373 12.799569-42.398571 28.599036-53.698191z m-91.39692 183.9938c11.099626-18.39938 33.998854-28.099053 50.498298-21.599272s25.999124 40.298642 20.899296 74.997472c-5.199825 34.698831-20.699302 61.097941-34.398841 58.598025-13.899532-2.499916-32.398908-21.099289-41.198611-41.498601-8.799703-20.399313-6.899767-52.098244 4.199858-70.497624zM830.772002 444.119543c-2.499916-2.599912-4.699842-5.099828-6.699774-7.599744-0.999966-1.19996-2.799906-1.19996-3.699876 0.099996-10.09966 13.799535-20.099323 27.399077-29.998989 40.698629-0.799973 1.099963-0.499983 2.699909 0.699977 3.399885 14.299518 8.29972 25.199151 19.999326 30.798962 34.498838 18.499377 47.798389-25.299147 109.096323-97.796704 136.995383-29.798996 11.499612-59.797985 15.499478-85.997102 12.999562-0.59998-0.099997-1.099963 0.099997-1.599946 0.399986-12.999562 9.19969-29.998989 18.09939-51.098278 19.59934-1.699943 0.099997-2.699909 1.899936-1.899936 3.399885 6.199791 11.699606 9.79967 23.899195 10.799636 35.89879 0.099997 0.999966 0.699976 1.799939 1.599946 1.999933 17.49941 5.599811 29.299013 15.599474 23.199218 31.398942-1.099963 2.799906 0 0-5.499814 10.399649l-5.399818 10.299653s0 0.099997-0.099997 0.099997c-7.899734 18.299383-24.499174 34.098851-37.198746 35.698797-11.299619 1.299956-28.299046-1.099963-39.898656-5.399818-1.599946-0.59998-3.199892 0.59998-3.099895 2.299922 1.099963 21.999259-1.799939 43.098548-8.8997 62.89788-0.59998 1.599946 0.799973 3.299889 2.499915 3.099896 3.999865-0.59998 8.099727-1.19996 12.199589-1.79994C817.272457 832.00647 1003.966165 645.912742 1019.26565 585.114791c6.299788-25.099154 12.999562-56.798086-27.999057-99.496647-40.898622-42.398571-109.296317 11.599609-160.494591-41.498601z'
-							p-id='5209'
-						></path>
-						<path
-							d='M288.390281 613.213844s-132.695528 72.09757-137.795356 184.993765c-5.199825 112.896195-112.996192 194.993428-148.894982 205.293082-35.89879 10.299653 524.082338 33.498871 484.383675-206.993024-0.099997-0.499983-0.29999-0.999966-0.699976-1.299956l-196.993361-181.993867zM534.98197 689.811263c20.399313 19.799333 25.599137 47.698393 11.59961 62.097907-14.099525 14.499511-41.998585 10.09966-62.497894-9.699673l-135.295441-128.995653c-20.399313-19.799333-25.599137-47.698393-11.599609-62.097907 14.099525-14.499511 41.998585-10.09966 62.497894 9.699673l135.29544 128.995653z m469.284185-678.377138c-36.598767-24.799164-69.497658-2.599912-83.797176 5.499814-0.099997 0-0.099997 0.099997-0.099997 0.099997-42.698561 28.699033-345.888343 323.389101-477.783898 459.584511l-0.199993 0.199994c-16.099457 21.499275-26.899093 38.398706 50.698292 115.896094 65.497793 65.497793 96.096761 61.297934 129.195645 32.998888 0.099997 0 0.099997-0.099997 0.199994-0.099997 55.398133-55.49813 290.690203-383.487076 377.587275-508.58286 14.199521-20.499309 43.498534-78.897341 4.199858-105.596441z'
-							p-id='5210'
+							d='M512 128a383.018667 383.018667 0 0 0-276.309333 117.333333 42.666667 42.666667 0 1 0 61.44 59.264A298.666667 298.666667 0 0 1 810.666667 509.226667V512a42.666667 42.666667 0 1 0 85.333333 0L896 508.842667V208.597333a42.666667 42.666667 0 1 0-85.333333 0v61.994667A383.274667 383.274667 0 0 0 512 128zM213.333333 512a42.666667 42.666667 0 1 0-85.333333 0v303.402667a42.666667 42.666667 0 1 0 85.333333 0v-62.037334A383.274667 383.274667 0 0 0 512 896a382.890667 382.890667 0 0 0 266.666667-107.690667 42.666667 42.666667 0 0 0-59.264-61.44A298.666667 298.666667 0 0 1 213.333333 512zM565.333333 512a53.333333 53.333333 0 1 1-106.666666 0 53.333333 53.333333 0 0 1 106.666666 0z'
+							p-id='16848'
 						></path>
 					</svg>
 					<span className='name'>{t('syncAndBackup')}</span>
+				</div>
+			</saki-menu-item>
+			<saki-menu-item
+				active={menuType === 'About'}
+				padding='16px 12px'
+				value='About'
+			>
+				<div className='settings-menu-item'>
+					<svg
+						className='icon'
+						width={'16px'}
+						height={'16px'}
+						viewBox='0 0 1024 1024'
+						version='1.1'
+						xmlns='http://www.w3.org/2000/svg'
+						p-id='23126'
+					>
+						<path
+							d='M511.250625 414.911719a46.545031 46.545031 0 0 1 46.545031 46.545031l0.162908 283.575604a46.545031 46.545031 0 0 1-93.090063 0l-0.162907-283.575604a46.545031 46.545031 0 0 1 46.545031-46.545031z m-50.012636-136.53985a50.035909 50.035909 0 0 1 100.071817 0l0.18618 1.512714a50.035909 50.035909 0 0 1-100.071817 0zM511.995345 1024a508.178653 508.178653 0 0 1-293.233697-93.299515 46.405396 46.405396 0 0 1-34.210598-44.683231l-0.418906-4.305415a46.405396 46.405396 0 0 1 80.592722-31.557531 420.534359 420.534359 0 1 0-132.653339-160.161453l-7.540295 7.540295a46.545031 46.545031 0 0 1 29.020827 43.077426l0.442177 4.328688a46.428669 46.428669 0 0 1-91.088626 12.776611A511.995345 511.995345 0 1 1 511.995345 1024z'
+							p-id='23127'
+						></path>
+					</svg>
+					<span className='name'>
+						{t('about', {
+							ns: 'settings',
+						})}
+					</span>
 				</div>
 			</saki-menu-item>
 		</saki-menu>
@@ -521,6 +544,7 @@ const Account = ({ show }: { show: boolean }) => {
 									flex: '1',
 								}}
 								app-id={sakisso.appId}
+								// url={"https://aiiko.club"}
 								url={sakisso.clientUrl + '/profile'}
 							/>
 						) : (
@@ -886,302 +910,437 @@ const SyncAndBackup = ({ show }: { show: boolean }) => {
 					</div>
 				)}
 			></SettingsItem>
-
+			{/* backup automatically  */}
 			{config.platform === 'Electron' ? (
-				<SettingsItem
-					subtitle={() => <div>{t('backup')}</div>}
-					main={() => (
-						<div className='s-backup'>
-							<div className='s-b-path'>
-								<span className='name'>
-									{t('storagePath', {
-										ns: 'settings',
-									})}
-								</span>
-								<saki-button
-									border='none'
-									bg-hover-color='transparent'
-									bg-active-color='transparent'
-									padding='0px'
-									ref={bindEvent({
-										tap: () => {
-											api.openFolder('', 'BackupPath')
-										},
-									})}
-								>
-									<div
-										className='content'
-										title={
-											config.backup.storagePath ||
-											t('chooseStoragePath', {
-												ns: 'settings',
-											})
-										}
+				<>
+					<SettingsItem
+						subtitle={() => <div>{t('backup')}</div>}
+						main={() => (
+							<div className='s-backup'>
+								<div className='s-b-path'>
+									<span className='name'>
+										{t('storagePath', {
+											ns: 'settings',
+										})}
+									</span>
+									<saki-button
+										border='none'
+										bg-hover-color='transparent'
+										bg-active-color='transparent'
+										padding='0px'
+										ref={bindEvent({
+											tap: () => {
+												api.openFolder(config.backup.storagePath, 'BackupPath')
+											},
+										})}
 									>
-										<span className='path text-elipsis'>
-											{config.backup.storagePath
-												? config.backup.storagePath
-												: t('chooseStoragePath', {
-														ns: 'settings',
-												  })}
-										</span>
-										<svg
-											className='icon'
-											viewBox='0 0 1024 1024'
-											version='1.1'
-											xmlns='http://www.w3.org/2000/svg'
-											p-id='48694'
+										<div
+											className='content'
+											title={
+												config.backup.storagePath ||
+												t('chooseStoragePath', {
+													ns: 'settings',
+												})
+											}
 										>
-											<path
-												d='M621.254 877.254l320-320c24.994-24.992 24.994-65.516 0-90.51l-320-320c-24.994-24.992-65.516-24.992-90.51 0-24.994 24.994-24.994 65.516 0 90.51L741.49 448 128 448c-35.346 0-64 28.654-64 64s28.654 64 64 64l613.49 0L530.744 786.746C518.248 799.242 512 815.622 512 832s6.248 32.758 18.744 45.254C555.738 902.248 596.26 902.248 621.254 877.254z'
-												p-id='48695'
-											></path>
-										</svg>
-									</div>
-								</saki-button>
-							</div>
+											<span className='path text-elipsis'>
+												{config.backup.storagePath
+													? config.backup.storagePath
+													: t('chooseStoragePath', {
+															ns: 'settings',
+													  })}
+											</span>
+											<svg
+												className='icon'
+												viewBox='0 0 1024 1024'
+												version='1.1'
+												xmlns='http://www.w3.org/2000/svg'
+												p-id='48694'
+											>
+												<path
+													d='M621.254 877.254l320-320c24.994-24.992 24.994-65.516 0-90.51l-320-320c-24.994-24.992-65.516-24.992-90.51 0-24.994 24.994-24.994 65.516 0 90.51L741.49 448 128 448c-35.346 0-64 28.654-64 64s28.654 64 64 64l613.49 0L530.744 786.746C518.248 799.242 512 815.622 512 832s6.248 32.758 18.744 45.254C555.738 902.248 596.26 902.248 621.254 877.254z'
+													p-id='48695'
+												></path>
+											</svg>
+										</div>
+									</saki-button>
+								</div>
 
-							<div className='s-p-automatically'>
-								<span>
-									{t('backupAutomatically', {
-										ns: 'settings',
-									})}
-								</span>
-								<saki-switch
-									ref={bindEvent({
-										change: (e) => {
-											if (!config.backup.storagePath) {
-												snackbar({
-													message: '请先选择一个存储路径',
-													horizontal: 'center',
-													vertical: 'top',
-													autoHideDuration: 2000,
-													closeIcon: true,
-												}).open()
+								<div className='s-p-last-backup-time'>
+									<div>
+										<span>
+											{t('lastBackupTime', {
+												ns: 'settings',
+											}) + ': '}
+										</span>
+										<span
+											style={{
+												color: '#999',
+											}}
+										>
+											{config.backup.lastBackupTime
+												? moment(config.backup.lastBackupTime * 1000).format(
+														'YYYY-MM-DD hh:mm:ss'
+												  )
+												: ''}
+										</span>
+									</div>
+
+									<saki-button
+										ref={bindEvent({
+											tap: () => {
+												api.backup(true)
+
+												setTimeout(() => {
+													dispatch(methods.config.getLastBackupTime())
+												}, 500)
+											},
+										})}
+										padding='6px 10px'
+										type='Primary'
+									>
+										{t('backUpNow', {
+											ns: 'settings',
+										})}
+									</saki-button>
+								</div>
+								{/* <div className='s-p-buttons'>
+									<saki-button
+										ref={bindEvent({
+											tap: () => {
+												api.backup(true)
+
+												setTimeout(() => {
+													dispatch(methods.config.getLastBackupTime())
+												}, 500)
+											},
+										})}
+										margin='18px 0 0'
+										padding='6px 10px'
+										type='Primary'
+									>
+										Back Up Now
+									</saki-button>
+								</div> */}
+							</div>
+						)}
+					></SettingsItem>
+
+					<SettingsItem
+						subtitle={() => <div>{t('backupAutomatically')}</div>}
+						main={() => (
+							<div className='s-backup'>
+								<div className='s-p-automatically'>
+									<span>
+										{t('backupAutomatically', {
+											ns: 'settings',
+										})}
+									</span>
+									<saki-switch
+										ref={bindEvent({
+											change: (e) => {
+												if (!config.backup.storagePath) {
+													snackbar({
+														message: '请先选择一个存储路径',
+														horizontal: 'center',
+														vertical: 'top',
+														autoHideDuration: 2000,
+														closeIcon: true,
+													}).open()
+													store.dispatch(
+														configSlice.actions.setBackup({
+															type: 'backupAutomatically',
+															v: false,
+														})
+													)
+													return
+												}
 												store.dispatch(
 													configSlice.actions.setBackup({
 														type: 'backupAutomatically',
-														v: false,
+														v: e.detail,
 													})
 												)
-												return
-											}
-											store.dispatch(
-												configSlice.actions.setBackup({
-													type: 'backupAutomatically',
-													v: e.detail,
-												})
-											)
-											if (e.detail) {
-												api.backup()
-											}
-										},
-									})}
-									height='24px'
-									value={config.backup.backupAutomatically}
-								></saki-switch>
-							</div>
-
-							<div className='s-p-automatically'>
-								<span>
-									{t('automaticBackupFrequency', {
-										ns: 'settings',
-									})}
-								</span>
-
-								<saki-dropdown
-									visible={openAutomaticBackupFrequencyDropDown}
-									floating-direction='Left'
-									z-index='1000'
-									ref={bindEvent({
-										close: () => {
-											setOpenAutomaticBackupFrequencyDropDown(false)
-										},
-									})}
-								>
-									<saki-button
-										border='none'
-										bg-hover-color='transparent'
-										bg-active-color='transparent'
-										padding='0px'
-										ref={bindEvent({
-											tap: () => {
-												console.log('自动备份频率')
-												setOpenAutomaticBackupFrequencyDropDown(true)
+												if (e.detail) {
+													api.backup()
+												}
 											},
 										})}
-									>
-										<span
-											style={{
-												color: '#999',
-											}}
-											className='name'
-										>
-											{
-												automaticBackupFrequencyValues.filter((v) => {
-													return (
-														v.value === config.backup.automaticBackupFrequency
-													)
-												})?.[0]?.key
-											}
-										</span>
-										<svg
-											className='icon'
-											viewBox='0 0 1024 1024'
-											version='1.1'
-											xmlns='http://www.w3.org/2000/svg'
-											p-id='51874'
-											width='16'
-											height='16'
-											fill='#999'
-										>
-											<path
-												d='M228.266667 347.733333h569.6c14.933333 0 25.6 4.266667 27.733333 12.8 4.266667 8.533333 0 17.066667-10.666667 27.733334l-281.6 281.6c-4.266667 4.266667-12.8 8.533333-19.2 8.533333-8.533333 0-14.933333-2.133333-19.2-8.533333l-281.6-281.6c-10.666667-10.666667-14.933333-21.333333-10.666666-27.733334 0-8.533333 8.533333-12.8 25.6-12.8z'
-												p-id='51875'
-											></path>
-										</svg>
-									</saki-button>
-									<div slot='main'>
-										<saki-menu
-											ref={bindEvent({
-												selectvalue: async (e) => {
-													console.log(e.detail.value)
-													store.dispatch(
-														configSlice.actions.setBackup({
-															type: 'automaticBackupFrequency',
-															v: e.detail.value,
-														})
-													)
-													setOpenAutomaticBackupFrequencyDropDown(false)
-												},
-											})}
-										>
-											{automaticBackupFrequencyValues.map((v, i) => {
-												return (
-													<saki-menu-item
-														key={i}
-														width={dropdownWidth}
-														padding='10px 18px'
-														value={v.value}
-													>
-														<div className='note-item'>
-															<span className='text-elipsis'>{v.key}</span>
-														</div>
-													</saki-menu-item>
-												)
-											})}
-										</saki-menu>
-									</div>
-								</saki-dropdown>
-							</div>
+										height='24px'
+										value={config.backup.backupAutomatically}
+									></saki-switch>
+								</div>
 
-							<div className='s-p-automatically'>
-								<span>
-									{t('keepBackups', {
-										ns: 'settings',
-									})}
-								</span>
-
-								<saki-dropdown
-									visible={openKeepBackupsDropDown}
-									floating-direction='Left'
-									z-index='1000'
-									ref={bindEvent({
-										close: () => {
-											setOpenKeepBackupsDropDown(false)
-										},
-									})}
-								>
-									<saki-button
-										border='none'
-										bg-hover-color='transparent'
-										bg-active-color='transparent'
-										padding='0px'
-										ref={bindEvent({
-											tap: () => {
-												setOpenKeepBackupsDropDown(true)
-											},
-										})}
-									>
-										<span
-											style={{
-												color: '#999',
-											}}
-											className='name'
-										>
-											{
-												keepBackupsValues.filter((v) => {
-													return v.value === config.backup.keepBackups
-												})?.[0]?.key
-											}
-										</span>
-										<svg
-											className='icon'
-											viewBox='0 0 1024 1024'
-											version='1.1'
-											xmlns='http://www.w3.org/2000/svg'
-											p-id='51874'
-											width='16'
-											height='16'
-											fill='#999'
-										>
-											<path
-												d='M228.266667 347.733333h569.6c14.933333 0 25.6 4.266667 27.733333 12.8 4.266667 8.533333 0 17.066667-10.666667 27.733334l-281.6 281.6c-4.266667 4.266667-12.8 8.533333-19.2 8.533333-8.533333 0-14.933333-2.133333-19.2-8.533333l-281.6-281.6c-10.666667-10.666667-14.933333-21.333333-10.666666-27.733334 0-8.533333 8.533333-12.8 25.6-12.8z'
-												p-id='51875'
-											></path>
-										</svg>
-									</saki-button>
-									<div slot='main'>
-										<saki-menu
-											ref={bindEvent({
-												selectvalue: async (e) => {
-													console.log(e.detail)
-													store.dispatch(
-														configSlice.actions.setBackup({
-															type: 'keepBackups',
-															v: e.detail.value,
-														})
-													)
-													setOpenKeepBackupsDropDown(false)
-												},
-											})}
-										>
-											{keepBackupsValues.map((v, i) => {
-												return (
-													<saki-menu-item
-														key={i}
-														width={dropdownWidth}
-														padding='10px 18px'
-														value={v.value}
-													>
-														<div className='note-item'>
-															<span className='text-elipsis'>{v.key}</span>
-														</div>
-													</saki-menu-item>
-												)
-											})}
-										</saki-menu>
-									</div>
-								</saki-dropdown>
-							</div>
-
-							<div className='s-p-last-backup-time'>
-								{config.backup.lastBackupTime
-									? t('lastBackupTime', {
+								<div className='s-p-automatically'>
+									<span>
+										{t('automaticBackupFrequency', {
 											ns: 'settings',
-									  }) +
-									  ': ' +
-									  moment(config.backup.lastBackupTime * 1000).format(
-											'YYYY-MM-DD hh:mm:ss'
-									  )
-									: ''}
+										})}
+									</span>
+
+									<saki-dropdown
+										visible={openAutomaticBackupFrequencyDropDown}
+										floating-direction='Left'
+										z-index='1000'
+										ref={bindEvent({
+											close: () => {
+												setOpenAutomaticBackupFrequencyDropDown(false)
+											},
+										})}
+									>
+										<saki-button
+											border='none'
+											bg-hover-color='transparent'
+											bg-active-color='transparent'
+											padding='0px'
+											ref={bindEvent({
+												tap: () => {
+													console.log('自动备份频率')
+													setOpenAutomaticBackupFrequencyDropDown(true)
+												},
+											})}
+										>
+											<span
+												style={{
+													color: '#999',
+												}}
+												className='name'
+											>
+												{
+													automaticBackupFrequencyValues.filter((v) => {
+														return (
+															v.value === config.backup.automaticBackupFrequency
+														)
+													})?.[0]?.key
+												}
+											</span>
+											<svg
+												className='icon'
+												viewBox='0 0 1024 1024'
+												version='1.1'
+												xmlns='http://www.w3.org/2000/svg'
+												p-id='51874'
+												width='16'
+												height='16'
+												fill='#999'
+											>
+												<path
+													d='M228.266667 347.733333h569.6c14.933333 0 25.6 4.266667 27.733333 12.8 4.266667 8.533333 0 17.066667-10.666667 27.733334l-281.6 281.6c-4.266667 4.266667-12.8 8.533333-19.2 8.533333-8.533333 0-14.933333-2.133333-19.2-8.533333l-281.6-281.6c-10.666667-10.666667-14.933333-21.333333-10.666666-27.733334 0-8.533333 8.533333-12.8 25.6-12.8z'
+													p-id='51875'
+												></path>
+											</svg>
+										</saki-button>
+										<div slot='main'>
+											<saki-menu
+												ref={bindEvent({
+													selectvalue: async (e) => {
+														console.log(e.detail.value)
+														store.dispatch(
+															configSlice.actions.setBackup({
+																type: 'automaticBackupFrequency',
+																v: e.detail.value,
+															})
+														)
+														setOpenAutomaticBackupFrequencyDropDown(false)
+													},
+												})}
+											>
+												{automaticBackupFrequencyValues.map((v, i) => {
+													return (
+														<saki-menu-item
+															key={i}
+															width={dropdownWidth}
+															padding='10px 18px'
+															value={v.value}
+														>
+															<div className='note-item'>
+																<span className='text-elipsis'>{v.key}</span>
+															</div>
+														</saki-menu-item>
+													)
+												})}
+											</saki-menu>
+										</div>
+									</saki-dropdown>
+								</div>
+
+								<div className='s-p-automatically'>
+									<span>
+										{t('keepBackups', {
+											ns: 'settings',
+										})}
+									</span>
+
+									<saki-dropdown
+										visible={openKeepBackupsDropDown}
+										floating-direction='Left'
+										z-index='1000'
+										ref={bindEvent({
+											close: () => {
+												setOpenKeepBackupsDropDown(false)
+											},
+										})}
+									>
+										<saki-button
+											border='none'
+											bg-hover-color='transparent'
+											bg-active-color='transparent'
+											padding='0px'
+											ref={bindEvent({
+												tap: () => {
+													setOpenKeepBackupsDropDown(true)
+												},
+											})}
+										>
+											<span
+												style={{
+													color: '#999',
+												}}
+												className='name'
+											>
+												{
+													keepBackupsValues.filter((v) => {
+														return v.value === config.backup.keepBackups
+													})?.[0]?.key
+												}
+											</span>
+											<svg
+												className='icon'
+												viewBox='0 0 1024 1024'
+												version='1.1'
+												xmlns='http://www.w3.org/2000/svg'
+												p-id='51874'
+												width='16'
+												height='16'
+												fill='#999'
+											>
+												<path
+													d='M228.266667 347.733333h569.6c14.933333 0 25.6 4.266667 27.733333 12.8 4.266667 8.533333 0 17.066667-10.666667 27.733334l-281.6 281.6c-4.266667 4.266667-12.8 8.533333-19.2 8.533333-8.533333 0-14.933333-2.133333-19.2-8.533333l-281.6-281.6c-10.666667-10.666667-14.933333-21.333333-10.666666-27.733334 0-8.533333 8.533333-12.8 25.6-12.8z'
+													p-id='51875'
+												></path>
+											</svg>
+										</saki-button>
+										<div slot='main'>
+											<saki-menu
+												ref={bindEvent({
+													selectvalue: async (e) => {
+														console.log(e.detail)
+														store.dispatch(
+															configSlice.actions.setBackup({
+																type: 'keepBackups',
+																v: e.detail.value,
+															})
+														)
+														setOpenKeepBackupsDropDown(false)
+													},
+												})}
+											>
+												{keepBackupsValues.map((v, i) => {
+													return (
+														<saki-menu-item
+															key={i}
+															width={dropdownWidth}
+															padding='10px 18px'
+															value={v.value}
+														>
+															<div className='note-item'>
+																<span className='text-elipsis'>{v.key}</span>
+															</div>
+														</saki-menu-item>
+													)
+												})}
+											</saki-menu>
+										</div>
+									</saki-dropdown>
+								</div>
 							</div>
-						</div>
-					)}
-				></SettingsItem>
+						)}
+					></SettingsItem>
+				</>
 			) : (
 				''
 			)}
+		</div>
+	)
+}
+
+const About = ({ show }: { show: boolean }) => {
+	const { t, i18n } = useTranslation('settings')
+	const appearance = useSelector((state: RootState) => state.appearance)
+	const config = useSelector((state: RootState) => state.config)
+
+	const dispatch = useDispatch<AppDispatch>()
+	const [mode, setMode] = useState(appearance.mode)
+	useEffect(() => {
+		setMode(appearance.mode)
+	}, [appearance.mode])
+	return (
+		<div
+			style={{
+				display: show ? 'block' : 'none',
+			}}
+			className='setting-about-page'
+		>
+			<div className='version-info'>
+				<img src='./logo192.png' alt='' />
+				<div className='version-code'>
+					<span>Version v{config.version}</span>
+				</div>
+			</div>
+
+			<SettingsItem
+				subtitle={() => (
+					<div>
+						{t('about') +
+							t('appTitle', {
+								ns: 'common',
+							})}
+					</div>
+				)}
+				main={() => (
+					<div className='about-links'>
+						<saki-button
+							ref={bindEvent({
+								tap: () => {
+									let url =
+										'https://github.com/ShiinaAiiko/meow-sticky-note/releases'
+									switch (config.platform) {
+										case 'Electron':
+											const { shell } = window.require('electron')
+											shell.openExternal(url)
+											break
+										case 'Web':
+											window.open(url)
+											break
+
+										default:
+											break
+									}
+								},
+							})}
+							border='none'
+							padding='0'
+							bg-hover-color='transparent'
+							bg-active-color='transparent'
+						>
+							<div className='settings-link'>
+								<svg
+									aria-hidden='true'
+									viewBox='0 0 16 16'
+									version='1.1'
+									width='26'
+									height='26'
+									data-view-component='true'
+									className='icon'
+								>
+									<path d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z'></path>
+								</svg>
+								<span>Github</span>
+							</div>
+						</saki-button>
+					</div>
+				)}
+			></SettingsItem>
 		</div>
 	)
 }

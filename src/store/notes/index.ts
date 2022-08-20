@@ -6,7 +6,12 @@ import {
 	AsyncThunkOptions,
 } from '@reduxjs/toolkit'
 import md5 from 'blueimp-md5'
-import store, { ActionParams, configSlice, RootState } from '../index'
+import store, {
+	ActionParams,
+	configSlice,
+	RootState,
+	userSlice,
+} from '../index'
 import { NoteItem, PageItem, CategoryItem } from './typings'
 import { Debounce, deepCopy } from '@nyanyajs/utils'
 import { prompt, snackbar, alert } from '@saki-ui/core'
@@ -138,19 +143,22 @@ export const notesMethods = {
 									return true
 								}
 							})
-							console.log(
-								'localLastUpdateTime',
-								note?.lastUpdateTime,
-								v.lastUpdateTime
-							)
+							// console.log(
+							// 	'localLastUpdateTime',
+							// 	note?.lastUpdateTime,
+							// 	v.lastUpdateTime
+							// )
 
 							// // 本地存在\更新
 							if (isExist && note?.lastUpdateTime) {
-								// && note.isSync
-								if (note.authorId === user.userInfo.uid) {
+								//
+								if (note.authorId === user.userInfo.uid && note.isSync) {
 									// 更新时间每次和saass同步
 									console.log(
-										'存在,版本是否一致?',
+										note.name,
+										' => 存在,版本是否一致?',
+										note?.lastUpdateTime,
+										v.lastUpdateTime,
 										Number(v.lastUpdateTime) > note.lastUpdateTime
 									)
 									if (Number(v.lastUpdateTime) > note.lastUpdateTime) {
@@ -181,12 +189,12 @@ export const notesMethods = {
 									if (note.authorId !== user.userInfo.uid) {
 										console.log('这是其他人的日记')
 									}
-									console.log('禁用同步')
+									console.log(note.name, ' => 禁用同步')
 								}
 							}
 							// 本地不存在\添加
 							else {
-								console.log('远端不存在,同步到远端', v)
+								console.log('远端存在,同步到本地', v)
 								getNote(v.id)
 							}
 						} else {
@@ -202,7 +210,7 @@ export const notesMethods = {
 							}
 						})
 						// 本地存在\远端不存在
-						if (!isExist) {
+						if (!isExist && v.isSync) {
 							console.log('本地存在远端不存在')
 							api.v1
 								.syncToServer({
@@ -220,13 +228,17 @@ export const notesMethods = {
 								})
 						}
 					})
-					store.dispatch(
-						configSlice.actions.setStatus({
-							type: 'syncStatus',
-							v: false,
-						})
-					)
+				} else {
+					if (files.code === 10004) {
+						thunkAPI.dispatch(userSlice.actions.logout({}))
+					}
 				}
+				store.dispatch(
+					configSlice.actions.setStatus({
+						type: 'syncStatus',
+						v: false,
+					})
+				)
 			} else {
 				console.log('未开启同步功能')
 			}
@@ -273,7 +285,7 @@ export const notesMethods = {
 							isSync: false,
 							categories: [],
 							authorId: user.userInfo.uid,
-							version: config.dataVersion,
+							version: config.version,
 						},
 					})
 				)
@@ -796,9 +808,20 @@ export const notesSlice = createSlice({
 		) => {
 			// console.log(state.list, params)
 			if (!params.payload) return
-			state.list.push(params.payload.v)
+			let isExist = false
+			state.list.some((v, i) => {
+				if (v.id === params.payload.v.id) {
+					isExist = true
+					state.list[i] = Object.assign(v, params.payload.v)
+					return true
+				}
+			})
+			console.log('isExist', isExist)
+			if (!isExist) {
+				state.list.push(params.payload.v)
 
-			state.list[state.list.length - 1].sort = state.list.length
+				state.list[state.list.length - 1].sort = state.list.length
+			}
 			state.noteId = params.payload.v.id
 			// console.log(state.list, params)
 
@@ -864,6 +887,32 @@ export const notesSlice = createSlice({
 							  }
 							: undefined,
 					})
+
+					return true
+				}
+			})
+		},
+		enableSyncNote: (
+			state,
+			params: ActionParams<{
+				noteId: string
+				isSync: boolean
+			}>
+		) => {
+			const { noteId, isSync } = params.payload
+			state.list.some((v) => {
+				if (v.id === noteId) {
+					v.isSync = isSync
+					saveNote({
+						id: v.id,
+						v,
+						requestParams: undefined,
+					})
+
+					isSync &&
+						setTimeout(async () => {
+							await store.dispatch(notesMethods.GetRemoteData())
+						})
 
 					return true
 				}

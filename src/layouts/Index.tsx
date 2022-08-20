@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { RouterProps, useLocation, useNavigate } from 'react-router-dom'
 import './Index.scss'
-import { Header, Settings, Login } from '../components'
+import { Header, Drag, Settings, Login } from '../components'
 import { bindEvent } from '../modules/bindEvent'
 
 import { useTranslation } from 'react-i18next'
 import { Debounce, deepCopy } from '@nyanyajs/utils'
+import { v5 as uuidv5, v4 as uuidv4 } from 'uuid'
 
 import { api } from '../modules/http/api'
 
@@ -21,6 +22,8 @@ import store, {
 import { useSelector, useDispatch } from 'react-redux'
 import { createRouter } from '../modules/electron/router'
 import { client } from '../store/nsocketio'
+import { NoteItem } from '../store/notes/typings'
+import { alert } from '@saki-ui/core'
 
 const debounce = new Debounce()
 const IndexLayout = ({ children }: RouterProps) => {
@@ -50,8 +53,10 @@ const IndexLayout = ({ children }: RouterProps) => {
 			dispatch(methods.user.Init()).unwrap()
 			dispatch(methods.appearance.Init()).unwrap()
 			createRouter()
+
 			// console.log('config.deviceType getDeviceType', config)
 		}, 50)
+
 		// setTimeout(() => {
 		// 	setOpenSettingModal(true)
 		// }, 1000)
@@ -60,7 +65,13 @@ const IndexLayout = ({ children }: RouterProps) => {
 
 	useEffect(() => {
 		// console.log('监听同步开启了', config.deviceType)
-		if (location.pathname === '/' || location.pathname === '/m') {
+		if (
+			location.pathname === '/' ||
+			location.pathname === '/m' ||
+			location.pathname === '/m/n' ||
+			location.pathname === '/m/c' ||
+			location.pathname === '/m/p'
+		) {
 			switch (config.deviceType) {
 				case 'Mobile':
 					// console.log('切换至手机版？')
@@ -173,8 +184,13 @@ const IndexLayout = ({ children }: RouterProps) => {
 						ref={bindEvent({
 							loaded: () => {
 								console.log('progress-bar', progressBar)
-								progressBar < 1 &&
-									setProgressBar(progressBar + 0.2 >= 1 ? 1 : progressBar + 0.2)
+								setProgressBar(0)
+								setTimeout(() => {
+									progressBar < 1 &&
+										setProgressBar(
+											progressBar + 0.2 >= 1 ? 1 : progressBar + 0.2
+										)
+								}, 0)
 								setLoadProgressBar(true)
 							},
 							transitionEnd: (e: CustomEvent) => {
@@ -232,6 +248,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 					setOpenSettingModal(false)
 				}}
 			/>
+			<Drag></Drag>
 		</div>
 	)
 }

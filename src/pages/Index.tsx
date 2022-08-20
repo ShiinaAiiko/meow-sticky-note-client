@@ -26,6 +26,7 @@ const IndexPage = (props: RouterProps) => {
 	const { t, i18n } = useTranslation('indexPage')
 	const notes = useSelector((state: RootState) => state.notes)
 	const config = useSelector((state: RootState) => state.config)
+	const user = useSelector((state: RootState) => state.user)
 	const [richtextEl, setRichtextEl] = useState<any>()
 	const [categoryContextMenuEl, setCategoryContextMenuEl] = useState<any>()
 	const [pageContextMenuEl, setPageContextMenuEl] = useState<any>()
@@ -190,6 +191,10 @@ const IndexPage = (props: RouterProps) => {
 								noteId={activeNotes?.id}
 								categoryId={activeCategory?.id}
 								page={activePage}
+								sync={
+									activeNotes.isSync &&
+									activeNotes.authorId === user.userInfo.uid
+								}
 							></PageContent>
 						</div>
 					</>

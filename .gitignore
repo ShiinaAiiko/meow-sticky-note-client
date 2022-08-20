@@ -10,6 +10,10 @@
 
 # production
 /build
+/el-build
+!/el-build/icons
+/out
+/tmp
 
 # misc
 .DS_Store
@@ -28,3 +32,4 @@ config*.json
 /src/protos/*.js
 /src/protos/*.d.ts
 /protos_temp
+/public/icons

@@ -23,4 +23,19 @@
 		}
 		// height: calc(100% - 57px);
 	}
+	.p-data {
+		position: fixed;
+		right: 10px;
+		bottom: 10px;
+		display: flex;
+		justify-content: flex-end;
+    align-items: center;
+		.p-d-words {
+			color: #999;
+			font-size: 12px;
+		}
+		.p-d-sync {
+			margin-left: 6px;
+		}
+	}
 }

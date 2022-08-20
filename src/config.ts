@@ -3,6 +3,7 @@ import * as Ion from 'ion-sdk-js/lib/connector'
 // import { config } from 'process'
 baselog.Info('Env:', process.env.NODE_ENV)
 
+let version = ''
 let sakisso = {
 	appId: '',
 	clientUrl: '',
@@ -22,6 +23,7 @@ let sakiui = {
 }
 
 interface Config {
+	version: typeof version
 	sakisso: typeof sakisso
 	serverApi: typeof serverApi
 	nsocketio: typeof nsocketio
@@ -33,6 +35,7 @@ try {
 	let configJson: Config = require('./config.temp.json')
 	console.log('configJson', configJson)
 	if (configJson) {
+		version = configJson.version
 		sakisso = configJson.sakisso
 		serverApi = configJson.serverApi
 		nsocketio = configJson.nsocketio
@@ -43,4 +46,4 @@ try {
 	console.log('未添加配置文件.')
 	console.log(error)
 }
-export { serverApi, sakiui, staticPathDomain, sakisso, nsocketio }
+export { version, serverApi, sakiui, staticPathDomain, sakisso, nsocketio }

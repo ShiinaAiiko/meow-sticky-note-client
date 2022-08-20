@@ -15,7 +15,7 @@ import { api } from '../modules/electron/api'
 import { stringify } from 'querystring'
 import { resolve } from 'path'
 import { nanoid } from 'nanoid'
-import { sakisso, nsocketio } from '../config'
+import { sakisso, nsocketio, version } from '../config'
 
 export const modeName = 'config'
 
@@ -162,7 +162,8 @@ let initialState = {
 			},
 		},
 	},
-	dataVersion: 'v1.0.0',
+	version: version,
+	isDev: process.env.NODE_ENV === 'development',
 	language: '',
 	deviceType,
 	sync: false,

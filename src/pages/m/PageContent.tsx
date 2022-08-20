@@ -29,6 +29,7 @@ const PageContentPage = (props: ReaderRouterProps) => {
 	const dispatch = useDispatch<AppDispatch>()
 	const notes = useSelector((state: RootState) => state.notes)
 	const config = useSelector((state: RootState) => state.config)
+	const user = useSelector((state: RootState) => state.user)
 	const autoCloseWindowAfterCopy = useSelector(
 		(state: RootState) => state.config.general.autoCloseWindowAfterCopy
 	)
@@ -40,6 +41,7 @@ const PageContentPage = (props: ReaderRouterProps) => {
 	let pid = searchParams.get('pid') || ''
 
 	const [page, setPage] = useState<PageItem>()
+	const [note, setNote] = useState<NoteItem>()
 	const [pageTitle, setPageTitle] = useState('')
 	useEffect(() => {
 		// console.log('notes', '212121212', noteId)
@@ -67,6 +69,7 @@ const PageContentPage = (props: ReaderRouterProps) => {
 					ns: 'common',
 				})
 		)
+		setNote(note)
 		setPage(page)
 	}, [nid, cid, pid, notes])
 
@@ -76,7 +79,12 @@ const PageContentPage = (props: ReaderRouterProps) => {
 				<title>{pageTitle}</title>
 			</Helmet>
 			<div ref={props.nodeRef} className='mobile-page-content-page'>
-				<PageContent noteId={nid} categoryId={cid} page={page}></PageContent>
+				<PageContent
+					noteId={nid}
+					categoryId={cid}
+					page={page}
+					sync={!!note && note?.isSync && note?.authorId === user.userInfo.uid}
+				></PageContent>
 			</div>
 		</>
 	)

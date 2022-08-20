@@ -24,16 +24,19 @@ import { CategoryItem, NoteItem, PageItem } from '../store/notes/typings'
 import { ReaderRouterProps } from '../modules/renderRoutes'
 import { resolve } from 'path'
 import { rejects } from 'assert'
+import { SyncOff } from './Icon'
 
 let fileProgressBar = progressBar()
 const PageContentComponent = ({
 	// onClick,
 	page,
+	sync,
 	noteId,
 	categoryId,
 }: {
 	noteId: string
 	categoryId: string
+	sync: boolean
 	page?: PageItem
 	// onClick: ({ id }: { id: string }) => void
 }) => {
@@ -394,6 +397,24 @@ const PageContentComponent = ({
 								ns: 'indexPage',
 							})}
 						/>
+					</div>
+					<div className='p-data'>
+						<div className='p-d-words'>
+							{page?.content?.replace(/<\/?.+?>/g, '').length}
+						</div>
+						<div className='p-d-sync'>
+							{sync ? (
+								''
+							) : (
+								<SyncOff
+									style={{
+										width: '14px',
+										height: '14px',
+										transform: 'translateY(2px)',
+									}}
+								/>
+							)}
+						</div>
 					</div>
 				</>
 			) : (

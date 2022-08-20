@@ -13,9 +13,8 @@ import { windows, openMainWindows } from '../windows'
 import { mode, setMode } from '../appearance'
 import { logo, systemConfig } from '../config'
 import { saveAs, openFolder, backup } from '../modules/methods'
-;(async () => {
-	setTimeout(async () => {}, 2000)
-})()
+import * as nyanyalog from 'nyanyajs-log'
+  
 
 export const R = (
 	func: (options: {
@@ -108,7 +107,7 @@ export const initRouter = () => {
 		'updateData',
 		R(({ window, data }) => {
 			windows.forEach((v) => {
-				console.log(v.id, window.id)
+				// nyanyalog.info(v.id, window.id)
 				if (v.id !== window.id) {
 					v.webContents.send('updateData')
 				}
@@ -120,7 +119,7 @@ export const initRouter = () => {
 		'updateProfile',
 		R(({ window, data }) => {
 			windows.forEach((v) => {
-				console.log(v.id, window.id)
+				// nyanyalog.info(v.id, window.id)
 				if (v.id !== window.id) {
 					v.webContents.send('updateProfile')
 				}
@@ -132,7 +131,7 @@ export const initRouter = () => {
 		'updateSetting',
 		R(({ window, data }) => {
 			windows.forEach((v) => {
-				console.log(v.id, window.id)
+				// nyanyalog.info(v.id, window.id)
 				if (v.id !== window.id) {
 					v.webContents.send('updateSetting', {
 						type: data.data.type,
@@ -165,8 +164,9 @@ export const initRouter = () => {
 
 	ipcMain.on(
 		'backup',
-		R(({ window, data }) => {
-			backup()
+    R(({ window, data }) => {
+      
+			backup(data.data.backupNow)
 		})
 	)
 }

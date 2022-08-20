@@ -86,6 +86,7 @@ const contextMenu = Menu.buildFromTemplate([
 	},
 ])
 
+
 //系统托盘右键菜单
 export const createTaskMenu = async (type?: 'pink' | 'white') => {
 	appTray && appTray.destroy()

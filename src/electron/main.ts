@@ -7,22 +7,27 @@ import {
 	MenuItem,
 	nativeTheme,
 	ipcMain,
+	protocol,
 	ipcRenderer,
 	Notification,
 } from 'electron'
 import path from 'path'
 import isDev from 'electron-is-dev'
+import { initConfig, systemConfig, logo, taskIcon } from './config'
 
 import { initShortcut } from './shortcut'
 
 import { initAppearance } from './appearance'
-import { initConfig, systemConfig, logo, taskIcon } from './config'
 import { createTaskMenu } from './taskMenu'
 import { initRouter } from './router/router'
 import { backup } from './modules/methods'
+import { openMainWindows } from './windows'
+import * as nyanyalog from 'nyanyajs-log'
 
-console.log('启动')
-
+nyanyalog.info('启动')
+// protocol.registerSchemesAsPrivileged([
+//   { scheme: 'app', privileges: { secure: true, standard: true } }
+// ])
 const ready = async () => {
 	app.commandLine.appendSwitch('disable-http-cache')
 	await initConfig()
@@ -31,32 +36,47 @@ const ready = async () => {
 	initRouter()
 	initShortcut()
 	await createTaskMenu()
+	openMainWindows()
 	await backup()
 	setInterval(async () => {
 		await backup()
 	}, 3600 * 1000)
 }
- 
-app.on('ready', ready)
+
+const isFirstInstance = app.requestSingleInstanceLock()
+
+console.log('isFirstInstance', isFirstInstance)
+if (!isFirstInstance) {
+	console.log('is second instance')
+	// setTimeout(() => {
+	app.quit()
+	// }, 30000)
+} else {
+	app.on('second-instance', (event, commanLine, workingDirectory) => {
+		console.log('new app started', commanLine)
+		openMainWindows()
+	})
+
+	app.on('ready', ready)
+}
 
 ipcMain.on('quit', () => {
-	console.log('quit')
+	nyanyalog.info('quit')
 	app.quit()
 })
-
+app.focus()
 app.on('window-all-closed', () => {
-	console.log('window-all-closed', process.platform)
+	nyanyalog.info('window-all-closed', process.platform)
 	if (process.platform !== 'darwin') {
 		// app.quit()
 	}
 })
 app.on('activate', () => {
-	console.log('activate')
+	nyanyalog.info('activate')
 	// if (mainWindow === null) {
 	// 	createWindow()
 	// }
 })
-
 // const menu = new Menu()
 // menu.append(
 // 	new MenuItem({
@@ -67,7 +87,7 @@ app.on('activate', () => {
 // 				accelerator:
 // 					process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Alt+Shift+I',
 // 				click: () => {
-// 					console.log('Electron rocks!')
+// 					nyanyalog.info('Electron rocks!')
 // 				},
 // 			},
 // 		],

@@ -89,8 +89,13 @@ export const api = {
 			})
 		)
 	},
-	backup() {
-		ipcRenderer?.send?.('backup', PARAMS('backup', {}))
+	backup(backupNow: boolean = false) {
+		ipcRenderer?.send?.(
+			'backup',
+			PARAMS('backup', {
+				backupNow,
+			})
+		)
 	},
 }
 
