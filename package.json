@@ -14,46 +14,11 @@
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"start": "concurrently \"BROWSER=none yarn dev\" \"wait-on http://localhost:3000 && electron .\"",
-		"el:dev": "nodemon --exec electron ./src/electron/dist/main.js",
-		"el:tsc": "rm -rf ./src/electron/dist/ && cd ./src/electron && tsc",
 		"el:build": "./release.sh elbuild",
-		"el:icon": "electron-icon-builder --input=./public/logo-neko-circle-white1500.png --output=public --flatten",
 		"protos:build": "pbjs -t static-module -w commonjs -o src/protos/proto.js  ./protos_temp/**/*.proto",
 		"protos:tsc": "pbts -o ./src/protos/proto.d.ts ./src/protos/proto.js",
 		"protos": "yarn protos:build && yarn protos:tsc"
 	},
-	"build": {
-		"productName": "Meow Sticky Note",
-		"appId": "com.meow.sticky.note",
-		"copyright": "©2022 Shiina Aiiko",
-		"directories": {
-			"output": "el-build"
-		},
-		"files": [
-			"src/electron/dist/**/*",
-			"build/**/*",
-			"package.json"
-		],
-		"extraResources": {
-			"from": "./out/",
-			"to": "out/"
-		},
-		"nsis": {
-			"shortcutName": "ExcelUtil",
-			"oneClick": false,
-			"allowToChangeInstallationDirectory": true
-		},
-		"linux": {
-			"icon": "build/icons",
-			"target": [
-				"deb"
-			]
-		},
-		"extends": null
-	},
-	"watch": [
-		"src/electron/dist/*"
-	],
 	"eslintConfig": {
 		"extends": [
 			"react-app",
@@ -84,8 +49,6 @@
 		"@types/react-dom": "^18.0.5",
 		"blueimp-md5": "^2.19.0",
 		"buffer": "^6.0.3",
-		"electron-is-dev": "^2.0.0",
-		"electron-reload": "^2.0.0-alpha.1",
 		"protobufjs": "^6.11.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
@@ -96,7 +59,7 @@
 		"react-router-dom": "^6.3.0",
 		"react-scripts": "5.0.1",
 		"react-transition-group": "^4.4.5",
-		"web-vitals": "^2.1.4"
+		"web-vitals": "^3.0.0-rc.0"
 	},
 	"devDependencies": {
 		"@types/blueimp-md5": "^2.18.0",
@@ -105,11 +68,7 @@
 		"@types/react-transition-group": "^4.4.5",
 		"@types/socket.io-client": "^1.4.36",
 		"@types/uuid": "^8.3.4",
-		"concurrently": "^7.2.2",
-		"electron": "^19.0.7",
-		"electron-builder": "^23.1.0",
 		"sass": "^1.53.0",
-		"typescript": "^4.7.4",
-		"wait-on": "^6.0.1"
+		"typescript": "^4.7.4"
 	}
 }

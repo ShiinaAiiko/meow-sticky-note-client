@@ -24,6 +24,7 @@ Dockerfile.multi
 README.md
 /src/protos/*.js
 /src/protos/*.d.ts
+/src/electron
 
 /node_modules
 /src/config.temp.json

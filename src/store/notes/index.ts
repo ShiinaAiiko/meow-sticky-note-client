@@ -175,7 +175,7 @@ export const notesMethods = {
 											v: note,
 											requestParams: {
 												type: 'Note',
-												methods: 'Add',
+												methods: 'Update',
 												options: {
 													noteId: note.id,
 												},
@@ -613,7 +613,7 @@ export const saveNote = (payload: {
 			)
 			if (config.sync) {
 				// && note.isSync
-				if (note.authorId === user.userInfo.uid) {
+				if (note.authorId === user.userInfo.uid && note.isSync) {
 					if (user.isLogin) {
 						console.log('同步远端')
 						console.log(payload.requestParams)

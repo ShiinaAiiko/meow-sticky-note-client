@@ -96,17 +96,35 @@ logs() {
 }
 
 elbuild() {
-  sudo cd ./
-  # sudo npm install -g electron-icon-builder
+  cp -r $DIR/public/logo-neko-circle-white1500.png $DIR/src/electron/logo.png
+  cd ./src/electron
   yarn el:icon
-  cp -r ./$configFilePath ./src/config.temp.json
-    yarn build
+  # electron-icon-builder --input=./logo.png --output=./ --flatten
+  cd ../../
+  cp -r $DIR/src/electron/icons $DIR/public/icons
+  rm -rf $DIR/src/electron/logo.png
+  rm -rf $DIR/src/electron/icons
+
+  cp -r $DIR/$configFilePath $DIR/src/config.temp.json
+  yarn build
+  cp -r ./build ./src/electron/build
+
+  cd ./src/electron
+
+  mkdir -p ./el-build/packages
+  cp -r ./el-build/*.AppImage ./el-build/packages/
+  cp -r ./el-build/*.deb ./el-build/packages/
   rm -rf ./el-build/linux-unpacked
   rm -rf ./el-build/*.AppImage
-  electron-builder --linux --x64
-  # sudo apt install -y ./el-build/meow-sticky-note_1.0.1_amd64.deb
+  rm -rf ./el-build/*.deb
+  yarn el:build
+  rm -rf ./build
+
+  cd ../../
+
+  # sudo apt install -y ./meow-sticky-note_1.0.1_amd64.deb
   # AppImage deb
-  # run
+  run
 }
 
 elgenerateicon() {
@@ -115,8 +133,8 @@ elgenerateicon() {
 
 run() {
   # chmod a+x ./*.AppImage
-  chmod a+x ./el-build/*.AppImage
-  ./el-build/*.AppImage
+  chmod a+x ./src/electron/el-build/*.AppImage
+  ./src/electron/el-build/*.AppImage
 }
 
 main() {

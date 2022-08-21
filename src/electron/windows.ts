@@ -63,11 +63,11 @@ export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
 	// 		: `file://${path.join(__dirname, '../build/index.html')}` + queryStr,
 	// 	{ extraHeaders: 'pragma: no-cache' }
 	// )
-	console.log(`file://${path.join(__dirname, '../../../build/index.html')}`)
+	// console.log(`file://${path.join(__dirname, '../../../build/index.html')}`)
 	window.loadURL(
 		dev
 			? 'http://localhost:16111' + route + queryStr
-			: `file://${path.join(__dirname, '../../../build/index.html')}` +
+			: `file://${path.join(__dirname, '../build/index.html')}` +
 					queryStr,
 		{ extraHeaders: 'pragma: no-cache' }
 	)
@@ -131,7 +131,7 @@ export const openMainWindows = () => {
 		// backgroundColor: 'rgba(0,0,0,0.3)',
 
 		webPreferences: {
-			devTools: false,
+			devTools: true,
 			nodeIntegration: true,
 			contextIsolation: false,
 		},

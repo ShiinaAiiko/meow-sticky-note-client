@@ -1,0 +1,81 @@
+{
+	"name": "meow-sticky-note",
+	"version": "1.0.1",
+	"private": true,
+	"description": "一个简单易用的跨平台笔记",
+	"main": "./dist/main.js",
+	"author": "Shiina Aiiko <shiina@aiiko.club>",
+	"homepage": ".",
+	"scripts": {
+		"el:dev": "nodemon --exec electron ./dist/main.js",
+		"el:tsc": "rm -rf ./dist/ && tsc",
+		"el:build": "electron-builder --linux --x64",
+		"el:icon": "electron-icon-builder --input=./logo.png --output=./ --flatten"
+	},
+	"build": {
+		"productName": "Meow Sticky Note",
+		"appId": "com.meow.sticky.note",
+		"copyright": "©2022 Shiina Aiiko",
+		"directories": {
+			"output": "el-build"
+		},
+		"files": [
+			"dist/**/*",
+			"build/**/*",
+			"package.json"
+		],
+		"extraResources": {
+			"from": "./out/",
+			"to": "out/"
+		},
+		"nsis": {
+			"shortcutName": "ExcelUtil",
+			"oneClick": false,
+			"allowToChangeInstallationDirectory": true
+		},
+		"linux": {
+			"icon": "build/icons",
+			"target": [
+				"AppImage",
+				"deb"
+			]
+		},
+		"extends": null
+	},
+	"watch": [
+		"src/electron/dist/*"
+	],
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"dependencies": {
+		"@nyanyajs/utils": "^1.0.12",
+		"blueimp-md5": "^2.19.0",
+		"electron-is-dev": "^2.0.0",
+		"electron-reload": "^2.0.0-alpha.1"
+	},
+	"devDependencies": {
+		"@types/blueimp-md5": "^2.18.0",
+		"@types/node": "^18.0.4",
+		"electron": "^19.0.7",
+		"electron-builder": "^23.1.0",
+		"electron-icon-builder": "^2.0.1",
+		"typescript": "^4.7.4",
+		"wait-on": "^6.0.1"
+	}
+}

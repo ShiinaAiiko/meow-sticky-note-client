@@ -7,7 +7,6 @@ import {
 import exp from 'constants'
 // import thunk from 'redux-thunk'
 import { useDispatch } from 'react-redux'
-
 import { storageMethods, storageSlice } from './storage'
 import { notesSlice, notesMethods } from './notes'
 import { appearanceMethods, appearanceSlice } from './appearance'
@@ -35,6 +34,10 @@ const rootReducer = combineReducers({
 
 const store = configureStore({
 	reducer: rootReducer,
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({
+			serializableCheck: false,
+		}),
 })
 
 export {

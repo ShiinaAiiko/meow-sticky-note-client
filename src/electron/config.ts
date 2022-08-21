@@ -51,7 +51,7 @@ nyanyalog.info('__dirname', __dirname)
 // 	console.log(`stderr: ${stderr}`)
 // })
 
-let staticPath = isDev ? '../../../public' : '../../../build'
+let staticPath = isDev ? '../../../public' : '../build'
 
 export const taskIcon = path.join(
 	path.join(__dirname, staticPath),
