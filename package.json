@@ -73,7 +73,7 @@
 		]
 	},
 	"dependencies": {
-		"@nyanyajs/utils": "^1.0.11",
+		"@nyanyajs/utils": "^1.0.12",
 		"@reduxjs/toolkit": "^1.8.3",
 		"@saki-ui/core": "^1.0.0",
 		"@testing-library/jest-dom": "^5.16.4",

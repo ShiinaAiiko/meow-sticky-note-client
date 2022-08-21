@@ -97,6 +97,7 @@ logs() {
 
 elbuild() {
   sudo cd ./
+  # sudo npm install -g electron-icon-builder
   yarn el:icon
   cp -r ./$configFilePath ./src/config.temp.json
     yarn build
