@@ -25,6 +25,7 @@ README.md
 /src/protos/*.js
 /src/protos/*.d.ts
 /src/electron
+!/src/electron/typings
 
 /node_modules
 /src/config.temp.json
