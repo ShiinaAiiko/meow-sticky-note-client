@@ -5,6 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
 
 .idea
 .vscode
@@ -26,6 +27,9 @@ README.md
 /src/protos/*.d.ts
 /src/electron
 !/src/electron/typings
+# /src/electron/node_modules
+# /src/electron/dist
+# /src/electron/el-build
 
 /node_modules
 /src/config.temp.json

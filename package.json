@@ -9,15 +9,15 @@
 	"scripts": {
 		"cache": "cp ./public/package1.json ./node_modules/@saki-ui/core/package.json",
 		"dc": "sudo rm -rf ./node_modules/.cache",
-		"dev": "cp -r ./config.test.json ./src/config.temp.json && yarn dc && PORT=16111 react-scripts start  --allow-root",
+		"dev": "cp -r ./config.test.json ./src/config.temp.json && npm run dc && PORT=16111 react-scripts start  --allow-root",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
-		"start": "concurrently \"BROWSER=none yarn dev\" \"wait-on http://localhost:3000 && electron .\"",
+		"start": "concurrently \"BROWSER=none npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
 		"el:build": "./release.sh elbuild",
 		"protos:build": "pbjs -t static-module -w commonjs -o src/protos/proto.js  ./protos_temp/**/*.proto",
 		"protos:tsc": "pbts -o ./src/protos/proto.d.ts ./src/protos/proto.js",
-		"protos": "yarn protos:build && yarn protos:tsc"
+		"protos": "npm run protos:build && npm run protos:tsc"
 	},
 	"eslintConfig": {
 		"extends": [

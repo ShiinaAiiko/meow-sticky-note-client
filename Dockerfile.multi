@@ -14,10 +14,9 @@ RUN \
 COPY . .
 
 RUN \
-  ls && \
   cp -r ./config.pro.temp.json ./src/config.temp.json && \
-  yarn protos && \
-  yarn build
+  npm run protos && \
+  npm run build
 
 FROM node:16.13.1-alpine3.13
 

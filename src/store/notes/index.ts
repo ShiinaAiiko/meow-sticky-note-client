@@ -22,7 +22,6 @@ import { api } from '../../modules/http/api'
 import electronApi from '../../modules/electron/api'
 import { protoRoot, LongToNumber } from '../../protos'
 import axios from 'axios'
-import { openMainWindows } from '../../electron/windows'
 
 const list: NoteItem[] = []
 

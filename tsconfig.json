@@ -17,6 +17,5 @@
 		"types": ["node"],
 		"jsx": "react-jsx"
 	},
-	"include": ["src"],
-	"exclude": ["electron"]
+	"include": ["src"]
 }

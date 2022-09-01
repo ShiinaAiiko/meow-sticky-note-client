@@ -12,14 +12,17 @@ import store, {
 import { Debounce, deepCopy } from '@nyanyajs/utils'
 import { storage } from '../../store/storage'
 const createRouterDebounce = new Debounce()
+
+export type Event = any
+export type Arg = any[]
 export const init = () => {
-	console.log('store', store.getState())
+	// console.log('store', store.getState())
 	const electron = window.require('electron')
 
 	if (electron) {
 		const { ipcRenderer, ipcMain } = electron
 
-		ipcRenderer.on('nativeThemeChange', (event, ...arg) => {
+		ipcRenderer.on('nativeThemeChange', (event: Event, ...arg: Arg) => {
 			store.dispatch(
 				appearanceSlice.actions.setMode({
 					mode: arg[1],
@@ -27,7 +30,7 @@ export const init = () => {
 			)
 		})
 
-		ipcRenderer.on('show', (event, ...arg) => {
+		ipcRenderer.on('show', (event: Event, ...arg: Arg) => {
 			switch (window.location.pathname) {
 				case '/pathname':
 					store.dispatch(methods.notes.Init()).unwrap()
@@ -39,19 +42,19 @@ export const init = () => {
 			}
 		})
 
-		ipcRenderer.on('updateData', (event, ...arg) => {
+		ipcRenderer.on('updateData', (event: Event, ...arg: Arg) => {
 			// console.log('updateData', arg)
 			// store.dispatch(methods.notes.Init()).unwrap()
 			store.dispatch(methods.notes.GetLocalData())
 		})
 
-		ipcRenderer.on('updateProfile', (event, ...arg) => {
+		ipcRenderer.on('updateProfile', (event: Event, ...arg: Arg) => {
 			console.log('updateData', arg)
 			// store.dispatch(methods.notes.Init()).unwrap()
 			store.dispatch(methods.user.Init())
 		})
 
-		ipcRenderer.on('updateSetting', (event, ...arg) => {
+		ipcRenderer.on('updateSetting', (event: Event, ...arg: Arg) => {
 			console.log('updateSetting', arg?.[0]?.type)
 			switch (arg?.[0]?.type) {
 				case 'autoCloseWindowAfterCopy':
@@ -74,7 +77,7 @@ export const init = () => {
 			// store.dispatch(methods.notes.Init()).unwrap()
 		})
 
-		ipcRenderer.on('openFolder', (event, ...arg) => {
+		ipcRenderer.on('openFolder', (event: Event, ...arg: Arg) => {
 			switch (arg?.[0]?.type) {
 				case 'BackupPath':
 					console.log(arg?.[0]?.path)
