@@ -9,7 +9,7 @@
 	"scripts": {
 		"cache": "cp ./public/package1.json ./node_modules/@saki-ui/core/package.json",
 		"dc": "sudo rm -rf ./node_modules/.cache",
-		"dev": "cp -r ./config.test.json ./src/config.temp.json && npm run dc && PORT=16111 react-scripts start  --allow-root",
+		"dev": "cp -r ./config.pro.json ./src/config.temp.json && npm run dc && PORT=16111 react-scripts start  --allow-root",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",

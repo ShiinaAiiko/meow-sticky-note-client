@@ -38,7 +38,7 @@ const DragComponent = () => {
 			e.stopPropagation()
 			e.preventDefault()
 			timer && clearTimeout(timer)
-			setShowModal(true)
+			// setShowModal(true)
 		})
 		el.addEventListener('dragleave', (e) => {
 			e.stopPropagation()
@@ -47,26 +47,34 @@ const DragComponent = () => {
 		el.addEventListener('drop', (e: any) => {
 			e.stopPropagation()
 			e.preventDefault()
-			setShowModal(false)
-			const ele: HTMLDivElement = e.target
-			if (ele?.classList.contains('drag-main')) {
-				if (e.dataTransfer.items) {
-					let items = new Array(...e.dataTransfer.items)
-					for (let index = 0; index < items.length; index++) {
-						let e = items[index]
-						let item = null
-						if (e.webkitGetAsEntry) {
-							item = e.webkitGetAsEntry()
-						} else if (e.getAsEntry) {
-							item = e.getAsEntry()
-						} else {
-							console.error('浏览器不支持拖拽上传')
-							return
-						}
-						if (item.isFile) {
-							item.file((file: File) => {
-								console.log(file)
-
+			// setShowModal(false)
+			// const ele: HTMLDivElement = e.target
+			// console.log('ele', ele, e.dataTransfer.items)
+			// if (ele?.classList.contains('drag-main')) {
+			if (e.dataTransfer.items) {
+				let items = new Array(...e.dataTransfer.items)
+				// console.log(items)
+				for (let index = 0; index < items.length; index++) {
+					let e = items[index]
+					let item = null
+					if (e.webkitGetAsEntry) {
+						item = e.webkitGetAsEntry()
+					} else if (e.getAsEntry) {
+						item = e.getAsEntry()
+					} else {
+						console.error('浏览器不支持拖拽上传')
+						return
+					}
+					// console.log('itemitem', item)
+					if (item.isFile) {
+						item.file((file: File) => {
+							// console.log(file)
+							if (
+								file.name.substring(
+									file.name.lastIndexOf('.'),
+									file.name.length
+								) === '.note'
+							) {
 								const fileReader = new FileReader()
 								fileReader.onload = (e) => {
 									try {
@@ -74,7 +82,6 @@ const DragComponent = () => {
 										const data = String(e.target?.result)
 										console.log(JSON.parse(data))
 										const note: NoteItem = JSON.parse(data)
-
 										if (note?.id) {
 											let isExist = false
 											const { notes, user } = store.getState()
@@ -142,11 +149,12 @@ const DragComponent = () => {
 									}
 								}
 								fileReader.readAsText(file)
-							})
-						}
+							}
+						})
 					}
 				}
 			}
+			// }
 		})
 	}
 	useEffect(() => {
@@ -156,19 +164,20 @@ const DragComponent = () => {
 	}, [])
 
 	return (
-		<saki-modal
-			width='100%'
-			height='100%'
-			max-width='300px'
-			max-height='200px'
-			visible={showModal}
-		>
-			<div className='drag-component'>
-				<div data-methods='drag' className='drag-main'>
-					拖拽区域
-				</div>
-			</div>
-		</saki-modal>
+		<></>
+		// <saki-modal
+		// 	width='100%'
+		// 	height='100%'
+		// 	max-width='300px'
+		// 	max-height='200px'
+		// 	visible={showModal}
+		// >
+		// 	<div className='drag-component'>
+		// 		<div data-methods='drag' className='drag-main'>
+		// 			拖拽区域
+		// 		</div>
+		// 	</div>
+		// </saki-modal>
 	)
 }
 

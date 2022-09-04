@@ -65,14 +65,12 @@ export const taskWhiteIcon = path.join(
 	path.join(__dirname, staticPath),
 	'logo-neko-white.png'
 )
-export const logoCircleIcon1024 = nativeImage
-	.createFromPath(
-		path.join(path.join(__dirname, staticPath), '/icons/1024x1024.png')
-	)
-  export const logoCircleIcon256 = nativeImage
-    .createFromPath(
-      path.join(path.join(__dirname, staticPath), '/icons/256x256.png')
-    )
+export const logoCircleIcon1024 = nativeImage.createFromPath(
+	path.join(path.join(__dirname, staticPath), '/icons/1024x1024.png')
+)
+export const logoCircleIcon256 = nativeImage.createFromPath(
+	path.join(path.join(__dirname, staticPath), '/icons/256x256.png')
+)
 export const logoCircleIcon128 = nativeImage.createFromPath(
 	path.join(path.join(__dirname, staticPath), '/icons/logo-circle-128.png')
 )
@@ -98,8 +96,10 @@ export const logoWhiteBg2 = path.join(
 )
 export const logo = path.join(path.join(__dirname, staticPath), 'logo192.png')
 
+let labelPrefix = isDev ? 'dev_' : ''
+
 export const systemConfig = new NodeFsStorage<any>({
-	label: 'systemConfig',
+	label: labelPrefix + 'systemConfig',
 	cacheRootDir: configRootDir + '/meow-sticky-note/s',
 	// encryption: {
 	// 	enable: false,
@@ -107,11 +107,11 @@ export const systemConfig = new NodeFsStorage<any>({
 	// },
 })
 export const notes = new NodeFsStorage<any>({
-	label: 'notes',
+	label: labelPrefix + 'notes',
 	cacheRootDir: cacheRootDir + '/meow-sticky-note/u',
 })
 export const global = new NodeFsStorage<any>({
-	label: 'global',
+	label: labelPrefix + 'global',
 	cacheRootDir: cacheRootDir + '/meow-sticky-note/u',
 })
 export const initConfig = async () => {

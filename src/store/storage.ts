@@ -14,37 +14,23 @@ import { platform } from './config'
 let storageStr: StorageOptions['storage'] = 'IndexedDB'
 
 console.log(storageStr)
+if (platform === 'Electron') {
+	storageStr = 'ElectronNodeFsStorage'
+}
+let labelPrefix = process.env.NODE_ENV === 'development' ? 'dev_' : ''
 export let storage = {
 	notes: new WebStorage<string, NoteItem>({
 		storage: storageStr,
-		baseLabel: 'notes',
+		baseLabel: labelPrefix + 'notes',
 	}),
 	global: new WebStorage<string, any>({
 		storage: storageStr,
-		baseLabel: 'global',
+		baseLabel: labelPrefix + 'global',
 	}),
 	systemConfig: new WebStorage<string, any>({
 		storage: storageStr,
-		baseLabel: 'systemConfig',
+		baseLabel: labelPrefix + 'systemConfig',
 	}),
-}
-if (platform === 'Electron') {
-	storageStr = 'ElectronNodeFsStorage'
-
-	storage = {
-		notes: new WebStorage<string, NoteItem>({
-			storage: storageStr,
-			baseLabel: 'notes',
-		}),
-		global: new WebStorage<string, any>({
-			storage: storageStr,
-			baseLabel: 'global',
-		}),
-		systemConfig: new WebStorage<string, any>({
-			storage: storageStr,
-			baseLabel: 'systemConfig',
-		}),
-	}
 }
 
 export const storageMethods = {
