@@ -98,7 +98,7 @@ logs() {
 }
 
 el:build() {
-  cp -r $DIR/public/logo-neko-circle-white1500.png $DIR/src/electron/logo.png
+  sudo cp -r $DIR/public/logo-neko-circle-white1500.png $DIR/src/electron/logo.png
   cd ./src/electron
   yarn el:icon
   # electron-icon-builder --input=./logo.png --output=./ --flatten
