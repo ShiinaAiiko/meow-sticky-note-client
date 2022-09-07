@@ -5,7 +5,7 @@ import {
 	Tray,
 	app,
 	Menu,
-  MenuItem,
+	MenuItem,
 } from 'electron'
 import path from 'path'
 
@@ -32,7 +32,6 @@ export interface BrowserWindowOPtions extends BrowserWindowConstructorOptions {
 }
 
 export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
-  
 	const window = new BrowserWindow({
 		...options,
 		webPreferences: {
@@ -68,7 +67,8 @@ export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
 	window.loadURL(
 		dev
 			? 'http://localhost:16111' + route + queryStr
-			: `file://${path.join(__dirname, '../build/index.html')}` + queryStr,
+			: `file://${path.join(__dirname, '../build/index.html')}#${route}` +
+					queryStr,
 		{ extraHeaders: 'pragma: no-cache' }
 	)
 	window.webContents.openDevTools()

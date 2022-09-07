@@ -33,9 +33,10 @@ interface Config {
 // import configJson from './config.test.json'
 try {
 	let configJson: Config = require('./config.temp.json')
+	let pkg = require('../package.json')
 	console.log('configJson', configJson)
 	if (configJson) {
-		version = configJson.version
+		version = pkg.version
 		sakisso = configJson.sakisso
 		serverApi = configJson.serverApi
 		nsocketio = configJson.nsocketio

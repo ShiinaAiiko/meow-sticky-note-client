@@ -14,7 +14,6 @@ import { mode, setMode } from '../appearance'
 import { logo, systemConfig } from '../config'
 import { saveAs, openFolder, backup } from '../modules/methods'
 import * as nyanyalog from 'nyanyajs-log'
-  
 
 export const R = (
 	func: (options: {
@@ -55,6 +54,7 @@ export const initRouter = () => {
 	ipcMain.on(
 		'openDevTools',
 		R(({ window }) => {
+			console.log('opendevtools', window)
 			window.webContents.openDevTools()
 		})
 	)
@@ -106,8 +106,9 @@ export const initRouter = () => {
 	ipcMain.on(
 		'updateData',
 		R(({ window, data }) => {
+			console.log('updateData', data)
 			windows.forEach((v) => {
-				// nyanyalog.info(v.id, window.id)
+				nyanyalog.info(v.id, window.id)
 				if (v.id !== window.id) {
 					v.webContents.send('updateData')
 				}
@@ -164,8 +165,7 @@ export const initRouter = () => {
 
 	ipcMain.on(
 		'backup',
-    R(({ window, data }) => {
-      
+		R(({ window, data }) => {
 			backup(data.data.backupNow)
 		})
 	)

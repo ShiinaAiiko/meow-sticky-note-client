@@ -3,11 +3,13 @@ import qs from 'qs'
 import { APIParams } from '../../electron/typings/api'
 
 const query = qs.parse(
-	window.location.search.substring(1, window.location.search.length)
+	window.location.search.substring(1, window.location.search.length) ||
+		window.location.hash?.split('?')?.[1]
 )
 const { ipcRenderer } = window?.require?.('electron') || {}
 export const PARAMS = (eventName: string, data?: any): APIParams => {
 	const route: any = query.route?.toString() || ''
+	console.log('electronapi', route, query)
 	return {
 		eventName,
 		route: route,

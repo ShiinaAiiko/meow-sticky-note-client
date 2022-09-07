@@ -14,7 +14,7 @@ import { Header } from '../components'
 import { api } from '../modules/electron/api'
 import { NoteItem } from '../store/notes/typings'
 
-let note: NoteItem
+// let note: NoteItem
 
 const QuickReviewPage = (props: RouterProps) => {
 	const { t, i18n } = useTranslation()
@@ -25,6 +25,12 @@ const QuickReviewPage = (props: RouterProps) => {
 		(state: RootState) => state.config.general.autoCloseWindowAfterCopy
 	)
 	const ref = useRef<any>(null)
+
+	const [note, setNote] = useState(
+		notes?.list.filter((v) => {
+			return v.id === notes.quickReviewSelect?.noteId
+		})?.[0]
+	)
 
 	useEffect(() => {
 		bindEvent(
@@ -51,14 +57,6 @@ const QuickReviewPage = (props: RouterProps) => {
 			}
 		)(ref.current)
 	}, [ref])
-
-	const filterNote = () => {
-		note =
-			notes?.list.filter((v) => {
-				return v.id === notes.quickReviewelect?.noteId
-			})?.[0] || undefined
-		return note
-	}
 
 	const copy = (content: string) => {
 		content = content.replace(/<\/?.+?>/g, '')
@@ -94,6 +92,15 @@ const QuickReviewPage = (props: RouterProps) => {
 				break
 		}
 	}
+
+	useEffect(() => {
+		const note = notes?.list.filter((v) => {
+			return v.id === notes.quickReviewSelect?.noteId
+		})?.[0]
+
+		setNote(note)
+		console.log('note', note)
+	}, [notes.list, notes.quickReviewSelect?.noteId])
 
 	return (
 		<div className='quick-review-page'>
@@ -173,7 +180,7 @@ const QuickReviewPage = (props: RouterProps) => {
 					</saki-tabs>
 				</div>
 			</div>
-			{!filterNote()?.categories?.length ? (
+			{!note ? (
 				<div className='qc-blank-page'>
 					<div>
 						<saki-button

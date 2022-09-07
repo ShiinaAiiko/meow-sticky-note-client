@@ -49,7 +49,7 @@ const HeaderComponent = ({
 				v.id ===
 				(location.pathname === '/'
 					? notes.noteId
-					: notes.quickReviewelect.noteId)
+					: notes.quickReviewSelect.noteId)
 			)
 		})?.[0]
 	)
@@ -85,11 +85,11 @@ const HeaderComponent = ({
 					v.id ===
 					(location.pathname === '/'
 						? notes.noteId
-						: notes.quickReviewelect.noteId)
+						: notes.quickReviewSelect.noteId)
 				)
 			})?.[0]
 		)
-	}, [notes.list, notes.noteId])
+	}, [notes.list, notes.noteId, notes.quickReviewSelect?.noteId])
 	return (
 		<div className='header-component'>
 			<div className='qv-h-left'>
@@ -217,6 +217,7 @@ const HeaderComponent = ({
 										// })
 										setOpenDropDownMenu(false)
 										if (!v?.id) return
+
 										switch (location.pathname) {
 											case '/':
 												dispatch(

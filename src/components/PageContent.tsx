@@ -52,7 +52,11 @@ const PageContentComponent = ({
 	const [categoryContextMenuEl, setCategoryContextMenuEl] = useState<any>()
 	const [richtextEl, setRichtextEl] = useState<any>()
 
+	const [pageTitle, setPageTitle] = useState('')
+
 	useEffect(() => {
+		console.log('changepage', page)
+		setPageTitle(page?.title || '')
 		richtextEl?.getFocus?.().then((isFocus: boolean) => {
 			console.log('isFocus', isFocus)
 			if (!isFocus) {
@@ -252,6 +256,21 @@ const PageContentComponent = ({
 		}
 		imgInput.click()
 	}
+
+	const changeTitle = async (title: string) => {
+		setPageTitle(title)
+		page?.id &&
+			(await dispatch(
+				methods.notes.UpdatePage({
+					noteId: noteId,
+					categoryId: categoryId,
+					pageId: page?.id || '',
+					data: {
+						title: title,
+					},
+				})
+			).unwrap())
+	}
 	return (
 		<div className='page-content-component'>
 			{page?.id ? (
@@ -272,26 +291,16 @@ const PageContentComponent = ({
 										})
 									).unwrap()
 								},
-								changevalue: async (e) => {
-									// console.log('changevalue', e, disableChangeValue)
+								changevalue: (e) => {
 									if (!config.pageConfig.disableChangeValue) {
-										await dispatch(
-											methods.notes.UpdatePage({
-												noteId: noteId,
-												categoryId: categoryId,
-												pageId: page.id,
-												data: {
-													title: e.detail,
-												},
-											})
-										).unwrap()
+										changeTitle(e.detail)
 									}
 								},
 							})}
 							height='56px'
 							padding='0 0px'
 							font-size='24px'
-							value={page?.title}
+							value={pageTitle}
 							placeholder={t('untitledPage', {
 								ns: 'indexPage',
 							})}
@@ -363,6 +372,13 @@ const PageContentComponent = ({
 									},
 									changevalue: async (e) => {
 										// console.log('eeee', e)
+										console.log(
+											'changevalue',
+											notes.list[notes.list.length - 1],
+											e.detail,
+											page,
+											page.id
+										)
 										if (!config.pageConfig.disableChangeValue) {
 											await dispatch(
 												methods.notes.UpdatePage({

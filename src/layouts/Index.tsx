@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { RouterProps, useLocation, useNavigate } from 'react-router-dom'
+import {
+	RouterProps,
+	useLocation,
+	useNavigate,
+	useParams,
+	useSearchParams,
+} from 'react-router-dom'
 import './Index.scss'
 import { Header, Drag, Settings, Login } from '../components'
 import { bindEvent } from '../modules/bindEvent'
@@ -45,6 +51,8 @@ const IndexLayout = ({ children }: RouterProps) => {
 
 	const history = useNavigate()
 	const location = useLocation()
+	const [params] = useSearchParams()
+
 	useEffect(() => {
 		debounce.increase(() => {
 			dispatch(methods.sso.Init()).unwrap()
@@ -65,24 +73,47 @@ const IndexLayout = ({ children }: RouterProps) => {
 
 	useEffect(() => {
 		// console.log('监听同步开启了', config.deviceType)
+		let routePath = location.pathname
+
+		// if (window.location.origin === 'file://') {
+		// 	routePath = location.hash
+		// }
+		console.log(
+			'---location.pathname',
+			location,
+			window.location
+			// location.hash,
+			// routePath,
+			// params.get('route'),
+			// location.pathname,
+
+			// routePath === '/' ||
+			// 	routePath === '/m' ||
+			// 	routePath === '/m/n' ||
+			// 	routePath === '/m/c' ||
+			// 	routePath === '/m/p'
+		)
+
+		// route
+
 		if (
-			location.pathname === '/' ||
-			location.pathname === '/m' ||
-			location.pathname === '/m/n' ||
-			location.pathname === '/m/c' ||
-			location.pathname === '/m/p'
+			routePath === '/' ||
+			routePath === '/m' ||
+			routePath === '/m/n' ||
+			routePath === '/m/c' ||
+			routePath === '/m/p'
 		) {
 			switch (config.deviceType) {
 				case 'Mobile':
 					// console.log('切换至手机版？')
-					history?.('/m', {
+					history?.('/m' + location.search, {
 						replace: true,
 					})
 
 					break
 
 				default:
-					history?.('/', {
+					history?.('/' + location.search, {
 						replace: true,
 					})
 					break

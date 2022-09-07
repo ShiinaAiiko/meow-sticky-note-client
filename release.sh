@@ -1,12 +1,14 @@
 #! /bin/bash
-name="meow-sticky-note-client"
+appName="meow-sticky-note"
+name="${appName}-client"
 port=16111
+version=1.0.1
 branch="main"
 # configFilePath="config.dev.json"
 configFilePath="config.pro.json"
 registryUrl="https://registry.npmmirror.com/"
 DIR=$(cd $(dirname $0) && pwd)
-allowMethods=("elgenerateicon elbuild run protos stop npmconfig install gitpull dockerremove start logs")
+allowMethods=("elgenerateicon el:build run protos stop npmconfig install gitpull dockerremove start logs")
 
 # npm i --registry https://registry.npmmirror.com/
 # npm i @nyanyajs/utils @saki-ui/core
@@ -95,7 +97,7 @@ logs() {
   docker logs -f $name
 }
 
-elbuild() {
+el:build() {
   cp -r $DIR/public/logo-neko-circle-white1500.png $DIR/src/electron/logo.png
   cd ./src/electron
   yarn el:icon
@@ -122,19 +124,20 @@ elbuild() {
 
   cd ../../
 
-  # sudo apt install -y ./meow-sticky-note_1.0.1_amd64.deb
-  # AppImage deb
-  run
+  el:install
+  el:run
 }
 
-elgenerateicon() {
-  electron-icon-builder --input=./public/logo-neko-circle-white1500.png --output=public/icons --flatten
+el:install() {
+  sudo apt remove -y ${appName}
+  sudo apt install -f -y ./src/electron/el-build/*.deb
 }
 
-run() {
+el:run() {
   # chmod a+x ./*.AppImage
   chmod a+x ./src/electron/el-build/*.AppImage
-  ./src/electron/el-build/*.AppImage
+  # ./src/electron/el-build/*.AppImage
+  ${appName}
 }
 
 main() {

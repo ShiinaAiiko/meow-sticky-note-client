@@ -594,7 +594,7 @@ export const saveNote = (payload: {
 		storage.notes.set(payload.id, note).then(async () => {
 			// console.log('payload.id')
 			// console.log(payload.id)
-			// console.log('config.platform', config.platform)
+			console.log('config.platform', config.platform)
 			switch (config.platform) {
 				case 'Electron':
 					electronApi.api.updateData()
@@ -700,7 +700,7 @@ export const notesSlice = createSlice({
 		isInit: false,
 		updateTime: 0,
 		mustUpdate: false,
-		quickReviewelect: {
+		quickReviewSelect: {
 			noteId: '',
 		},
 	},
@@ -738,7 +738,7 @@ export const notesSlice = createSlice({
 					noteId: state.list?.[0]?.id || '',
 				}
 			}
-			state.quickReviewelect.noteId = params.payload.noteId
+			state.quickReviewSelect.noteId = params.payload.noteId
 			storage.global.setSync('quickReviewSelectData', {
 				noteId: params.payload.noteId,
 			})
@@ -1307,6 +1307,7 @@ export const notesSlice = createSlice({
 					v.categories.some((sv) => {
 						if (sv.id === categoryId) {
 							sv.data.some((ssv) => {
+								console.log('page', deepCopy(ssv), pageId)
 								if (ssv.id === pageId) {
 									ssv.lastUpdateTime = Math.floor(new Date().getTime() / 1000)
 									// ssv = Object.assign(ssv, params.payload)

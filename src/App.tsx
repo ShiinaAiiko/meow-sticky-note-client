@@ -85,7 +85,7 @@ function App() {
 						<title></title>
 					</Helmet>
 					<RenderRoutes
-						routerType={isElectron ? 'Hash' : 'History'}
+						routerType={isElectron && !isDev ? 'Hash' : 'History'}
 						routes={routes}
 					/>
 				</div>
