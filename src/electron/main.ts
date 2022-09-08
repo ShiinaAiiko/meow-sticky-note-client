@@ -24,74 +24,83 @@ import { backup } from './modules/methods'
 import { openMainWindows } from './windows'
 import * as nyanyalog from 'nyanyajs-log'
 
-nyanyalog.info('启动')
-// protocol.registerSchemesAsPrivileged([
-//   { scheme: 'app', privileges: { secure: true, standard: true } }
-// ])
-const ready = async () => {
-	app.commandLine.appendSwitch('disable-http-cache')
-	await initConfig()
-	await initAppearance()
+const run = () => {
+	let isQuit = false
 
-	initRouter()
-	initShortcut()
-	await createTaskMenu()
-	openMainWindows()
-	await backup()
-	setInterval(async () => {
-		await backup()
-	}, 3600 * 1000)
-}
+	const argvFunc = (argv: string[]) => {
+		nyanyalog.info(argv)
+		isQuit = false
+		argv.forEach((val, index) => {
+			if (val === 'quit') {
+				app.quit()
+				isQuit = true
+			}
+		})
+		nyanyalog.info('isQuit => ', isQuit)
+	}
 
-const isFirstInstance = app.requestSingleInstanceLock()
+	argvFunc(process.argv)
 
-console.log('isFirstInstance', isFirstInstance)
-if (!isFirstInstance) {
-	console.log('is second instance')
-	// setTimeout(() => {
-	app.quit()
-	// }, 30000)
-} else {
-	app.on('second-instance', (event, commanLine, workingDirectory) => {
-		console.log('new app started', commanLine)
+	nyanyalog.info('启动')
+
+	// protocol.registerSchemesAsPrivileged([
+	//   { scheme: 'app', privileges: { secure: true, standard: true } }
+	// ])
+	const ready = async () => {
+		if (isQuit) {
+			return
+		}
+		app.commandLine.appendSwitch('disable-http-cache')
+		await initConfig()
+		await initAppearance()
+
+		initRouter()
+		initShortcut()
+		await createTaskMenu()
 		openMainWindows()
+		await backup()
+		setInterval(async () => {
+			await backup()
+		}, 3600 * 1000)
+	}
+
+	const isFirstInstance = app.requestSingleInstanceLock()
+
+	nyanyalog.info('isFirstInstance', isFirstInstance)
+	if (!isFirstInstance) {
+		nyanyalog.info('is second instance')
+		app.quit()
+	} else {
+		app.on('second-instance', (event, commanLine, workingDirectory) => {
+			nyanyalog.info('new app started', commanLine)
+
+			argvFunc(commanLine)
+
+			!isQuit && openMainWindows()
+		})
+
+		app.on('ready', ready)
+	}
+
+	ipcMain.on('quit', () => {
+		nyanyalog.info('quit')
+		app.quit()
 	})
 
-	app.on('ready', ready)
+	app.focus()
+
+	app.on('window-all-closed', () => {
+		nyanyalog.info('window-all-closed', process.platform)
+		// if (process.platform !== 'darwin') {
+		// 	// app.quit()
+		// }
+	})
+	app.on('activate', () => {
+		nyanyalog.info('activate')
+		// if (mainWindow === null) {
+		// 	createWindow()
+		// }
+	})
 }
 
-ipcMain.on('quit', () => {
-	nyanyalog.info('quit')
-	app.quit()
-})
-app.focus()
-app.on('window-all-closed', () => {
-	nyanyalog.info('window-all-closed', process.platform)
-	if (process.platform !== 'darwin') {
-		// app.quit()
-	}
-})
-app.on('activate', () => {
-	nyanyalog.info('activate')
-	// if (mainWindow === null) {
-	// 	createWindow()
-	// }
-})
-// const menu = new Menu()
-// menu.append(
-// 	new MenuItem({
-// 		label: 'Electron',
-// 		submenu: [
-// 			{
-// 				role: 'help',
-// 				accelerator:
-// 					process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Alt+Shift+I',
-// 				click: () => {
-// 					nyanyalog.info('Electron rocks!')
-// 				},
-// 			},
-// 		],
-// 	})
-// )
-
-// Menu.setApplicationMenu(null)
+run()

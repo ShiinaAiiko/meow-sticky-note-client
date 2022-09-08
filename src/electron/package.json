@@ -22,6 +22,7 @@
 		"files": [
 			"dist/**/*",
 			"build/**/*",
+			".desktop",
 			"package.json"
 		],
 		"extraResources": {
@@ -38,7 +39,14 @@
 			"target": [
 				"AppImage",
 				"deb"
-			]
+			],
+			"desktop": {
+				"Terminal": "false",
+				"X-MultipleArgs": "false",
+				"StartupNotify": "true",
+				"StartupWMClass": "meow-sticky-note",
+				"category": "Office;Network;\n\nActions=Quit\n\n[Desktop Action Quit]\nName=Quit Meow Sticky Note\nExec=meow-sticky-note quit"
+			}
 		},
 		"extends": null
 	},

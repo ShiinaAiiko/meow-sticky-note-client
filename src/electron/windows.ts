@@ -38,7 +38,8 @@ export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
 			...options.webPreferences,
 			devTools: true,
 		},
-		icon: logoCircleIcon1024,
+    icon: logoCircleIcon1024,
+    
 	})
 
 	if (process.platform === 'darwin') {

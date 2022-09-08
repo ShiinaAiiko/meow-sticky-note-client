@@ -8,7 +8,7 @@ branch="main"
 configFilePath="config.pro.json"
 registryUrl="https://registry.npmmirror.com/"
 DIR=$(cd $(dirname $0) && pwd)
-allowMethods=("elgenerateicon el:build run protos stop npmconfig install gitpull dockerremove start logs")
+allowMethods=("el:install el:run el:build run protos stop npmconfig install gitpull dockerremove start logs")
 
 # npm i --registry https://registry.npmmirror.com/
 # npm i @nyanyajs/utils @saki-ui/core
@@ -108,7 +108,7 @@ el:build() {
   rm -rf $DIR/src/electron/icons
 
   cp -r $DIR/$configFilePath $DIR/src/config.temp.json
-  yarn build
+  # yarn build
   cp -r ./build ./src/electron/build
 
   cd ./src/electron
@@ -129,6 +129,7 @@ el:build() {
 }
 
 el:install() {
+  # ./release.sh el:install && ./release.sh el:run
   sudo apt remove -y ${appName}
   sudo apt install -f -y ./src/electron/el-build/*.deb
 }
