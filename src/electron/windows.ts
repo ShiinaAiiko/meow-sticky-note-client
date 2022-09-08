@@ -5,6 +5,7 @@ import {
 	Tray,
 	app,
 	Menu,
+	screen,
 	MenuItem,
 } from 'electron'
 import path from 'path'
@@ -23,6 +24,7 @@ import {
 	logoWhiteBg2,
 	taskIcon,
 	logo,
+	systemConfig,
 } from './config'
 
 export const windows = new Map<Route, BrowserWindow>()
@@ -31,23 +33,32 @@ export interface BrowserWindowOPtions extends BrowserWindowConstructorOptions {
 	visible: boolean
 }
 
-export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
+export const createWindow = async (
+	route: Route,
+	options: BrowserWindowOPtions
+) => {
+	let x = await systemConfig.get(route + 'x')
+	let y = await systemConfig.get(route + 'y')
+	console.log('systemConfig', await systemConfig.get(route + 'x'))
+	console.log('systemConfig', await systemConfig.get(route + 'y'))
+
 	const window = new BrowserWindow({
 		...options,
 		webPreferences: {
 			...options.webPreferences,
 			devTools: true,
 		},
-    icon: logoCircleIcon1024,
-    
+		icon: logoCircleIcon1024,
 	})
 
 	if (process.platform === 'darwin') {
 		app.dock.setIcon(logoCircleIcon1024)
 	}
 
-	if (options.center) {
+	if (!x) {
 		window.center()
+	} else {
+		window.setPosition(x, y)
 	}
 	if (options.visible) {
 		window.show()
@@ -87,6 +98,11 @@ export const createWindow = (route: Route, options: BrowserWindowOPtions) => {
 		console.log('closed')
 		windows.delete(route)
 	})
+	window.on('move', async (e: any) => {
+		const [x, y] = window.getPosition()
+		await systemConfig.set(route + 'x', x)
+		await systemConfig.set(route + 'y', y)
+	})
 	window.setMenu(null)
 	windows.set(route, window)
 	return window
@@ -108,7 +124,7 @@ menu.append(
 	})
 )
 
-export const openMainWindows = () => {
+export const openMainWindows = async () => {
 	let window = windows.get('/')
 	if (window) {
 		window.show()
@@ -116,17 +132,17 @@ export const openMainWindows = () => {
 		window.webContents.send('show')
 		return window
 	}
-	return createWindow('/', {
+	return await createWindow('/', {
 		title: 'Meow Sticky Note',
 		width: 1200,
 		height: 780,
-		x: 0,
-		y: 0,
+		// x: 0,
+		// y: 0,
 		skipTaskbar: false,
 		hasShadow: true,
 		alwaysOnTop: false,
 		fullscreen: false,
-		center: true,
+		// center: true,
 		// 可以隐藏窗口
 		frame: true,
 		// backgroundColor: 'rgba(0,0,0,0.3)',
@@ -140,7 +156,7 @@ export const openMainWindows = () => {
 	})
 }
 
-export const openQuickReviewWindows = () => {
+export const openQuickReviewWindows = async () => {
 	let window = windows.get('/quickreview')
 	if (window) {
 		window.show()
@@ -148,18 +164,18 @@ export const openQuickReviewWindows = () => {
 		window.webContents.send('show')
 		return window
 	}
-	return createWindow('/quickreview', {
+	return await createWindow('/quickreview', {
 		title: 'Quick Review',
 		width: 800,
 		height: 600,
-		x: 0,
-		y: 500,
+		// x: 0,
+		// y: 500,
 		skipTaskbar: false,
 		hasShadow: true,
 		alwaysOnTop: false,
 		// transparent: true,
 		// fullscreen: false,
-		center: true,
+		// center: true,
 		// 可以隐藏窗口
 		frame: true,
 		// backgroundColor: 'rgba(0,0,0,0.3)',

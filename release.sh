@@ -103,12 +103,19 @@ el:build() {
   yarn el:icon
   # electron-icon-builder --input=./logo.png --output=./ --flatten
   cd ../../
+
+
   cp -r $DIR/src/electron/icons $DIR/public/icons
   rm -rf $DIR/src/electron/logo.png
   rm -rf $DIR/src/electron/icons
 
   cp -r $DIR/$configFilePath $DIR/src/config.temp.json
-  # yarn build
+  yarn build
+
+  wget https://saki-ui.aiiko.club/saki-ui.tgz
+  tar zxvf ./saki-ui.tgz -C ./build
+  rm -rf ./saki-ui*
+
   cp -r ./build ./src/electron/build
 
   cd ./src/electron

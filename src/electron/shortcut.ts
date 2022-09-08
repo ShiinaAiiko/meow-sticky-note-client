@@ -24,7 +24,7 @@ import {
 
 export const initShortcut = () => {
 	console.log('initShortcut')
-	globalShortcut.register('Control+Alt+n', () => {
+	globalShortcut.register('Control+Alt+n', async () => {
 		let window = windows.get('/')
 
 		if (window) {
@@ -38,13 +38,13 @@ export const initShortcut = () => {
 				window.webContents.send('hide')
 			}
 		} else {
-			window = openMainWindows()
+			window = await openMainWindows()
 			window.webContents.send('show')
 			// window.setFullScreen(true)
 		}
 		// Do stuff when Y and either Command/Control is pressed.
 	})
-	globalShortcut.register('Control+Alt+r', () => {
+	globalShortcut.register('Control+Alt+r', async () => {
 		let window = windows.get('/quickreview')
 		console.log('快捷键', window)
 
@@ -56,15 +56,15 @@ export const initShortcut = () => {
 				// 未来去掉
 				// window.reload()
 			} else {
-        if (!window.isFocused()) {
-          window.focus()
-          return
-        }
+				if (!window.isFocused()) {
+					window.focus()
+					return
+				}
 				window.hide()
 				window.webContents.send('hide')
 			}
 		} else {
-			window = openQuickReviewWindows()
+			window = await openQuickReviewWindows()
 			// window.setFullScreen(true)
 		}
 		// Do stuff when Y and either Command/Control is pressed.
