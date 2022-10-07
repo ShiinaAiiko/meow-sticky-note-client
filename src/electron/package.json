@@ -9,7 +9,8 @@
 	"scripts": {
 		"el:dev": "nodemon --exec electron ./dist/main.js",
 		"el:tsc": "rm -rf ./dist/ && tsc",
-		"el:build": "electron-builder --linux --x64",
+		"el:build-linux": "electron-builder --linux --x64",
+		"el:build-win": "electron-builder --win --x64",
 		"el:icon": "electron-icon-builder --input=./logo.png --output=./ --flatten"
 	},
 	"build": {
@@ -29,10 +30,20 @@
 			"from": "./out/",
 			"to": "out/"
 		},
+		"win": {
+			"icon": "build/icons/icon.ico",
+			"target": [
+				"nsis"
+			]
+		},
 		"nsis": {
-			"shortcutName": "ExcelUtil",
+			"installerIcon": "build/icons/icon.ico",
+			"uninstallerIcon": "build/icons/icon.ico",
+			"uninstallDisplayName": "Uninstall Meow Sticky Note",
 			"oneClick": false,
-			"allowToChangeInstallationDirectory": true
+			"allowToChangeInstallationDirectory": true,
+			"allowElevation": true,
+			"createDesktopShortcut": true
 		},
 		"linux": {
 			"icon": "build/icons",

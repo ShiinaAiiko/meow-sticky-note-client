@@ -5,7 +5,7 @@ import {
 	configureStore,
 } from '@reduxjs/toolkit'
 import md5 from 'blueimp-md5'
-import store, { ActionParams, RootState } from '.'
+import store, { ActionParams, RootState, configSlice } from '.'
 import { PARAMS, protoRoot } from '../protos'
 import { WebStorage } from '@nyanyajs/utils'
 import { createSocketioRouter } from '../modules/socketio/router'
@@ -23,7 +23,7 @@ const namespace = {
 	sync: '/sync',
 }
 const state: {
-	client?: NSocketIoClient
+	// client?: NSocketIoClient
 	namespace: typeof namespace
 	status: 'connecting' | 'success' | 'fail' | 'notConnected'
 } = {
@@ -58,7 +58,7 @@ export const nsocketioMethods = {
 	>(modeName + '/Init', async (_, thunkAPI) => {
 		console.log('初始化socket')
 		const { nsocketio, user, config } = thunkAPI.getState()
-		if (nsocketio.client) {
+		if (client) {
 			console.log('无需重复创建client')
 			return
 		}
@@ -75,7 +75,18 @@ export const nsocketioMethods = {
 				{ token, deviceId, userAgent },
 				protoRoot.base.RequestType
 			),
-			reconnectionDelay: 30000,
+			reconnectionDelay: 6000,
+		})
+
+		client.addEventListener('connected', () => {
+			setStatus('success')
+			// console.log('connect => connected', client)
+			// thunkAPI.dispatch(configSlice.actions.setNetworkStatus(true))
+		})
+		client.addEventListener('disconnect', () => {
+			setStatus('fail')
+			// console.log('connect => disconnect', client)
+			// thunkAPI.dispatch(configSlice.actions.setNetworkStatus(false))
 		})
 
 		client.socket(state.namespace.base)
@@ -170,5 +181,18 @@ export const nsocketioMethods = {
 			console.log('disconnect', attempt)
 			setStatus('fail')
 		})
+	}),
+	Close: createAsyncThunk<
+		void,
+		void,
+		{
+			state: RootState
+		}
+	>(modeName + '/Close', async (_, thunkAPI) => {
+		console.log('Close socket')
+		if (client) {
+			client?.close?.()
+			client = undefined
+		}
 	}),
 }

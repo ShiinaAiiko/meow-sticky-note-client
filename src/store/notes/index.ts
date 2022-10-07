@@ -13,7 +13,7 @@ import store, {
 	userSlice,
 } from '../index'
 import { NoteItem, PageItem, CategoryItem } from './typings'
-import { Debounce, deepCopy } from '@nyanyajs/utils'
+import { Debounce, deepCopy, QueueLoop } from '@nyanyajs/utils'
 import { prompt, snackbar, alert } from '@saki-ui/core'
 import { v5 as uuidv5, v4 as uuidv4 } from 'uuid'
 import { storage } from '../storage'
@@ -59,19 +59,19 @@ export const notesMethods = {
 			state: RootState
 		}
 	>('notes/Init', async (_, thunkAPI) => {
-		syncRemoteDataDebounce.increase(async () => {
-			const { user } = store.getState()
-			await store.dispatch(notesMethods.GetLocalData())
-			await store.dispatch(notesMethods.GetRemoteData())
-			store.dispatch(notesSlice.actions.setIsInit(true))
-
-			if (user.isLogin) {
-				console.log('登陆完成，获取远程数据')
-			}
-		}, 200)
+		setInterval(() => {
+			// thunkAPI.dispatch(notesMethods.GetRemoteData()).unwrap()
+		}, 60 * 1000)
+		// syncRemoteDataDebounce.increase(async () => {
+		// 	const { user, config } = store.getState()
+		// 	// await store.dispatch(notesMethods.GetLocalData())
+		// 	// config.networkStatus &&
+		// 	// 	(await store.dispatch(notesMethods.GetRemoteData()))
+		// 	// store.dispatch(notesSlice.actions.setIsInit(true))
+		// }, 200)
 	}),
 	GetLocalData: createAsyncThunk('notes/GetLocalData', async (_, thunkAPI) => {
-		// console.log('------GetRemoteData------')
+		console.log('------GetLocalData------')
 		const { config, notes, user } = store.getState()
 
 		const res = await storage.notes.getAll()
@@ -102,14 +102,19 @@ export const notesMethods = {
 				v: true,
 			})
 		)
+		store.dispatch(notesSlice.actions.setIsInit(true))
 	}),
 	GetRemoteData: createAsyncThunk(
 		'notes/GetRemoteData',
 		async (_, thunkAPI) => {
-			// console.log('------GetRemoteData------')
+			console.log('------GetRemoteData------')
 			const { config, notes, user } = store.getState()
 			if (config.sync) {
 				console.log('开始了同步功能')
+				if (!config.networkStatus) {
+					console.log('没网')
+					return
+				}
 				if (!user.isLogin) {
 					console.log('未登录')
 					return
@@ -142,11 +147,12 @@ export const notesMethods = {
 									return true
 								}
 							})
-							// console.log(
-							// 	'localLastUpdateTime',
-							// 	note?.lastUpdateTime,
-							// 	v.lastUpdateTime
-							// )
+							console.log(
+								'localLastUpdateTime',
+								note?.lastUpdateTime,
+								v.lastUpdateTime,
+								note?.authorId
+							)
 
 							// // 本地存在\更新
 							if (isExist && note?.lastUpdateTime) {
@@ -210,21 +216,37 @@ export const notesMethods = {
 						})
 						// 本地存在\远端不存在
 						if (!isExist && v.isSync) {
-							console.log('本地存在远端不存在')
-							api.v1
-								.syncToServer({
-									type: 'Note',
-									methods: 'Add',
-									options: {
+							console.log('本地存在远端不存在', deepCopy(v))
+							// 如果已经上传过远端,则视为删除,没有则视为本地创建未上传
+							if (v.syncTime) {
+								thunkAPI.dispatch(
+									notesSlice.actions.deleteNote({
 										noteId: v.id,
-									},
-									data: {
-										note: v,
-									},
-								})
-								.then((res) => {
-									console.log(res)
-								})
+									})
+								)
+							} else {
+								store.dispatch(
+									notesSlice.actions.setNoteLastUpdateTime({
+										id: v.id,
+										lastUpdateTime: Math.floor(new Date().getTime() / 1000),
+										syncTime: Math.floor(new Date().getTime() / 1000),
+									})
+								)
+								api.v1
+									.syncToServer({
+										type: 'Note',
+										methods: 'Add',
+										options: {
+											noteId: v.id,
+										},
+										data: {
+											note: v,
+										},
+									})
+									.then((res) => {
+										// console.log(res)
+									})
+							}
 						}
 					})
 				} else {
@@ -280,8 +302,9 @@ export const notesMethods = {
 							name: name,
 							createTime: Math.floor(new Date().getTime() / 1000),
 							lastUpdateTime: Math.floor(new Date().getTime() / 1000),
+							syncTime: 0,
 							sort: (notes.list[notes.list?.length - 1]?.sort || 0) + 1,
-							isSync: false,
+							isSync: user.isLogin,
 							categories: [],
 							authorId: user.userInfo.uid,
 							version: config.version,
@@ -337,7 +360,6 @@ export const notesMethods = {
 								createTime: Math.floor(new Date().getTime() / 1000),
 								lastUpdateTime: Math.floor(new Date().getTime() / 1000),
 								sort: 0,
-
 								data: [],
 							},
 						})
@@ -565,6 +587,72 @@ export const notesMethods = {
 			}
 		}
 	),
+	EnableSyncNote: createAsyncThunk<
+		void,
+		{
+			noteId: string
+			isSync: boolean
+		},
+		{
+			state: RootState
+		}
+	>('notes/EnableSyncNote', async ({ noteId, isSync }, thunkAPI) => {
+		thunkAPI.dispatch(
+			notesSlice.actions.enableSyncNote({
+				noteId,
+				isSync,
+			})
+		)
+		if (isSync) {
+			let note = thunkAPI
+				.getState()
+				.notes.list.filter((v) => v.id === noteId)?.[0]
+			const res = await api.v1.getNote({
+				id: noteId,
+			})
+			console.log(res)
+			if (res.code === 200) {
+				console.log('GetRemoteData', res.data.note)
+				saveNote({
+					id: note.id,
+					v: note,
+					requestParams: {
+						type: 'Note',
+						methods: 'Update',
+						options: {
+							noteId: note.id,
+						},
+						data: {
+							note: note,
+						},
+					},
+				})
+			} else if (res.code === 10021) {
+				// 创建
+				thunkAPI.dispatch(
+					notesSlice.actions.setNoteLastUpdateTime({
+						id: noteId,
+						lastUpdateTime: Math.floor(new Date().getTime() / 1000),
+						syncTime: Math.floor(new Date().getTime() / 1000),
+					})
+				)
+				api.v1
+					.syncToServer({
+						type: 'Note',
+						methods: 'Add',
+						options: {
+							noteId: noteId,
+						},
+						data: {
+							note: note,
+						},
+					})
+					.then((res) => {})
+			} else {
+				console.log(res)
+			}
+		}
+	}),
 }
 export const saveNote = (payload: {
 	id: string
@@ -575,7 +663,7 @@ export const saveNote = (payload: {
 	if (!payload?.id) return
 	payload = deepCopy(payload)
 	let note = payload.v
-	// console.log(note)
+	console.log(deepCopy(note))
 	// const note = JSON.parse(JSON.stringify(payload.v))
 
 	// saveNoteDebounce.increase(() => {
@@ -608,6 +696,7 @@ export const saveNote = (payload: {
 				notesSlice.actions.setNoteLastUpdateTime({
 					id: payload.id,
 					lastUpdateTime: Math.floor(new Date().getTime() / 1000),
+					syncTime: Math.floor(new Date().getTime() / 1000),
 				})
 			)
 			if (config.sync) {
@@ -640,14 +729,18 @@ export const saveNote = (payload: {
 							}
 							if (res.code === 200) {
 								// const lastUpdateTime = new Date().getTime()
-								res.data?.lastUpdateTime &&
+
+								if (res.data?.lastUpdateTime) {
+									let t = Number(res.data.lastUpdateTime) || note.lastUpdateTime
 									store.dispatch(
 										notesSlice.actions.setNoteLastUpdateTime({
 											id: payload.id,
-											lastUpdateTime:
-												Number(res.data.lastUpdateTime) || note.lastUpdateTime,
+											lastUpdateTime: t,
+											syncTime: t,
 										})
 									)
+								}
+
 								// note.lastUpdateTime = lastUpdateTime
 								// console.log(res.data.urls)
 								// console.log(
@@ -783,7 +876,8 @@ export const notesSlice = createSlice({
 			state,
 			params: ActionParams<{
 				id: string
-				lastUpdateTime: number
+				lastUpdateTime?: number
+				syncTime?: number
 			}>
 		) => {
 			// console.log('setNoteLastUpdateTime1')
@@ -791,7 +885,9 @@ export const notesSlice = createSlice({
 			state.list.some((v) => {
 				if (v.id === params.payload.id) {
 					// console.log('setNoteLastUpdateTime2')
-					v.lastUpdateTime = params.payload.lastUpdateTime
+					params.payload.lastUpdateTime &&
+						(v.lastUpdateTime = params.payload.lastUpdateTime)
+					params.payload.syncTime && (v.syncTime = params.payload.syncTime)
 
 					storage.notes.set(v.id, deepCopy(v))
 					return true
@@ -902,16 +998,20 @@ export const notesSlice = createSlice({
 			state.list.some((v) => {
 				if (v.id === noteId) {
 					v.isSync = isSync
-					saveNote({
-						id: v.id,
-						v,
-						requestParams: undefined,
-					})
+					console.log('enableSyncNote', deepCopy(v))
+					// 1. 检测远端是否存在,不存在则添加,存在则不添加
 
-					isSync &&
-						setTimeout(async () => {
-							await store.dispatch(notesMethods.GetRemoteData())
-						})
+					// saveNote({
+					// 	id: v.id,
+					// 	v,
+					// 	requestParams: undefined,
+					// })
+
+					// 等上面这个完成后再刷新
+					// isSync &&
+					// 	setTimeout(async () => {
+					// 		await store.dispatch(notesMethods.GetRemoteData())
+					// 	})
 
 					return true
 				}

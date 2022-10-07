@@ -24,6 +24,7 @@ import store, {
 	notesSlice,
 	storageSlice,
 	configSlice,
+	userSlice,
 } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import { createRouter } from '../modules/electron/router'
@@ -31,13 +32,14 @@ import { client } from '../store/nsocketio'
 import { NoteItem } from '../store/notes/typings'
 import { alert } from '@saki-ui/core'
 
-const debounce = new Debounce()
 const IndexLayout = ({ children }: RouterProps) => {
+	const [debounce] = useState(new Debounce())
 	const { t, i18n } = useTranslation()
 	const dispatch = useDispatch<AppDispatch>()
 	const [openSettingModal, setOpenSettingModal] = useState(false)
 	// const [openSettingType, setOpenSettingType] = useState('')
 
+	const nsocketio = useSelector((state: RootState) => state.nsocketio)
 	const appearance = useSelector((state: RootState) => state.appearance)
 	const config = useSelector((state: RootState) => state.config)
 	const notes = useSelector((state: RootState) => state.notes)
@@ -57,9 +59,12 @@ const IndexLayout = ({ children }: RouterProps) => {
 		debounce.increase(() => {
 			dispatch(methods.sso.Init()).unwrap()
 			dispatch(methods.config.Init()).unwrap()
-
 			dispatch(methods.user.Init()).unwrap()
+
 			dispatch(methods.appearance.Init()).unwrap()
+			dispatch(methods.notes.Init())
+			dispatch(methods.notes.GetLocalData())
+
 			createRouter()
 
 			// console.log('config.deviceType getDeviceType', config)
@@ -70,6 +75,15 @@ const IndexLayout = ({ children }: RouterProps) => {
 		// }, 1000)
 		// store.dispatch(storageSlice.actions.init())
 	}, [])
+
+	// useEffect(() => {
+	// 	// if (!config.networkStatus) {
+	// 	// 	dispatch(userSlice.actions.setInit(false))
+	// 	// }
+	// 	if (config.networkStatus && notes.isInit) {
+	// 		dispatch(methods.user.Init()).unwrap()
+	// 	}
+	// }, [config.networkStatus])
 
 	useEffect(() => {
 		// console.log('监听同步开启了', config.deviceType)
@@ -97,18 +111,21 @@ const IndexLayout = ({ children }: RouterProps) => {
 		// route
 
 		if (
-			routePath === '/' ||
-			routePath === '/m' ||
-			routePath === '/m/n' ||
-			routePath === '/m/c' ||
-			routePath === '/m/p'
+			config.deviceType &&
+			(routePath === '/' ||
+				routePath === '/m' ||
+				routePath === '/m/n' ||
+				routePath === '/m/c' ||
+				routePath === '/m/p')
 		) {
 			switch (config.deviceType) {
 				case 'Mobile':
 					// console.log('切换至手机版？')
-					history?.('/m' + location.search, {
-						replace: true,
-					})
+					if (routePath === '/') {
+						history?.('/m' + location.search, {
+							replace: true,
+						})
+					}
 
 					break
 
@@ -123,9 +140,9 @@ const IndexLayout = ({ children }: RouterProps) => {
 
 	useEffect(() => {
 		// console.log('监听同步开启了', notes.isInit, config.sync)
-		if (config.sync && notes.isInit) {
-			// console.log('监听同步开启了')
-			dispatch(methods.notes.Init()).unwrap()
+		if (config.sync && user.isLogin && notes.isInit) {
+			console.log('监听同步开启了')
+			dispatch(methods.notes.GetRemoteData()).unwrap()
 		}
 	}, [config.sync])
 
@@ -133,16 +150,19 @@ const IndexLayout = ({ children }: RouterProps) => {
 		if (user.isInit) {
 			progressBar < 1 &&
 				setProgressBar(progressBar + 0.2 >= 1 ? 1 : progressBar + 0.2)
-			dispatch(methods.notes.Init()).unwrap()
 		}
 		if (
+			user.isInit &&
 			user.isLogin &&
-			(location.pathname === '/' || location.pathname === '/m')
+			(location.pathname === '/' || location.pathname.indexOf('/m') === 0)
 		) {
+			console.log('监听同步开启了1')
+			dispatch(methods.notes.GetRemoteData()).unwrap()
 			dispatch(methods.nsocketio.Init()).unwrap()
 		} else {
-			client?.close?.()
+			dispatch(methods.nsocketio.Close()).unwrap()
 		}
+		// , config.networkStatus
 	}, [user.isInit, user.isLogin])
 
 	useEffect(() => {
@@ -207,7 +227,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 					})}
 				</div> */}
 				<div className='loading-logo'>
-					<img src='./logo192.png' alt='' />
+					<img src={config.origin + '/logo192.png'} alt='' />
 				</div>
 				{/* <div>progressBar, {progressBar}</div> */}
 				<div className='loading-progress-bar'>
@@ -270,6 +290,26 @@ const IndexLayout = ({ children }: RouterProps) => {
 					setOpenSettingModal(true)
 				}}
 			/>
+
+			{nsocketio.status !== 'success' &&
+			user.token &&
+			config.deviceType === 'Mobile' ? (
+				<div className='il-connection-error'>
+					<div className='circle-loading'></div>
+					<span
+						style={{
+							color: '#555',
+						}}
+					>
+						{t('connecting', {
+							ns: 'common',
+						})}
+					</span>
+				</div>
+			) : (
+				''
+			)}
+
 			<div className='il-main'>{children}</div>
 
 			<Settings

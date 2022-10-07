@@ -279,16 +279,30 @@ const NodeListComponent = ({
 									break
 								case 'sync':
 									alert({
-										title: 'Sync',
-										content: note.isSync ? '关闭同步' : '开启同步',
+										title: t('sync', {
+											ns: 'settings',
+										}),
+										content: note.isSync
+											? t('turnedOffTip', {
+													ns: 'common',
+											  })
+											: t('turnedOnTip', {
+													ns: 'common',
+											  }),
 										cancelText: t('cancel', {
 											ns: 'common',
 										}),
-										confirmText: note.isSync ? 'Turn off' : 'Turn on',
+										confirmText: note.isSync
+											? t('turnOff', {
+													ns: 'common',
+											  })
+											: t('turnOn', {
+													ns: 'common',
+											  }),
 										onCancel() {},
 										async onConfirm() {
 											store.dispatch(
-												notesSlice.actions.enableSyncNote({
+												methods.notes.EnableSyncNote({
 													noteId: note.id,
 													isSync: !note.isSync,
 												})
@@ -337,9 +351,13 @@ const NodeListComponent = ({
 							></path>
 						</svg>
 						<span>
-							{(notes.list[contentMenuActiveIndex]?.isSync
-								? 'Turn off'
-								: 'Turn on') + ' sync'}
+							{notes.list[contentMenuActiveIndex]?.isSync
+								? t('turnOffSync', {
+										ns: 'common',
+								  })
+								: t('turnOnSync', {
+										ns: 'common',
+								  })}
 						</span>
 					</div>
 				</saki-context-menu-item>

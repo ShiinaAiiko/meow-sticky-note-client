@@ -37,6 +37,14 @@ const resources = {
 
 			saveAs: '另存',
 			download: '下载',
+			connecting: '正在连接',
+
+			turnOff: '关闭',
+			turnOn: '开启',
+			turnOffSync: '关闭同步',
+			turnOnSync: '开启同步',
+			turnedOnTip: '此笔记将同步到云端',
+			turnedOffTip: '即将关闭此笔记的同步功能',
 		},
 		indexHeader: {},
 		indexPage: {
@@ -137,6 +145,14 @@ const resources = {
 
 			saveAs: '另存',
 			download: '下載',
+			connecting: '正在連接',
+
+			turnOff: '關閉',
+			turnOn: '開啟',
+			turnOffSync: '關閉同步',
+			turnOnSync: '開啟同步',
+			turnedOnTip: '此筆記將同步到雲端',
+			turnedOffTip: '即將關閉此筆記的同步功能',
 		},
 		indexHeader: {},
 		indexPage: {
@@ -237,6 +253,14 @@ const resources = {
 
 			saveAs: 'Save as',
 			download: 'Download',
+			connecting: 'connecting',
+
+			turnOff: 'Turn off',
+			turnOn: 'Turn on',
+			turnOffSync: 'Turn off sync',
+			turnOnSync: 'Turn on sync',
+			turnedOnTip: 'This note will sync to the cloud.',
+			turnedOffTip: 'Sync will be turned off for this note soon.',
 		},
 		indexHeader: {},
 		indexPage: {

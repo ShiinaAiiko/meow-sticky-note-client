@@ -92,6 +92,7 @@ const DragComponent = () => {
 													return true
 												}
 											})
+											note.syncTime = 0
 											if (!isExist) {
 												store.dispatch(
 													notesSlice.actions.addNote({

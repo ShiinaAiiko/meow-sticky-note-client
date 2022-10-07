@@ -36,24 +36,36 @@ main() {
 
 main "$1"
 
-#  "dmg": {
-#  	"contents": [
-#  		{
-#  			"x": 410,
-#  			"y": 150,
-#  			"type": "link",
-#  			"path": "/Applications"
-#  		},
-#  		{
-#  			"x": 130,
-#  			"y": 150,
-#  			"type": "file"
-#  		}
-#  	]
-#  },
-#  "mac": {
-#  	"icon": "build/icons/icon.icns"
-#  },
-#  "win": {
-#  	"icon": "build/icons/icon.ico"
-#  },
+# "dmg": {
+# 	"contents": [
+# 		{
+# 			"x": 410,
+# 			"y": 150,
+# 			"type": "link",
+# 			"path": "/Applications"
+# 		},
+# 		{
+# 			"x": 130,
+# 			"y": 150,
+# 			"type": "file"
+# 		}
+# 	]
+# },
+# "mac": {
+# 	"icon": "build/icons/icon.icns"
+# },
+# "win": {
+# 	"icon": "build/icons/icon.ico",
+# 	"target": [
+# 		"nsis"
+# 	]
+# },
+# "nsis": {
+# 	"installerIcon": "build/icons/icon.ico",
+# 	"uninstallerIcon": "build/icons/icon.ico",
+# 	"uninstallDisplayName": "卸载这个软件",
+# 	"oneClick": false,
+# 	"allowToChangeInstallationDirectory": true,
+# 	"allowElevation": true,
+# 	"createDesktopShortcut": true
+# },

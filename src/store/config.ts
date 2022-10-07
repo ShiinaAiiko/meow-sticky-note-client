@@ -15,7 +15,7 @@ import { api } from '../modules/electron/api'
 import { stringify } from 'querystring'
 import { resolve } from 'path'
 import { nanoid } from 'nanoid'
-import { sakisso, nsocketio, version } from '../config'
+import { sakisso, nsocketio, version, origin } from '../config'
 
 export const modeName = 'config'
 
@@ -164,6 +164,8 @@ let initialState = {
 	},
 	version: version,
 	isDev: process.env.NODE_ENV === 'development',
+	networkStatus: window.navigator.onLine,
+	origin: origin,
 	language: '',
 	deviceType,
 	sync: false,
@@ -323,6 +325,9 @@ export const configSlice = createSlice({
 				'autoCloseWindowAfterCopy',
 				JSON.stringify(params.payload)
 			)
+		},
+		setNetworkStatus: (state, params: ActionParams<boolean>) => {
+			state.networkStatus = params.payload
 		},
 	},
 })

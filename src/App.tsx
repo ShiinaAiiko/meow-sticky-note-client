@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
@@ -8,8 +8,10 @@ import routes from './routes'
 import { Provider } from 'react-redux'
 import { useParams, useLocation } from 'react-router-dom'
 import qs from 'qs'
-import { sakiui } from './config'
-
+import { sakiui, networkTestUrl, origin } from './config'
+import axios from 'axios'
+// NetworkStatus
+import { Debounce, deepCopy } from '@nyanyajs/utils'
 import store, {
 	RootState,
 	AppDispatch,
@@ -18,11 +20,64 @@ import store, {
 	notesSlice,
 	storageSlice,
 	appearanceSlice,
+	configSlice,
 } from './store'
+
 import { useSelector, useDispatch } from 'react-redux'
+import { config } from 'process'
+
+export class NetworkStatus extends EventTarget {
+	private networkTestUrl: string = ''
+	public online = true
+	constructor(options?: { testUrl: string }) {
+		super()
+
+		this.networkTestUrl = options?.testUrl || window.location.origin
+
+		this.run(true)
+	}
+	private run(init: boolean) {
+		setTimeout(
+			async () => {
+				try {
+					const res = await axios({
+						url: this.networkTestUrl,
+						method: 'HEAD',
+					})
+
+					this.run(false)
+					console.log('nsnsns', res, this)
+					if (res.status !== 200) {
+						if (!init && this.online) {
+							this.online = false
+							this.dispatchEvent(new Event('offline'))
+						}
+						return false
+					}
+
+					if (!init && !this.online) {
+						this.online = true
+						this.dispatchEvent(new Event('online'))
+					}
+					return true
+				} catch (error) {
+					console.log('nsnsns', error, this)
+					if (!init && this.online) {
+						this.online = false
+						this.dispatchEvent(new Event('offline'))
+					}
+					this.run(false)
+					return false
+				}
+			},
+			init ? 0 : 5000
+		)
+	}
+}
 
 function App() {
 	const params = useParams()
+	const [debounce] = useState(new Debounce())
 	// const location = useLocation()
 	const isDev = process.env.NODE_ENV === 'development'
 	let isElectron = !!(
@@ -54,6 +109,7 @@ function App() {
 			} = {}
 
 			window.addEventListener('keydown', (e) => {
+				console.log('keydown', e.key)
 				if (e.key === 'r' || e.key === 'Control') {
 					currentKey[e.key] = e.key
 				}
@@ -73,6 +129,62 @@ function App() {
 		window.addEventListener('resize', () => {
 			store.dispatch(methods.config.getDeviceType())
 		})
+
+		async function isOnline() {
+			try {
+				const res = await axios({
+					url: networkTestUrl,
+					method: 'HEAD',
+				})
+				if (res.status === 200) {
+					return true
+				} else {
+					return false
+				}
+			} catch (error) {
+				return false
+			}
+		}
+		// setInterval(async () => {
+		// 	const res = await isOnline()
+		// 	if (res) {
+		// 		console.log('Succesfully coected!')
+		// 	} else {
+		// 		console.log('Sorry, we currently do not have Internet access.')
+		// 	}
+		// }, 3000)
+
+		// const ns = new NetworkStatus({
+		// 	testUrl: networkTestUrl,
+		// })
+		// ns.addEventListener('online', () => {
+		// 	console.log('nsnsns', ns.online, 'Succesfully coected!')
+		// })
+		// ns.addEventListener('offline', () => {
+		// 	console.log(
+		// 		'nsnsns',
+		// 		ns.online,
+		// 		'Sorry, we currently do not have Internet access.'
+		// 	)
+		// })
+		// console.log('nsnsns', ns.online)
+		// store.dispatch(configSlice.actions.setNetworkStatus(ns.online))
+
+		// debounce.increase(() => {
+		// 	window.addEventListener('offline', function () {
+		// 		console.log('断网了')
+		// 		store.dispatch(
+		// 			configSlice.actions.setNetworkStatus(window.navigator.onLine)
+		// 		)
+		// 	})
+
+		// 	window.addEventListener('online', function () {
+		// 		console.log('联网了')
+		// 		store.dispatch(
+		// 			configSlice.actions.setNetworkStatus(window.navigator.onLine)
+		// 		)
+		// 	})
+		// }, 50)
 	}, [])
 
 	return (
@@ -80,8 +192,22 @@ function App() {
 			<HelmetProvider>
 				<div className='App'>
 					<Helmet>
-						<script type='module' src={sakiui.esmjsurl}></script>
-						<script noModule src={sakiui.jsurl}></script>
+						<script
+							type='module'
+							src={
+								sakiui.esmjsurl.indexOf('http') === 0
+									? sakiui.esmjsurl
+									: origin + sakiui.esmjsurl
+							}
+						></script>
+						<script
+							noModule
+							src={
+								sakiui.jsurl.indexOf('http') === 0
+									? sakiui.jsurl
+									: origin + sakiui.jsurl
+							}
+						></script>
 						<title></title>
 					</Helmet>
 					<RenderRoutes

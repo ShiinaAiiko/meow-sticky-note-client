@@ -279,7 +279,7 @@ const PageContentComponent = ({
 						<saki-input
 							ref={bindEvent({
 								clearvalue: async (e) => {
-									console.log('clearvalue', e)
+									// console.log('clearvalue', e)
 									await dispatch(
 										methods.notes.UpdatePage({
 											noteId: noteId,
@@ -372,13 +372,13 @@ const PageContentComponent = ({
 									},
 									changevalue: async (e) => {
 										// console.log('eeee', e)
-										console.log(
-											'changevalue',
-											notes.list[notes.list.length - 1],
-											e.detail,
-											page,
-											page.id
-										)
+										// console.log(
+										// 	'changevalue',
+										// 	notes.list[notes.list.length - 1],
+										// 	e.detail,
+										// 	page,
+										// 	page.id
+										// )
 										if (!config.pageConfig.disableChangeValue) {
 											await dispatch(
 												methods.notes.UpdatePage({
@@ -415,9 +415,6 @@ const PageContentComponent = ({
 						/>
 					</div>
 					<div className='p-data'>
-						<div className='p-d-words'>
-							{page?.content?.replace(/<\/?.+?>/g, '').length}
-						</div>
 						<div className='p-d-sync'>
 							{sync ? (
 								''
@@ -430,6 +427,9 @@ const PageContentComponent = ({
 									}}
 								/>
 							)}
+						</div>
+						<div className='p-d-words'>
+							{page?.content?.replace(/<\/?.+?>/g, '').length}
 						</div>
 					</div>
 				</>

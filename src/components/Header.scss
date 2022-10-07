@@ -117,7 +117,7 @@
 				width: 10px;
 				height: 10px;
 				line-height: 16px;
-				transform: translateY(2px);
+				// transform: translateY(2px);
 				fill: var(--color);
 			}
 		}
@@ -128,6 +128,11 @@
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
+		.qv-h-r-connecting {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+		}
 		.qv-h-r-sync {
 			margin-right: 10px;
 			.icon {

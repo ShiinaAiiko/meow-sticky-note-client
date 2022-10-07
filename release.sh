@@ -101,9 +101,7 @@ el:build() {
   sudo cp -r $DIR/public/logo-neko-circle-white1500.png $DIR/src/electron/logo.png
   cd ./src/electron
   yarn el:icon
-  # electron-icon-builder --input=./logo.png --output=./ --flatten
   cd ../../
-
 
   cp -r $DIR/src/electron/icons $DIR/public/icons
   rm -rf $DIR/src/electron/logo.png
@@ -123,10 +121,15 @@ el:build() {
   mkdir -p ./el-build/packages
   cp -r ./el-build/*.AppImage ./el-build/packages/
   cp -r ./el-build/*.deb ./el-build/packages/
+  cp -r ./el-build/*.exe ./el-build/packages/
+  
   rm -rf ./el-build/linux-unpacked
   rm -rf ./el-build/*.AppImage
   rm -rf ./el-build/*.deb
-  yarn el:build
+  rm -rf ./el-build/*.exe
+  rm -rf ./el-build/*.exe.blockmap
+  # yarn el:build-win
+  yarn el:build-linux
   rm -rf ./build
 
   cd ../../

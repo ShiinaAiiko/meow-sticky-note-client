@@ -32,28 +32,29 @@ export const userMethods = {
 	>(modeName + '/Init', async (_, thunkAPI) => {
 		// 获取配置
 		// console.log(await storage.config.get('language'))
-		const { user } = thunkAPI.getState()
+		// thunkAPI.dispatch(userSlice.actions.setInit(false))
+		const { user, config } = thunkAPI.getState()
 		console.log('校验token是否有效')
 		const token = await storage.global.get('token')
 		const deviceId = await storage.global.get('deviceId')
 		const userInfo = await storage.global.get('userInfo')
 		if (token) {
-			if (!user.isLogin) {
-				thunkAPI.dispatch(
+			thunkAPI.dispatch(
+				userSlice.actions.login({
+					token: token,
+					deviceId: deviceId,
+					userInfo: userInfo,
+				})
+			)
+			// 检测网络状态情况
+			await thunkAPI
+				.dispatch(
 					methods.user.checkToken({
 						token,
 						deviceId,
 					})
 				)
-			} else {
-				thunkAPI.dispatch(
-					userSlice.actions.login({
-						token: token,
-						deviceId: deviceId,
-						userInfo: userInfo,
-					})
-				)
-			}
+				.unwrap()
 		} else {
 			thunkAPI.dispatch(userSlice.actions.logout({}))
 		}
@@ -71,24 +72,25 @@ export const userMethods = {
 			},
 			thunkAPI
 		) => {
-			const res = await client?.checkToken({
-				token,
-				deviceId,
-			})
-			console.log('res checkToken', res)
-			if (res) {
-				console.log('登陆成功')
-				thunkAPI.dispatch(
-					userSlice.actions.login({
-						token: res.token,
-						deviceId: res.deviceId,
-						userInfo: res.userInfo,
-					})
-				)
-			} else {
-				// thunkAPI.dispatch(userSlice.actions.logout({}))
-			}
-			return res
+			try {
+				const res = await client?.checkToken({
+					token,
+					deviceId,
+				})
+				console.log('res checkToken', res)
+				if (res) {
+					// console.log('登陆成功')
+					thunkAPI.dispatch(
+						userSlice.actions.login({
+							token: res.token,
+							deviceId: res.deviceId,
+							userInfo: res.userInfo,
+						})
+					)
+				} else {
+					thunkAPI.dispatch(userSlice.actions.logout({}))
+				}
+			} catch (error) {}
 		}
 	),
 }

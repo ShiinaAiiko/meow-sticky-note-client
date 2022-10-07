@@ -8,8 +8,8 @@
 	"homepage": ".",
 	"scripts": {
 		"cache": "cp ./public/package1.json ./node_modules/@saki-ui/core/package.json",
-		"dc": "sudo rm -rf ./node_modules/.cache",
-		"dev": "cp -r ./config.pro.json ./src/config.temp.json && npm run dc && PORT=16111 react-scripts start  --allow-root",
+		"dc": "sudo rm -rf ./node_modules/.cache && sudo rm -rf ./src/electron/el-build/linux-unpacked && sudo rm -rf ./src/electron/el-build/win-unpacked",
+		"dev": "cp -r ./config.test.json ./src/config.temp.json && npm run dc && PORT=16111 react-scripts start  --allow-root",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
@@ -38,7 +38,7 @@
 		]
 	},
 	"dependencies": {
-		"@nyanyajs/utils": "^1.0.12",
+		"@nyanyajs/utils": "^1.0.13",
 		"@reduxjs/toolkit": "^1.8.3",
 		"@saki-ui/core": "^1.0.0",
 		"@testing-library/jest-dom": "^5.16.4",

@@ -21,6 +21,7 @@ export interface NoteItem {
 	name: string
 	createTime: number
 	lastUpdateTime: number
+	syncTime: number
 	sort: number
 	isSync: boolean
 	categories: CategoryItem[]

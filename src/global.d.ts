@@ -30,6 +30,7 @@ declare global {
 			'saki-page-container': any
 			'saki-transition': any
 			'saki-linear-progress-bar': any
+			'saki-loading': any
 		}
 	}
 	namespace Window {

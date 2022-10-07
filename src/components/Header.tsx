@@ -28,6 +28,7 @@ const HeaderComponent = ({
 	const { t, i18n } = useTranslation('index-header')
 	const notes = useSelector((state: RootState) => state.notes)
 	const config = useSelector((state: RootState) => state.config)
+	const nsocketio = useSelector((state: RootState) => state.nsocketio)
 	const appStatus = useSelector((state: RootState) => state.config.status)
 	const user = useSelector((state: RootState) => state.user)
 
@@ -138,7 +139,7 @@ const HeaderComponent = ({
 									ns: 'common',
 								})}
 							>
-								<img src='./logo192.png' alt='' />
+								<img src={config.origin + '/logo192.png'} alt='' />
 								<span className='text-elipsis'>
 									{t('appTitle', {
 										ns: 'common',
@@ -178,12 +179,17 @@ const HeaderComponent = ({
 								className='qv-h-c-name'
 							>
 								<span className='name'>{activeNote?.name || 'Add a note'}</span>
-								{/* {activeNote.authorId === user.userInfo.uid &&
-								activeNote.isSync ? (
-									''
+								{activeNote &&
+								(activeNote?.authorId !== user.userInfo.uid ||
+									!activeNote?.isSync) ? (
+									<SyncOff
+										style={{
+											marginLeft: '6px',
+										}}
+									/>
 								) : (
-									<SyncOff />
-								)} */}
+									''
+								)}
 								<svg
 									className='icon'
 									viewBox='0 0 1024 1024'
@@ -239,88 +245,6 @@ const HeaderComponent = ({
 										}
 									}}
 								></NodeList>
-								{/* <saki-menu
-									ref={bindEvent({
-										selectvalue: async (e) => {
-											console.log(e.detail.value)
-											switch (e.detail.value) {
-												case 'AddNotebook':
-													await dispatch(methods.notes.AddNotebook()).unwrap()
-													break
-
-												default:
-													switch (location.pathname) {
-														case '/':
-															store.dispatch(
-																notesSlice.actions.selectNote({
-																	id: e.detail.value,
-																})
-															)
-															break
-														case '/quickreview':
-															store.dispatch(
-																notesSlice.actions.setQuickReviewSelectData({
-																	noteId: e.detail.value,
-																})
-															)
-															break
-
-														default:
-															break
-													}
-
-													break
-											}
-											setOpenDropDownMenu(false)
-										},
-									})}
-								>
-									<saki-drag-sort
-										ref={bindEvent({
-											dragdone: (e) => {
-												console.log(e.detail)
-												store.dispatch(
-													notesSlice.actions.sortNote({
-														originalIndex: e.detail.originalIndex,
-														targetIndex: e.detail.targetIndex,
-													})
-												)
-											},
-										})}
-									>
-										{notes.list?.map((v, i) => {
-											return (
-												<saki-drag-sort-item key={i}>
-													<saki-menu-item
-														width='200px'
-														key={i}
-														padding='10px 18px'
-														value={v.id}
-													>
-														<div
-															className='note-item'
-															onClick={(e) => {
-																console.log(e)
-															}}
-														>
-															<span className='text-elipsis'>{v.name}</span>
-														</div>
-													</saki-menu-item>
-												</saki-drag-sort-item>
-											)
-										})}
-
-										<saki-drag-sort-item draggable='false'>
-											<saki-menu-item padding='10px 18px' value={'AddNotebook'}>
-												<span className='add-notebook'>
-													{t('addNotebook', {
-														ns: 'indexPage',
-													})}
-												</span>
-											</saki-menu-item>
-										</saki-drag-sort-item>
-									</saki-drag-sort>
-								</saki-menu> */}
 							</div>
 						</saki-dropdown>
 					)}
@@ -329,303 +253,31 @@ const HeaderComponent = ({
 				''
 			)}
 			<div className='qv-h-right'>
-				{/* <saki-dropdown
-					visible={false}
-					floating-direction='Left'
-					ref={bindEvent({
-						close: (e) => {
-							// setOpenSettingDropDownMenu(false)
-						},
-					})}
-				>
-					<div
-						className={'qv-h-r-sync ' + (appStatus.syncStatus ? 'loading' : '')}
-					>
-						<saki-button
-							ref={bindEvent({
-								tap: (e) => {
-									// setOpenSettingDropDownMenu(true)
-								},
-							})}
-							type='CircleIconGrayHover'
-							font-size='13px'
+				{nsocketio.status !== 'success' &&
+				user.token &&
+				config.deviceType !== 'Mobile' &&
+				location.pathname !== '/quickreview' ? (
+					<div className='qv-h-r-connecting'>
+						<saki-loading
+							type='rotateEaseInOut'
+							width='20px'
+							height='20px'
+							border='3px'
+							border-color='var(--default-color)'
+						/>
+						<span
+							style={{
+								color: '#555',
+							}}
 						>
-							<svg
-								className='icon'
-								viewBox='0 0 1024 1024'
-								version='1.1'
-								xmlns='http://www.w3.org/2000/svg'
-								p-id='2593'
-							>
-								<path
-									d='M511.4 866.2c-11.6 0-23.3-0.6-34.9-1.7l-0.7-0.1-6.9-1h-1.4c-5.5 0-10.5-0.8-15.8-1.6l-2.4-0.4h-0.1c-0.2 0-0.4-0.1-0.5-0.1-0.4-0.1-0.8-0.2-1.1-0.3-0.8-0.2-1.9-0.5-3.3-0.6-1.5-0.4-2.9-0.7-4.2-1-0.7-0.1-1.4-0.3-2.1-0.5-1.5-0.4-2.8-0.7-4-0.9-0.9-0.2-1.7-0.4-2.3-0.5l-0.9-0.2-0.9-0.2c-6.5-1.1-12.7-2.7-19.3-4.9-1.6-0.6-3-1-4.2-1.4-0.4-0.1-0.9-0.2-1.3-0.4l-0.9-0.3-1-0.2c-0.5-0.1-1.7-0.4-3.6-1l-0.7-0.2-0.7-0.2c-7.8-2-14.9-4.9-21.4-7.7l-6.8-3.5-0.7-0.3c-39.3-16.6-76-41.9-106.3-73.1l-1-1-0.7-0.8c-2.6-3-5.3-6-8.3-8.9-0.9-1-1.8-2-2.7-2.9-3-3.3-5.9-6.3-8.4-9.7l-0.4-0.6-0.5-0.5c-1.2-1.3-1.5-1.8-1.6-1.9l-0.3-0.4-0.6-0.8c-0.4-0.6-1.1-1.5-2-2.6l-0.5-0.6c-3.8-4.6-7.8-9.7-12-15.9l-0.4-0.6-0.3-0.4c0-0.1-0.1-0.2-0.2-0.3l-0.7-1.5-0.9-1.4c-37.7-56.5-58.7-121.8-60.7-189l-0.6-18.5H96L196 353l100 152.5h-65.7l0.8 19.9c2.5 59.6 23.6 116.6 61.2 164.7l0.2 0.2 0.2 0.3c0.9 1.7 2 3.5 3.7 5.2 22.6 26.6 48.8 48.7 78 65.9l4.5 2.6h1c5.8 3.7 11.9 6.8 19.7 10.1l3.3 1.4c6 2.5 12.3 5.2 18.7 7.1l1.9 0.6 1.9 0.2c0.3 0 1.5 0.2 4.1 1.3l0.6 0.3 0.6 0.2c5.4 2 10.7 3.1 16.6 4.3l1.9 0.4h0.1c1.2 0.2 2.4 0.4 3.5 0.6 0.5 0.1 1.1 0.2 1.6 0.3 0.6 0.1 1.5 0.2 1.8 0.3l1.1 0.4 1.2 0.2c2.8 0.6 5.6 0.8 8.6 1.1l3 0.3c1.6 0.2 3.1 0.3 4.2 0.5l1.9 0.4h1c0.7 0.1 1.3 0.2 2 0.3 1.7 0.3 3.8 0.6 6.1 0.6h0.1c8.3 0.9 17 1.4 26.5 1.4 56.6 0 112.9-17.8 158.7-50.1l0.3-0.1 1.1-0.8c6.5-4.5 13.4-6.8 20.3-6.8 2.3 0 4.2 0.1 5.8 0.5 7.7 1.4 15.1 5 22.6 11l0.7 1c11.3 16.5 7.4 38.6-8.8 50.4-58.8 42.2-128.2 64.5-201.2 64.5zM723.5 522.1H789l-0.8-19.9c-2.5-60.3-24.4-118.9-61.8-165.2v-1.3l-4.4-5.3c-27.2-32.7-62.1-59-101-76.3l-3.6-1.8c-5.1-2.6-10.5-4.4-15.2-5.9l-1.8-0.6c-1.5-0.6-2.9-1.1-4.1-1.4l-5.6-2.3-8-2c-3.4-1-7.2-1.9-11.3-2.6h-0.1c-0.5-0.2-1-0.4-1.4-0.5l-0.3-0.1-0.3-0.1c-0.4-0.1-0.8-0.2-1.1-0.3-1.4-0.4-3.7-1.1-6.7-1.2l-18.8-3.1-7.9-1.1h-0.4c-8.9-0.8-18-1.2-27-1.2-56.6 0-112.9 17.8-158.7 50.1l-0.3 0.1-1.1 0.7c-6.5 4.5-13.4 6.8-20.3 6.8-2.3 0-4.2-0.1-5.8-0.5-9.6-1.8-17.5-7-22.8-15l-0.1-0.2c-11.2-16.5-7.4-38.6 8.8-50.3 58.5-41.8 128.1-63.8 201.1-63.8h5.4c9 0 18.3 0 27.3 1l1.1 0.1h1.1c0.8 0 1.7 0.1 2.8 0.3 0.6 0.1 1.2 0.1 1.8 0.2h0.3c1.5 0.2 3.3 0.4 5.4 0.5 3.1 0.7 6.1 0.9 8.6 1.1 1 0.1 1.9 0.2 2.9 0.3 1.6 0.2 3.1 0.3 4.2 0.5l1.9 0.4h1.1l2.3 0.8h1.1c0.3 0 0.6 0.1 1 0.1l12.1 3.1 22.3 6.4 9.4 3.1 23.9 8.9 1.5 1.5 3.3 0.7 0.2 0.1 1.6 0.7c50 21.7 94.8 55.8 129.4 98.5l0.6 0.8 2.7 2.7c5 5.9 9.4 11.4 13.6 17.2v1.3l3.2 4.8c37.9 57.1 58.9 122.6 61 189.4l0.6 18.3 18.3 0.2c1.1 0 27.2 0.2 39.3 0.2 5.2 0 6.2 0 7.1-0.1l0.7-0.1h0.4C919 534.1 861 622.5 827.4 673.7L723.5 522.1z'
-									fill=''
-									p-id='2594'
-								></path>
-							</svg>
-						</saki-button>
-					</div>
-					<div slot='main'>
-						<saki-menu
-							ref={bindEvent({
-								selectvalue: async (e) => {
-									console.log(e.detail.value)
-									switch (e.detail.value) {
-										case 'Setting':
-											onSettings?.()
-											break
-										case 'OpenDevTools':
-											api.openDevTools()
-											break
-
-										case 'Quit':
-											window.require('electron')?.ipcRenderer?.send?.('quit')
-											break
-
-										default:
-											break
-									}
-									// setOpenSettingDropDownMenu(false)
-								},
+							{t('connecting', {
+								ns: 'common',
 							})}
-						></saki-menu>
+						</span>
 					</div>
-				</saki-dropdown> */}
-
-				{/* {notes.noteId && location.pathname === '/' ? (
-					<saki-dropdown
-						visible={openAddDropDownMenu}
-						floating-direction='Left'
-						ref={bindEvent({
-							close: (e) => {
-								setOpenAddDropDownMenu(false)
-							},
-						})}
-					>
-						<div className='qv-h-r-addnote'>
-							<saki-button
-								ref={bindEvent({
-									tap: (e) => {
-										setOpenAddDropDownMenu(true)
-									},
-								})}
-								type='CircleIconGrayHover'
-								font-size='13px'
-							>
-								{appStatus.syncStatus ? (
-									<svg
-										className='icon loading'
-										viewBox='0 0 1024 1024'
-										version='1.1'
-										xmlns='http://www.w3.org/2000/svg'
-										p-id='2593'
-									>
-										<path
-											d='M511.4 866.2c-11.6 0-23.3-0.6-34.9-1.7l-0.7-0.1-6.9-1h-1.4c-5.5 0-10.5-0.8-15.8-1.6l-2.4-0.4h-0.1c-0.2 0-0.4-0.1-0.5-0.1-0.4-0.1-0.8-0.2-1.1-0.3-0.8-0.2-1.9-0.5-3.3-0.6-1.5-0.4-2.9-0.7-4.2-1-0.7-0.1-1.4-0.3-2.1-0.5-1.5-0.4-2.8-0.7-4-0.9-0.9-0.2-1.7-0.4-2.3-0.5l-0.9-0.2-0.9-0.2c-6.5-1.1-12.7-2.7-19.3-4.9-1.6-0.6-3-1-4.2-1.4-0.4-0.1-0.9-0.2-1.3-0.4l-0.9-0.3-1-0.2c-0.5-0.1-1.7-0.4-3.6-1l-0.7-0.2-0.7-0.2c-7.8-2-14.9-4.9-21.4-7.7l-6.8-3.5-0.7-0.3c-39.3-16.6-76-41.9-106.3-73.1l-1-1-0.7-0.8c-2.6-3-5.3-6-8.3-8.9-0.9-1-1.8-2-2.7-2.9-3-3.3-5.9-6.3-8.4-9.7l-0.4-0.6-0.5-0.5c-1.2-1.3-1.5-1.8-1.6-1.9l-0.3-0.4-0.6-0.8c-0.4-0.6-1.1-1.5-2-2.6l-0.5-0.6c-3.8-4.6-7.8-9.7-12-15.9l-0.4-0.6-0.3-0.4c0-0.1-0.1-0.2-0.2-0.3l-0.7-1.5-0.9-1.4c-37.7-56.5-58.7-121.8-60.7-189l-0.6-18.5H96L196 353l100 152.5h-65.7l0.8 19.9c2.5 59.6 23.6 116.6 61.2 164.7l0.2 0.2 0.2 0.3c0.9 1.7 2 3.5 3.7 5.2 22.6 26.6 48.8 48.7 78 65.9l4.5 2.6h1c5.8 3.7 11.9 6.8 19.7 10.1l3.3 1.4c6 2.5 12.3 5.2 18.7 7.1l1.9 0.6 1.9 0.2c0.3 0 1.5 0.2 4.1 1.3l0.6 0.3 0.6 0.2c5.4 2 10.7 3.1 16.6 4.3l1.9 0.4h0.1c1.2 0.2 2.4 0.4 3.5 0.6 0.5 0.1 1.1 0.2 1.6 0.3 0.6 0.1 1.5 0.2 1.8 0.3l1.1 0.4 1.2 0.2c2.8 0.6 5.6 0.8 8.6 1.1l3 0.3c1.6 0.2 3.1 0.3 4.2 0.5l1.9 0.4h1c0.7 0.1 1.3 0.2 2 0.3 1.7 0.3 3.8 0.6 6.1 0.6h0.1c8.3 0.9 17 1.4 26.5 1.4 56.6 0 112.9-17.8 158.7-50.1l0.3-0.1 1.1-0.8c6.5-4.5 13.4-6.8 20.3-6.8 2.3 0 4.2 0.1 5.8 0.5 7.7 1.4 15.1 5 22.6 11l0.7 1c11.3 16.5 7.4 38.6-8.8 50.4-58.8 42.2-128.2 64.5-201.2 64.5zM723.5 522.1H789l-0.8-19.9c-2.5-60.3-24.4-118.9-61.8-165.2v-1.3l-4.4-5.3c-27.2-32.7-62.1-59-101-76.3l-3.6-1.8c-5.1-2.6-10.5-4.4-15.2-5.9l-1.8-0.6c-1.5-0.6-2.9-1.1-4.1-1.4l-5.6-2.3-8-2c-3.4-1-7.2-1.9-11.3-2.6h-0.1c-0.5-0.2-1-0.4-1.4-0.5l-0.3-0.1-0.3-0.1c-0.4-0.1-0.8-0.2-1.1-0.3-1.4-0.4-3.7-1.1-6.7-1.2l-18.8-3.1-7.9-1.1h-0.4c-8.9-0.8-18-1.2-27-1.2-56.6 0-112.9 17.8-158.7 50.1l-0.3 0.1-1.1 0.7c-6.5 4.5-13.4 6.8-20.3 6.8-2.3 0-4.2-0.1-5.8-0.5-9.6-1.8-17.5-7-22.8-15l-0.1-0.2c-11.2-16.5-7.4-38.6 8.8-50.3 58.5-41.8 128.1-63.8 201.1-63.8h5.4c9 0 18.3 0 27.3 1l1.1 0.1h1.1c0.8 0 1.7 0.1 2.8 0.3 0.6 0.1 1.2 0.1 1.8 0.2h0.3c1.5 0.2 3.3 0.4 5.4 0.5 3.1 0.7 6.1 0.9 8.6 1.1 1 0.1 1.9 0.2 2.9 0.3 1.6 0.2 3.1 0.3 4.2 0.5l1.9 0.4h1.1l2.3 0.8h1.1c0.3 0 0.6 0.1 1 0.1l12.1 3.1 22.3 6.4 9.4 3.1 23.9 8.9 1.5 1.5 3.3 0.7 0.2 0.1 1.6 0.7c50 21.7 94.8 55.8 129.4 98.5l0.6 0.8 2.7 2.7c5 5.9 9.4 11.4 13.6 17.2v1.3l3.2 4.8c37.9 57.1 58.9 122.6 61 189.4l0.6 18.3 18.3 0.2c1.1 0 27.2 0.2 39.3 0.2 5.2 0 6.2 0 7.1-0.1l0.7-0.1h0.4C919 534.1 861 622.5 827.4 673.7L723.5 522.1z'
-											fill=''
-											p-id='2594'
-										></path>
-									</svg>
-								) : (
-									<svg
-										className={'icon '}
-										viewBox='0 0 1024 1024'
-										version='1.1'
-										xmlns='http://www.w3.org/2000/svg'
-										p-id='8901'
-									>
-										<path
-											d='M916.945455 900.654545H111.709091c-18.618182 0-34.909091-16.290909-34.909091-34.90909s16.290909-34.909091 34.909091-34.909091h805.236364c18.618182 0 34.909091 16.290909 34.90909 34.909091s-13.963636 34.909091-34.90909 34.90909zM842.472727 747.054545H393.309091c-18.618182 0-34.909091-16.290909-34.909091-34.90909s16.290909-34.909091 34.909091-34.909091h446.836364c18.618182 0 34.909091 16.290909 34.90909 34.909091s-13.963636 34.909091-32.581818 34.90909zM160.581818 542.254545l104.727273 107.054546-46.545455 46.545454-104.727272-104.727272zM558.545455 141.963636l104.727272 107.054546-48.872727 46.545454-104.727273-104.727272z'
-											fill='#666666'
-											p-id='8902'
-										></path>
-										<path
-											d='M128 765.672727c-20.945455 0-41.890909-9.309091-58.181818-25.6-16.290909-16.290909-25.6-41.890909-25.6-65.163636l9.309091-114.036364L537.6 74.472727c23.272727-23.272727 53.527273-34.909091 86.109091-34.909091 37.236364 0 72.145455 16.290909 97.745454 41.890909 27.927273 27.927273 41.890909 65.163636 41.89091 102.4 0 32.581818-13.963636 62.836364-37.236364 83.781819l-479.418182 488.727272-114.036364 9.309091h-4.654545z m-4.654545-174.545454L116.363636 679.563636c0 4.654545 2.327273 9.309091 4.654546 9.309091 2.327273 2.327273 6.981818 4.654545 9.309091 4.654546l88.436363-6.981818L677.236364 216.436364c9.309091-9.309091 13.963636-20.945455 16.290909-34.909091 0-18.618182-6.981818-37.236364-20.945455-51.2-13.963636-13.963636-30.254545-20.945455-48.872727-20.945455-9.309091 0-23.272727 2.327273-34.909091 13.963637l-465.454545 467.781818z'
-											fill='#666666'
-											p-id='8903'
-										></path>
-									</svg>
-								)}
-							</saki-button>
-						</div>
-						<div slot='main'>
-							<saki-menu
-								ref={bindEvent({
-									selectvalue: async (e) => {
-										console.log(e.detail.value)
-										switch (e.detail.value) {
-											case 'AddNote':
-												await dispatch(methods.notes.AddNotebook()).unwrap()
-												break
-											case 'RenameThisNote':
-												let name = ''
-
-												prompt({
-													title: t('rename', {
-														ns: 'common',
-													}),
-													value: notes.list.filter((v) => {
-														return v.id === notes.noteId
-													})?.[0]?.name,
-													placeholder: t('notebookName', {
-														ns: 'common',
-													}),
-													cancelText: t('cancel', {
-														ns: 'common',
-													}),
-													confirmText: t('rename', {
-														ns: 'common',
-													}),
-													onChange(e) {
-														name = e
-														return ''
-													},
-													onCancel() {},
-													onConfirm() {
-														if (!name) {
-															snackbar({
-																message: i18n.t('notebookNameNil', {
-																	ns: 'common',
-																}),
-																vertical: 'top',
-																horizontal: 'center',
-																autoHideDuration: 2000,
-																closeIcon: true,
-															}).open()
-															return
-														}
-														store.dispatch(
-															notesSlice.actions.updateNote({
-																noteId: notes.noteId,
-																note: {
-																	name,
-																},
-															})
-														)
-													},
-												}).open()
-												break
-
-											case 'DeleteNote':
-												alert({
-													title: t('delete', {
-														ns: 'common',
-													}),
-													content: t('deleteThisCategory', {
-														ns: 'common',
-													}),
-													cancelText: t('cancel', {
-														ns: 'common',
-													}),
-													confirmText: t('delete', {
-														ns: 'common',
-													}),
-													onCancel() {},
-													async onConfirm() {
-														console.log('deelee')
-														store.dispatch(
-															notesSlice.actions.deleteNote({
-																noteId: notes.noteId,
-															})
-														)
-													},
-												}).open()
-												// window.require('electron')?.ipcRenderer?.send?.('quit')
-												break
-
-											default:
-												break
-										}
-										setOpenAddDropDownMenu(false)
-									},
-								})}
-							>
-								<saki-menu-item padding='10px 18px' value={'AddNote'}>
-									<div className='qv-h-r-u-item'>
-										<svg
-											className='icon'
-											viewBox='0 0 1024 1024'
-											version='1.1'
-											xmlns='http://www.w3.org/2000/svg'
-											p-id='11478'
-										>
-											<path
-												d='M508.9 926.4c-36.3-1.6-64.6-32.2-64.6-68.6V166.1c0-36.3 28.3-66.9 64.6-68.6 38.8-1.7 70.7 29.2 70.7 67.6v693.7c0 38.4-31.9 69.4-70.7 67.6z'
-												fill='#666666'
-												p-id='11479'
-											></path>
-											<path
-												d='M858.9 579.6H165.2c-37.4 0-67.6-30.3-67.6-67.6 0-37.4 30.3-67.6 67.6-67.6h693.7c37.4 0 67.6 30.3 67.6 67.6 0 37.4-30.3 67.6-67.6 67.6z'
-												fill='#666666'
-												p-id='11480'
-											></path>
-										</svg>
-										<span>
-											{t('addNotebook', {
-												ns: 'indexPage',
-											})}
-										</span>
-									</div>
-								</saki-menu-item>
-								<saki-menu-item padding='10px 18px' value={'RenameThisNote'}>
-									<div className='qv-h-r-u-item'>
-										<svg
-											className='icon'
-											viewBox='0 0 1024 1024'
-											version='1.1'
-											xmlns='http://www.w3.org/2000/svg'
-											p-id='8901'
-										>
-											<path
-												d='M916.945455 900.654545H111.709091c-18.618182 0-34.909091-16.290909-34.909091-34.90909s16.290909-34.909091 34.909091-34.909091h805.236364c18.618182 0 34.909091 16.290909 34.90909 34.909091s-13.963636 34.909091-34.90909 34.90909zM842.472727 747.054545H393.309091c-18.618182 0-34.909091-16.290909-34.909091-34.90909s16.290909-34.909091 34.909091-34.909091h446.836364c18.618182 0 34.909091 16.290909 34.90909 34.909091s-13.963636 34.909091-32.581818 34.90909zM160.581818 542.254545l104.727273 107.054546-46.545455 46.545454-104.727272-104.727272zM558.545455 141.963636l104.727272 107.054546-48.872727 46.545454-104.727273-104.727272z'
-												fill='#666666'
-												p-id='8902'
-											></path>
-											<path
-												d='M128 765.672727c-20.945455 0-41.890909-9.309091-58.181818-25.6-16.290909-16.290909-25.6-41.890909-25.6-65.163636l9.309091-114.036364L537.6 74.472727c23.272727-23.272727 53.527273-34.909091 86.109091-34.909091 37.236364 0 72.145455 16.290909 97.745454 41.890909 27.927273 27.927273 41.890909 65.163636 41.89091 102.4 0 32.581818-13.963636 62.836364-37.236364 83.781819l-479.418182 488.727272-114.036364 9.309091h-4.654545z m-4.654545-174.545454L116.363636 679.563636c0 4.654545 2.327273 9.309091 4.654546 9.309091 2.327273 2.327273 6.981818 4.654545 9.309091 4.654546l88.436363-6.981818L677.236364 216.436364c9.309091-9.309091 13.963636-20.945455 16.290909-34.909091 0-18.618182-6.981818-37.236364-20.945455-51.2-13.963636-13.963636-30.254545-20.945455-48.872727-20.945455-9.309091 0-23.272727 2.327273-34.909091 13.963637l-465.454545 467.781818z'
-												fill='#666666'
-												p-id='8903'
-											></path>
-										</svg>
-										<span>
-											{t('renameThisNote', {
-												ns: 'indexPage',
-											})}
-										</span>
-									</div>
-								</saki-menu-item>
-								<saki-menu-item padding='10px 18px' value={'DeleteNote'}>
-									<div className='qv-h-r-u-item'>
-										<svg
-											className='icon'
-											viewBox='0 0 1024 1024'
-											version='1.1'
-											xmlns='http://www.w3.org/2000/svg'
-											p-id='6838'
-										>
-											<path
-												d='M608 768c-17.696 0-32-14.304-32-32V384c0-17.696 14.304-32 32-32s32 14.304 32 32v352c0 17.696-14.304 32-32 32zM416 768c-17.696 0-32-14.304-32-32V384c0-17.696 14.304-32 32-32s32 14.304 32 32v352c0 17.696-14.304 32-32 32zM928 224H768v-64c0-52.928-42.72-96-95.264-96H352c-52.928 0-96 43.072-96 96v64H96c-17.696 0-32 14.304-32 32s14.304 32 32 32h832c17.696 0 32-14.304 32-32s-14.304-32-32-32z m-608-64c0-17.632 14.368-32 32-32h320.736C690.272 128 704 142.048 704 160v64H320v-64z'
-												p-id='6839'
-											></path>
-											<path
-												d='M736.128 960H288.064c-52.928 0-96-43.072-96-96V383.52c0-17.664 14.336-32 32-32s32 14.336 32 32V864c0 17.664 14.368 32 32 32h448.064c17.664 0 32-14.336 32-32V384.832c0-17.664 14.304-32 32-32s32 14.336 32 32V864c0 52.928-43.072 96-96 96z'
-												p-id='6840'
-											></path>
-										</svg>
-										<span>
-											{t('deleteNote', {
-												ns: 'indexPage',
-											})}
-										</span>
-									</div>
-								</saki-menu-item>
-							</saki-menu>
-						</div>
-					</saki-dropdown>
 				) : (
 					''
-				)} */}
-
+				)}
 				<saki-dropdown
 					visible={openSettingDropDownMenu}
 					floating-direction='Left'
@@ -806,7 +458,6 @@ const HeaderComponent = ({
 						</saki-menu>
 					</div>
 				</saki-dropdown>
-
 				<saki-dropdown
 					style={{
 						display: user.isLogin ? 'block' : 'none',
