@@ -147,46 +147,6 @@ function App() {
 				return false
 			}
 		}
-		// setInterval(async () => {
-		// 	const res = await isOnline()
-		// 	if (res) {
-		// 		console.log('Succesfully coected!')
-		// 	} else {
-		// 		console.log('Sorry, we currently do not have Internet access.')
-		// 	}
-		// }, 3000)
-
-		// const ns = new NetworkStatus({
-		// 	testUrl: networkTestUrl,
-		// })
-		// ns.addEventListener('online', () => {
-		// 	console.log('nsnsns', ns.online, 'Succesfully coected!')
-		// })
-		// ns.addEventListener('offline', () => {
-		// 	console.log(
-		// 		'nsnsns',
-		// 		ns.online,
-		// 		'Sorry, we currently do not have Internet access.'
-		// 	)
-		// })
-		// console.log('nsnsns', ns.online)
-		// store.dispatch(configSlice.actions.setNetworkStatus(ns.online))
-
-		// debounce.increase(() => {
-		// 	window.addEventListener('offline', function () {
-		// 		console.log('断网了')
-		// 		store.dispatch(
-		// 			configSlice.actions.setNetworkStatus(window.navigator.onLine)
-		// 		)
-		// 	})
-
-		// 	window.addEventListener('online', function () {
-		// 		console.log('联网了')
-		// 		store.dispatch(
-		// 			configSlice.actions.setNetworkStatus(window.navigator.onLine)
-		// 		)
-		// 	})
-		// }, 50)
 	}, [])
 
 	return (

@@ -180,7 +180,7 @@ export function watchPush() {
 			if (result === 'granted') {
 				navigator.serviceWorker.ready
 					.then((registration) => {
-            console.log('registration watch push', registration)
+						console.log('registration watch push', registration)
 						registration.addEventListener('push', (e) => {
 							console.log('push', e)
 
@@ -230,8 +230,7 @@ export function push() {
 								// })
 								// console.log('res', res)
 
-								const vapidPublicKey =
-									'BJbk4WUdqG2PifeKd0MlF2cljUPZO_GMPzfD0QNGsqrg7FkN1YO4VeVRdny0nsZRur50_PbHDz3Jptf1jPiygAs'
+								const vapidPublicKey = ''
 								// Chrome doesn't accept the base64-encoded (string) vapidPublicKey yet
 								// urlBase64ToUint8Array() is defined in /tools.js
 
