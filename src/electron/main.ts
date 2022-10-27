@@ -23,8 +23,13 @@ import { initRouter } from './router/router'
 import { backup } from './modules/methods'
 import { openMainWindows } from './windows'
 import * as nyanyalog from 'nyanyajs-log'
+import { t } from './modules/languages'
 
 const run = () => {
+	if (process.platform === 'win32') {
+		app.setAppUserModelId(t("appName"))
+	}
+
 	let isQuit = false
 
 	const argvFunc = (argv: string[]) => {

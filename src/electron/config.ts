@@ -10,6 +10,9 @@ import { NodeFsStorage, electronRouter } from '@nyanyajs/utils/dist/node'
 import path from 'path'
 import isDev from 'electron-is-dev'
 import * as nyanyalog from 'nyanyajs-log'
+import { appTray, getMenu } from './taskMenu'
+import { t } from './modules/languages'
+import { osLocale } from 'os-locale'
 
 nyanyalog.config({
 	format: {
@@ -114,10 +117,23 @@ export const global = new NodeFsStorage<any>({
 	label: labelPrefix + 'global',
 	cacheRootDir: cacheRootDir + '/meow-sticky-note/u',
 })
+
+export let languages = 'en-US'
+export let supportLanguages = ['en-US', 'zh-CN', 'zh-TW']
+export const setLanguages = async () => {
+	languages = await systemConfig.get('language')
+	let locale = Intl.DateTimeFormat().resolvedOptions().locale
+	if (languages === 'system') {
+		languages = supportLanguages.includes(locale) ? locale : 'en-US'
+	}
+	appTray.setToolTip(t('appName'))
+	appTray.setContextMenu(getMenu())
+}
+
 export const initConfig = async () => {
 	NodeFsStorage.baseRootDir = cacheRootDir + "'/meow-sticky-note/u'"
 
-	await systemConfig.getAndSet('language', (v) => {
+	languages = await systemConfig.getAndSet('language', (v) => {
 		return v ? v : 'en-US'
 	})
 	await systemConfig.getAndSet('mode', (v) => {

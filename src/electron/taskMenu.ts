@@ -16,76 +16,96 @@ import {
 	openQuickReviewWindows,
 	createWindow,
 } from './windows'
+import { version } from './package.json'
+import { exec } from 'child_process'
 import {
 	initConfig,
 	logo,
+	setLanguages,
 	systemConfig,
 	taskIcon,
 	taskWhiteIcon,
 } from './config'
+import { t } from './modules/languages'
 
-let appTray: Tray
+export let appTray: Tray
 
-const contextMenu = Menu.buildFromTemplate([
-	{
-		label: 'Open Meow Sticky Note',
-		click() {
-			openMainWindows()
-		},
-	},
-	{
-		label: 'Quick review',
-		click() {
-			openQuickReviewWindows()
-		},
-	},
-	{
-		label: 'Icon',
-		submenu: Menu.buildFromTemplate([
-			{
-				label: 'Pink Icon',
-				click() {
-					createTaskMenu('pink')
-				},
+export const getMenu = () => {
+	return Menu.buildFromTemplate([
+		{
+			label: t('openMainWindow').replace('{{appName}}', t('appName')),
+			click() {
+				openMainWindows()
 			},
-			{
-				label: 'White Icon',
-				click() {
-					createTaskMenu('white')
-				},
-			},
-		]),
-	},
-	// {
-	// 	label: 'Clear cache',
-	// 	accelerator: 'CmdOrCtrl+Shift+Delete',
-	// 	click: (item: any, focusedWindow: any) => {
-	// 		if (focusedWindow) {
-	// 			const clearObj = {
-	// 				storages: [
-	// 					'appcache',
-	// 					'filesystem',
-	// 					// 'indexdb',
-	// 					'localstorage',
-	// 					'shadercache',
-	// 					'websql',
-	// 					'serviceworkers',
-	// 					'cachestorage',
-	// 				],
-	// 			}
-	// 			focusedWindow.webContents.session.clearStorageData(clearObj)
-	// 		}
-	// 	},
-	// },
-	{
-		label: 'Quit',
-		click() {
-			//ipc.send('close-main-window');
-			app.quit()
 		},
-	},
-])
-
+		{
+			label: t('quickReview'),
+			click() {
+				openQuickReviewWindows()
+			},
+		},
+		{
+			label: t('icon'),
+			submenu: Menu.buildFromTemplate([
+				{
+					label: t('pinkIcon'),
+					click() {
+						createTaskMenu('pink')
+					},
+				},
+				{
+					label: t('whiteIcon'),
+					click() {
+						createTaskMenu('white')
+					},
+				},
+			]),
+		},
+		// {
+		// 	label: 'Clear cache',
+		// 	accelerator: 'CmdOrCtrl+Shift+Delete',
+		// 	click: (item: any, focusedWindow: any) => {
+		// 		if (focusedWindow) {
+		// 			const clearObj = {
+		// 				storages: [
+		// 					'appcache',
+		// 					'filesystem',
+		// 					// 'indexdb',
+		// 					'localstorage',
+		// 					'shadercache',
+		// 					'websql',
+		// 					'serviceworkers',
+		// 					'cachestorage',
+		// 				],
+		// 			}
+		// 			focusedWindow.webContents.session.clearStorageData(clearObj)
+		// 		}
+		// 	},
+		// },
+		{
+			label: t('about'),
+			submenu: [
+				{
+					label: t('version') + ': ' + version,
+					enabled: false,
+				},
+				{
+					label: t('github'),
+					click() {
+						exec('start https://github.com/ShiinaAiiko/meow-sticky-note')
+					},
+				},
+			],
+		},
+		{
+			label: t('quit'),
+			click() {
+				//ipc.send('close-main-window');
+				app.quit()
+			},
+		},
+	])
+}
 
 //系统托盘右键菜单
 export const createTaskMenu = async (type?: 'pink' | 'white') => {
@@ -108,9 +128,5 @@ export const createTaskMenu = async (type?: 'pink' | 'white') => {
 	// console.log(iconDir)
 	//图标的上下文菜单
 
-	//设置此托盘图标的悬停提示内容
-	appTray.setToolTip('Meow Sticky Note')
-
-	//设置此图标的上下文菜单
-	appTray.setContextMenu(contextMenu)
+  setLanguages()
 }

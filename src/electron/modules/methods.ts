@@ -115,27 +115,31 @@ const clearBackup = async () => {
 
 		const storagePath = await systemConfig.get('backupStoragePath')
 		// nyanyalog.info('keepBackups', storagePath, keepBackups)
-		const files = fs.readdirSync(storagePath)
-		// nyanyalog.info(files)
-		const timestamp = Math.floor(new Date().getTime() / 1000)
+		// console.log('storagePath', !!storagePath)
+		if (storagePath) {
+			const files = fs.readdirSync(storagePath)
+			// nyanyalog.info(files)
+			const timestamp = Math.floor(new Date().getTime() / 1000)
 
-		files.forEach((v) => {
-			if (v.indexOf('backup_') === 0) {
-				const createTime = Math.floor(
-					new Date(v.replace('backup_', '').replace('_', ' ')).getTime() / 1000
-				)
-				// nyanyalog.info(createTime)
-				const filePath = storagePath + '/' + v
-				// nyanyalog.info(filePath)
+			files.forEach((v) => {
+				if (v.indexOf('backup_') === 0) {
+					const createTime = Math.floor(
+						new Date(v.replace('backup_', '').replace('_', ' ')).getTime() /
+							1000
+					)
+					// nyanyalog.info(createTime)
+					const filePath = storagePath + '/' + v
+					// nyanyalog.info(filePath)
 
-				if (timestamp - createTime >= keepBackups) {
-					nyanyalog.info(filePath, ' => 该删除了')
-					removeDir(filePath)
-				} else {
-					// nyanyalog.info(filePath, ' => 不需要删除')
+					if (timestamp - createTime >= keepBackups) {
+						nyanyalog.info(filePath, ' => 该删除了')
+						removeDir(filePath)
+					} else {
+						// nyanyalog.info(filePath, ' => 不需要删除')
+					}
 				}
-			}
-		})
+			})
+		}
 	} catch (error) {
 		nyanyalog.error(error)
 	}

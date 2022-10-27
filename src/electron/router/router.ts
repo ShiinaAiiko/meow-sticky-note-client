@@ -11,7 +11,7 @@ import { APIParams } from '../typings/api'
 
 import { windows, openMainWindows } from '../windows'
 import { mode, setMode } from '../appearance'
-import { logo, systemConfig } from '../config'
+import { setLanguages, logo, systemConfig } from '../config'
 import { saveAs, openFolder, backup } from '../modules/methods'
 import * as nyanyalog from 'nyanyajs-log'
 
@@ -131,6 +131,15 @@ export const initRouter = () => {
 	ipcMain.on(
 		'updateSetting',
 		R(({ window, data }) => {
+			switch (data.data.type) {
+				case 'language':
+					setLanguages()
+
+					break
+
+				default:
+					break
+			}
 			windows.forEach((v) => {
 				// nyanyalog.info(v.id, window.id)
 				if (v.id !== window.id) {

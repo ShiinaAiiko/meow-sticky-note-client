@@ -8,7 +8,7 @@ branch="main"
 configFilePath="config.pro.json"
 registryUrl="https://registry.npmmirror.com/"
 DIR=$(cd $(dirname $0) && pwd)
-allowMethods=("el:install el:run el:build run protos stop npmconfig install gitpull dockerremove start logs")
+allowMethods=("el:install el:run el:build push run protos stop npmconfig install gitpull dockerremove start logs")
 
 # yarn --registry https://registry.npmmirror.com/
 #  yarn add @nyanyajs/utils @saki-ui/core
@@ -127,16 +127,32 @@ el:build() {
   rm -rf ./el-build/*.AppImage
   rm -rf ./el-build/*.deb
   rm -rf ./el-build/*.exe
-  rm -rf ./el-build/*.exe.blockmap
-  # yarn el:build-win
+  yarn el:build-win
   yarn el:build-linux
   rm -rf ./build
 
+  # Meow Sticky Note Setup 1.0.1.exe
+  # Meow Sticky Note-1.0.1.AppImage
+  # meow-sticky-note_1.0.1_amd64.deb
+  mv "./el-build/Meow Sticky Note Setup "$version".exe" \
+    ./el-build/$appName-v$version-win-x64.exe
+  mv "./el-build/Meow Sticky Note-"$version".AppImage" \
+    ./el-build/$appName-v$version-linux-x64.AppImage
+  mv "./el-build/meow-sticky-note_"$version"_amd64.deb" \
+    ./el-build/$appName-v$version-linux-amd64-x64.deb
+
+  rm -rf ./el-build/*.exe.blockmap
   cd ../../
 
-  el:install
-  el:run
+  # el:install
+  # el:run
 }
+
+push() {
+  git tag v$version
+  git push origin v$version
+}
+
 
 el:install() {
   # ./release.sh el:install && ./release.sh el:run

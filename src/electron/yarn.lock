@@ -2184,6 +2184,11 @@ invert-kv@^1.0.0:
   resolved "https://registry.npm.aiiko.club/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
   integrity sha512-xgs2NH9AE66ucSq4cNG1nhSFghr5l6tdL15Pk+jl46bmmBapgoaY/AacXyaDznAqmGL99TiLSQgO/XazFSKYeQ==
 
+invert-kv@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.npm.aiiko.club/invert-kv/-/invert-kv-3.0.1.tgz#a93c7a3d4386a1dc8325b97da9bb1620c0282523"
+  integrity sha512-CYdFeFexxhv/Bcny+Q0BfOV+ltRlJcd4BBZBYFX/O0u4npJrgZtIcjokegtiSMAvlMTJ+Koq0GBCc//3bueQxw==
+
 ion-sdk-js@^1.8.2:
   version "1.8.2"
   resolved "https://registry.npm.aiiko.club/ion-sdk-js/-/ion-sdk-js-1.8.2.tgz#2adb712b13fe71464a6c907b725fcb127bbc7567"
@@ -2475,6 +2480,13 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
+lcid@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.npm.aiiko.club/lcid/-/lcid-3.1.1.tgz#9030ec479a058fc36b5e8243ebaac8b6ac582fd0"
+  integrity sha512-M6T051+5QCGLBQb8id3hdvIW8+zeFV2FyBGFS9IEK5H9Wt4MueD4bW1eWikpHgZp+5xR3l5c8pZUkQsIA0BFZg==
+  dependencies:
+    invert-kv "^3.0.0"
+
 leven@2.1.0:
   version "2.1.0"
   resolved "https://registry.npm.aiiko.club/leven/-/leven-2.1.0.tgz#c2e7a9f772094dee9d34202ae8acce4687875580"
@@ -2754,6 +2766,13 @@ os-locale@^1.4.0:
   integrity sha512-PRT7ZORmwu2MEFt4/fv3Q+mEfN4zetKxufQrkShY2oGvUms9r8otu5HfdyIFHkYXjO7laNsoVGmM2MANfuTA8g==
   dependencies:
     lcid "^1.0.0"
+
+os-locale@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.npm.aiiko.club/os-locale/-/os-locale-6.0.2.tgz#2e5122600f48cd9b846524c07f898db1c596bf20"
+  integrity sha512-qIb8bzRqaN/vVqEYZ7lTAg6PonskO7xOmM7OClD28F6eFa4s5XGe4bGpHUHMoCHbNNuR0pDYFeSLiW5bnjWXIA==
+  dependencies:
+    lcid "^3.1.1"
 
 p-cancelable@^1.0.0:
   version "1.1.0"

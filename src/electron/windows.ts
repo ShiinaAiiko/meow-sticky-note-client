@@ -134,8 +134,8 @@ export const openMainWindows = async () => {
 	}
 	return await createWindow('/', {
 		title: 'Meow Sticky Note',
-		width: 1200,
-		height: 780,
+		width: 1000,
+		height: 680,
 		// x: 0,
 		// y: 0,
 		skipTaskbar: false,
@@ -148,7 +148,7 @@ export const openMainWindows = async () => {
 		// backgroundColor: 'rgba(0,0,0,0.3)',
 
 		webPreferences: {
-			devTools: true,
+			devTools: false,
 			nodeIntegration: true,
 			contextIsolation: false,
 		},
