@@ -10,10 +10,8 @@ registryUrl="https://registry.npmmirror.com/"
 DIR=$(cd $(dirname $0) && pwd)
 allowMethods=("el:install el:run el:build run protos stop npmconfig install gitpull dockerremove start logs")
 
-# npm i --registry https://registry.npmmirror.com/
-# npm i @nyanyajs/utils @saki-ui/core
-# "@nyanyajs/utils": "^1.0.10",
-# "@saki-ui/core": "^1.0.0",
+# yarn --registry https://registry.npmmirror.com/
+#  yarn add @nyanyajs/utils @saki-ui/core
 npmconfig() {
   echo "-> 配置npm config"
   # yarn config set electron_mirror https://registry.npmmirror.com/binary.html?path=electron/
@@ -61,6 +59,7 @@ start() {
   echo "-> 准备构建Docker"
   docker build \
     -t $name \
+    --network host \
     $(cat /etc/hosts | sed 's/^#.*//g' | grep '[0-9][0-9]' | tr "\t" " " | awk '{print "--add-host="$2":"$1 }' | tr '\n' ' ') \
     . \
     -f Dockerfile.multi
@@ -70,11 +69,11 @@ start() {
   rm -rf $DIR/config.pro.temp.json
 
   echo "-> 准备运行Docker"
-  docker stop $name
-  docker rm $name
+  stop
 
   docker run \
     --name=$name \
+    --network host \
     $(cat /etc/hosts | sed 's/^#.*//g' | grep '[0-9][0-9]' | tr "\t" " " | awk '{print "--add-host="$2":"$1 }' | tr '\n' ' ') \
     -p $port:$port \
     --restart=always \
@@ -83,6 +82,7 @@ start() {
 
 stop() {
   docker stop $name
+  docker rm $name
 }
 
 protos() {
@@ -122,7 +122,7 @@ el:build() {
   cp -r ./el-build/*.AppImage ./el-build/packages/
   cp -r ./el-build/*.deb ./el-build/packages/
   cp -r ./el-build/*.exe ./el-build/packages/
-  
+
   rm -rf ./el-build/linux-unpacked
   rm -rf ./el-build/*.AppImage
   rm -rf ./el-build/*.deb

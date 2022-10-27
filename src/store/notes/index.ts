@@ -216,7 +216,7 @@ export const notesMethods = {
 						})
 						// 本地存在\远端不存在
 						if (!isExist && v.isSync) {
-							console.log('本地存在远端不存在', deepCopy(v))
+							console.log('本地存在远端不存在', 1, deepCopy(v))
 							// 如果已经上传过远端,则视为删除,没有则视为本地创建未上传
 							if (v.syncTime) {
 								thunkAPI.dispatch(
@@ -446,6 +446,7 @@ export const notesMethods = {
 									noteId: pl.options?.noteId || '',
 									note: {
 										name: pl.data?.note?.name || '',
+										categories: pl.data?.note?.categories || undefined,
 									},
 									disableSync: true,
 								})
@@ -495,6 +496,7 @@ export const notesMethods = {
 									categoryId: pl.options?.categoryId,
 									category: {
 										name: pl.data?.category.name,
+										lastUpdateTime: pl.data?.category.lastUpdateTime,
 									},
 									disableSync: true,
 								})
@@ -597,6 +599,7 @@ export const notesMethods = {
 			state: RootState
 		}
 	>('notes/EnableSyncNote', async ({ noteId, isSync }, thunkAPI) => {
+		console.log('------EnableSyncNote------')
 		thunkAPI.dispatch(
 			notesSlice.actions.enableSyncNote({
 				noteId,
@@ -611,6 +614,7 @@ export const notesMethods = {
 				id: noteId,
 			})
 			console.log(res)
+			// 存在就更新，不存在則創建
 			if (res.code === 200) {
 				console.log('GetRemoteData', res.data.note)
 				saveNote({
@@ -848,7 +852,7 @@ export const notesSlice = createSlice({
 				if (v.id === params.payload.id) {
 					note = Object.assign(v, params.payload.v)
 					v = Object.assign(v, params.payload.v)
-					state.updateTime = new Date().getTime()
+					state.updateTime = Math.floor(new Date().getTime() / 1000)
 					return true
 				}
 			})
@@ -948,6 +952,7 @@ export const notesSlice = createSlice({
 				note: {
 					name?: string
 					authorId?: number
+					categories?: CategoryItem[]
 					isSync?: boolean
 				}
 				disableSync?: boolean
@@ -957,6 +962,7 @@ export const notesSlice = createSlice({
 			if (!note.name) return
 			state.list.some((v) => {
 				if (v.id === noteId) {
+					v.categories = note.categories || v.categories
 					v.name = note.name || ''
 					v.authorId = note.authorId || v.authorId
 					v.isSync = note.isSync || v.isSync
@@ -1256,6 +1262,7 @@ export const notesSlice = createSlice({
 				categoryId: string
 				category: {
 					name?: string
+					lastUpdateTime?: number
 				}
 				disableSync?: boolean
 			}>
@@ -1267,7 +1274,9 @@ export const notesSlice = createSlice({
 						if (sv.id === categoryId) {
 							// console.log('categiory', category)
 							// console.log({ ...sv })
-							sv.lastUpdateTime = Math.floor(new Date().getTime() / 1000)
+							sv.lastUpdateTime =
+								category.lastUpdateTime ||
+								Math.floor(new Date().getTime() / 1000)
 							sv = Object.assign(sv, category)
 							// console.log({ ...sv })
 							saveNote({
@@ -1396,20 +1405,23 @@ export const notesSlice = createSlice({
 				data: {
 					title?: string
 					content?: string
+					lastUpdateTime?: number
 				}
 				disableSync?: boolean
 			}>
 		) => {
 			const { noteId, categoryId, pageId, data, disableSync } = params.payload
-			console.log(params)
+			console.log(deepCopy(params))
 			state.list.some((v) => {
 				if (v.id === noteId) {
 					v.categories.some((sv) => {
 						if (sv.id === categoryId) {
 							sv.data.some((ssv) => {
-								console.log('page', deepCopy(ssv), pageId)
+								console.log('pageupdate', deepCopy(ssv), pageId)
 								if (ssv.id === pageId) {
-									ssv.lastUpdateTime = Math.floor(new Date().getTime() / 1000)
+									ssv.lastUpdateTime =
+										data.lastUpdateTime ||
+										Math.floor(new Date().getTime() / 1000)
 									// ssv = Object.assign(ssv, params.payload)
 									// data.title &&
 									// 	(ssv.title =
@@ -1442,6 +1454,7 @@ export const notesSlice = createSlice({
 									} else {
 										state.mustUpdate = false
 									}
+									// console.log('page222', deepCopy(ssv), data, pageId)
 									const saveNoteParams = {
 										id: v.id,
 										v: deepCopy(v),

@@ -4,6 +4,8 @@ port=16111
 DIR=$(cd $(dirname $0) && pwd)
 allowMethods=("build gicon")
 
+# yarn --registry https://registry.npmmirror.com/
+#  yarn add @nyanyajs/utils
 build() {
   rm -rf ./el-build/linux-unpacked
   rm -rf ./el-build/*.AppImage

@@ -106,9 +106,11 @@ const IndexPage = (props: RouterProps) => {
 		})?.[0]
 		setActiveCategory(ac)
 		setActivePage(
-			ac?.data.filter((v) => {
-				return v.id === notes.pageId
-			})?.[0]
+			deepCopy(
+				ac?.data.filter((v) => {
+					return v.id === notes.pageId
+				})?.[0]
+			)
 		)
 	}, [notes, notes.noteId, notes.categoryId, notes.pageId, notes.updateTime])
 

@@ -45,6 +45,9 @@ const resources = {
 			turnOnSync: '开启同步',
 			turnedOnTip: '此笔记将同步到云端',
 			turnedOffTip: '即将关闭此笔记的同步功能',
+
+			importNotes: '导入笔记',
+			noteAlreadyExistsOverwrite: '这个笔记已经存在，你要覆盖它吗？',
 		},
 		indexHeader: {},
 		indexPage: {
@@ -81,6 +84,10 @@ const resources = {
 			syncingTo: '正在同步至',
 			syncPromptForNotLoggedIn: '启用同步功能前需要先登陆帐号',
 			modes: '模式',
+
+			openMeowStickyNote: '打开随喵笔记',
+			openQuickReview: '打开快速预览',
+			autoCloseWindowAfterCopy: '复制后自动关闭窗口',
 
 			light: '浅色模式',
 			dark: '暗黑模式',
@@ -153,6 +160,9 @@ const resources = {
 			turnOnSync: '開啟同步',
 			turnedOnTip: '此筆記將同步到雲端',
 			turnedOffTip: '即將關閉此筆記的同步功能',
+
+			importNotes: '導入筆記',
+			noteAlreadyExistsOverwrite: '這個筆記已經存在，你要覆蓋它嗎？',
 		},
 		indexHeader: {},
 		indexPage: {
@@ -189,6 +199,10 @@ const resources = {
 			syncingTo: '正在同步至',
 			syncPromptForNotLoggedIn: '啟用同步功能前需要先登陸帳號',
 			modes: '模式',
+
+			openMeowStickyNote: '打開随喵笔记',
+			openQuickReview: '打開快速預覽',
+			autoCloseWindowAfterCopy: '複製后自動關閉窗口',
 
 			light: '淺色模式',
 			dark: '暗黑模式',
@@ -261,6 +275,10 @@ const resources = {
 			turnOnSync: 'Turn on sync',
 			turnedOnTip: 'This note will sync to the cloud.',
 			turnedOffTip: 'Sync will be turned off for this note soon.',
+
+			importNotes: 'Import notes',
+			noteAlreadyExistsOverwrite:
+				'This note already exists, do you want to overwrite it?',
 		},
 		indexHeader: {},
 		indexPage: {
@@ -298,6 +316,10 @@ const resources = {
 			syncPromptForNotLoggedIn:
 				'To enable synchronization, you need to log in to your account.',
 			modes: 'Modes',
+
+			openMeowStickyNote: 'Open Meow Sticky Note',
+			openQuickReview: 'Open Quick review',
+			autoCloseWindowAfterCopy: 'Automatically close the window after copying',
 
 			light: 'Light',
 			dark: 'Dark',

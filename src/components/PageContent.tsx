@@ -63,7 +63,7 @@ const PageContentComponent = ({
 				richtextEl?.initValue?.(page?.content)
 			}
 		})
-	}, [page])
+	}, [page, notes.updateTime])
 
 	const upload = (file: File) => {
 		return new Promise((resolve, reject) => {
@@ -292,7 +292,10 @@ const PageContentComponent = ({
 									).unwrap()
 								},
 								changevalue: (e) => {
-									if (!config.pageConfig.disableChangeValue) {
+									if (
+										!config.pageConfig.disableChangeValue &&
+										page.title !== e.detail
+									) {
 										changeTitle(e.detail)
 									}
 								},
@@ -379,7 +382,10 @@ const PageContentComponent = ({
 										// 	page,
 										// 	page.id
 										// )
-										if (!config.pageConfig.disableChangeValue) {
+										if (
+											!config.pageConfig.disableChangeValue &&
+											page.content !== e.detail.richText
+										) {
 											await dispatch(
 												methods.notes.UpdatePage({
 													noteId: noteId,

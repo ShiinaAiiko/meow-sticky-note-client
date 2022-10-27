@@ -148,7 +148,7 @@ export const openMainWindows = async () => {
 		// backgroundColor: 'rgba(0,0,0,0.3)',
 
 		webPreferences: {
-			devTools: false,
+			devTools: true,
 			nodeIntegration: true,
 			contextIsolation: false,
 		},

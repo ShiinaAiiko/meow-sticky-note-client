@@ -6,17 +6,17 @@ ENV CLIENT_ENV=production
 # ENV NODE_ENV=production
 
 COPY .yarnrc .npmrc /root/
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
 
 RUN \
-  npm i
+  yarn 
 
 COPY . .
 
 RUN \
   cp -r ./config.pro.temp.json ./src/config.temp.json && \
-  npm run protos && \
-  npm run build && \
+  yarn protos && \
+  yarn build && \
   wget https://saki-ui.aiiko.club/saki-ui.tgz && \
   tar zxvf ./saki-ui.tgz -C ./build && \
   rm -rf ./saki-ui* 

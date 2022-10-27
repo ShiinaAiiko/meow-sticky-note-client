@@ -281,7 +281,6 @@ const IndexLayout = ({ children }: RouterProps) => {
 					></saki-linear-progress-bar>
 				</div>
 			</div>
-
 			<Header
 				onSettings={(type: string) => {
 					console.log('onSettings', type)

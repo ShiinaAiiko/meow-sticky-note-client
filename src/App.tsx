@@ -124,6 +124,8 @@ function App() {
 					delete currentKey[e.key]
 				}
 			})
+		} else {
+			// console.log = () => {}
 		}
 
 		window.addEventListener('resize', () => {

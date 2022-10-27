@@ -99,7 +99,9 @@ const SettingsComponent = ({
 						title={
 							config.deviceType === 'Mobile'
 								? showItemPage
-									? t(config.pageConfig.settingPage.settingType)
+									? t(
+											config.pageConfig.settingPage.settingType?.toLocaleLowerCase()
+									  )
 									: t('title')
 								: t('title')
 						}
@@ -759,7 +761,11 @@ const General = ({ show }: { show: boolean }) => {
 						type='Radio'
 					>
 						<div className='shortcut-item'>
-							<span>主程序</span>
+							<span>
+								{t('openMeowStickyNote', {
+									ns: 'settings',
+								})}
+							</span>
 							<div className='keys'>
 								<div className='key-item'>CTRL</div>
 								<div className='key-item'>ALT</div>
@@ -767,7 +773,11 @@ const General = ({ show }: { show: boolean }) => {
 							</div>
 						</div>
 						<div className='shortcut-item'>
-							<span>快速阅览</span>
+							<span>
+								{t('openQuickReview', {
+									ns: 'settings',
+								})}
+							</span>
 							<div className='keys'>
 								<div className='key-item'>CTRL</div>
 								<div className='key-item'>ALT</div>
@@ -787,7 +797,11 @@ const General = ({ show }: { show: boolean }) => {
 				)}
 				main={() => (
 					<div className='auto-close-window-after-copy'>
-						<span>复制后自动关闭窗口</span>
+						<span>
+							{t('autoCloseWindowAfterCopy', {
+								ns: 'settings',
+							})}
+						</span>
 						<saki-switch
 							ref={bindEvent({
 								change: (e) => {

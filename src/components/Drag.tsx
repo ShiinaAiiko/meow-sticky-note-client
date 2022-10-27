@@ -105,42 +105,45 @@ const DragComponent = () => {
 												)
 											} else {
 												alert({
-													title: '导入笔记',
-													content: '确定导入?',
+													title: t('importNotes', {
+														ns: 'common',
+													}),
+													content: t('noteAlreadyExistsOverwrite', {
+														ns: 'common',
+													}),
 													cancelText: 'Cancel',
-													confirmText: 'Next',
-													onCancel() {},
+													confirmText: 'Replace',
+													onCancel() {
+														// store.dispatch(
+														// 	notesSlice.actions.addNote({
+														// 		v: {
+														// 			...note,
+														// 			id: uuidv5(note.name, uuidv4()),
+														// 			authorId: user.userInfo.uid,
+														// 			isSync: false,
+														// 		},
+														// 		disableSync: true,
+														// 	})
+														// )
+													},
 													onConfirm() {
-														alert({
-															title: '导入笔记',
-															content: '检测到已导入同一个笔记,是否覆盖?',
-															cancelText: 'Add',
-															confirmText: 'Replace',
-															onCancel() {
-																store.dispatch(
-																	notesSlice.actions.addNote({
-																		v: {
-																			...note,
-																			id: uuidv5(note.name, uuidv4()),
-																			authorId: user.userInfo.uid,
-																			isSync: false,
-																		},
-																		disableSync: true,
-																	})
-																)
-															},
-															onConfirm() {
-																store.dispatch(
-																	notesSlice.actions.addNote({
-																		v: {
-																			...note,
-																			isSync: false,
-																		},
-																		disableSync: true,
-																	})
-																)
-															},
-														}).open()
+														store.dispatch(
+															notesSlice.actions.addNote({
+																v: {
+																	...note,
+																	isSync: false,
+																},
+																disableSync: true,
+															})
+														)
+														if (note.isSync) {
+															store.dispatch(
+																methods.notes.EnableSyncNote({
+																	noteId: note.id,
+																	isSync: true,
+																})
+															)
+														}
 													},
 												}).open()
 											}

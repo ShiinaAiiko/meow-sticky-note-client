@@ -9,11 +9,10 @@
 	"scripts": {
 		"cache": "cp ./public/package1.json ./node_modules/@saki-ui/core/package.json",
 		"dc": "sudo rm -rf ./node_modules/.cache && sudo rm -rf ./src/electron/el-build/linux-unpacked && sudo rm -rf ./src/electron/el-build/win-unpacked",
-		"dev": "cp -r ./config.test.json ./src/config.temp.json && npm run dc && PORT=16111 react-scripts start  --allow-root",
-		"build": "react-scripts build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject",
-		"start": "concurrently \"BROWSER=none npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+		"dev": "cp -r ./config.test.json ./src/config.temp.json && npm run dc && PORT=16111 react-app-rewired start  --allow-root",
+		"build": "react-app-rewired build",
+		"test": "react-app-rewired test",
+		"eject": "react-app-rewired eject",
 		"el:build": "./release.sh elbuild",
 		"protos:build": "pbjs -t static-module -w commonjs -o src/protos/proto.js  ./protos_temp/**/*.proto",
 		"protos:tsc": "pbts -o ./src/protos/proto.d.ts ./src/protos/proto.js",
@@ -49,6 +48,7 @@
 		"@types/react-dom": "^18.0.5",
 		"blueimp-md5": "^2.19.0",
 		"buffer": "^6.0.3",
+		"i18next": "^21.10.0",
 		"protobufjs": "^6.11.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
@@ -68,7 +68,10 @@
 		"@types/react-transition-group": "^4.4.5",
 		"@types/socket.io-client": "^1.4.36",
 		"@types/uuid": "^8.3.4",
+		"customize-cra": "^1.0.0",
+		"react-app-rewired": "^2.2.1",
 		"sass": "^1.53.0",
+		"terser-webpack-plugin": "^5.3.6",
 		"typescript": "^4.7.4"
 	}
 }
