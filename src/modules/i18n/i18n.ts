@@ -4,7 +4,7 @@ import { initReactI18next } from 'react-i18next'
 const resources = {
 	'zh-CN': {
 		common: {
-			appTitle: '随喵笔记',
+			appTitle: '随喵便签',
 			language: '多语言',
 			openDevtools: '开发者工具',
 			quit: '退出',
@@ -119,7 +119,7 @@ const resources = {
 	},
 	'zh-TW': {
 		common: {
-			appTitle: '随喵笔记',
+			appTitle: '隨喵便簽',
 			language: '多語言',
 			openDevtools: '開發者工具',
 			quit: '退出',
