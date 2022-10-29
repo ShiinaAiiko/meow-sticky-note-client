@@ -8,7 +8,7 @@ branch="main"
 configFilePath="config.pro.json"
 registryUrl="https://registry.npmmirror.com/"
 DIR=$(cd $(dirname $0) && pwd)
-allowMethods=("el:install el:run el:build push run protos stop npmconfig install gitpull dockerremove start logs")
+allowMethods=("el:icon el:install el:run el:build push run protos stop npmconfig install gitpull dockerremove start logs")
 
 # yarn --registry https://registry.npmmirror.com/
 #  yarn add @nyanyajs/utils @saki-ui/core
@@ -97,8 +97,8 @@ logs() {
   docker logs -f $name
 }
 
-el:build() {
-  sudo cp -r $DIR/public/logo-neko-circle-white1500.png $DIR/src/electron/logo.png
+el:icon() {
+  sudo cp -r $DIR/public/logo-white-bg.png $DIR/src/electron/logo.png
   cd ./src/electron
   yarn el:icon
   cd ../../
@@ -106,6 +106,10 @@ el:build() {
   cp -r $DIR/src/electron/icons $DIR/public/icons
   rm -rf $DIR/src/electron/logo.png
   rm -rf $DIR/src/electron/icons
+}
+
+el:build() {
+  el:icon
 
   cp -r $DIR/$configFilePath $DIR/src/config.temp.json
   yarn build
@@ -152,7 +156,6 @@ push() {
   git tag v$version
   git push origin v$version
 }
-
 
 el:install() {
   # ./release.sh el:install && ./release.sh el:run
