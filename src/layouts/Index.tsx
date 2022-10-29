@@ -227,7 +227,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 					})}
 				</div> */}
 				<div className='loading-logo'>
-					<img src={config.origin + '/logo192.png'} alt='' />
+					<img src={config.origin + '/256x256.png'} alt='' />
 				</div>
 				{/* <div>progressBar, {progressBar}</div> */}
 				<div className='loading-progress-bar'>
