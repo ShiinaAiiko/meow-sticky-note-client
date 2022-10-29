@@ -1296,7 +1296,7 @@ const About = ({ show }: { show: boolean }) => {
 			className='setting-about-page'
 		>
 			<div className='version-info'>
-				<img src='./256x256.png' alt='' />
+				<img src='./logo192.png' alt='' />
 				<div className='version-code'>
 					<span>Version v{config.version}</span>
 				</div>

@@ -190,6 +190,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 
 	return (
 		<div className='index-layout'>
+			{window.innerWidth},{config.deviceType}
 			<Login />
 			<saki-init
 				ref={bindEvent({
@@ -206,7 +207,6 @@ const IndexLayout = ({ children }: RouterProps) => {
 					},
 				})}
 			></saki-init>
-
 			<div
 				onTransitionEnd={() => {
 					console.log('onTransitionEnd')
@@ -227,7 +227,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 					})}
 				</div> */}
 				<div className='loading-logo'>
-					<img src={config.origin + '/256x256.png'} alt='' />
+					<img src={config.origin + '/logo192.png'} alt='' />
 				</div>
 				{/* <div>progressBar, {progressBar}</div> */}
 				<div className='loading-progress-bar'>
@@ -289,7 +289,6 @@ const IndexLayout = ({ children }: RouterProps) => {
 					setOpenSettingModal(true)
 				}}
 			/>
-
 			{nsocketio.status !== 'success' &&
 			user.token &&
 			config.deviceType === 'Mobile' ? (
@@ -308,9 +307,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 			) : (
 				''
 			)}
-
 			<div className='il-main'>{children}</div>
-
 			<Settings
 				visible={openSettingModal}
 				// type={openSettingType}

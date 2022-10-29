@@ -139,7 +139,7 @@ const HeaderComponent = ({
 									ns: 'common',
 								})}
 							>
-								<img src={config.origin + '/256x256.png'} alt='' />
+								<img src={config.origin + '/logo192.png'} alt='' />
 								<span className='text-elipsis'>
 									{t('appTitle', {
 										ns: 'common',

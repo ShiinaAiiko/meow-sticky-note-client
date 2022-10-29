@@ -8,23 +8,24 @@
 			"type": "image/x-icon"
 		},
 		{
-			"src": "192x192.png",
+			"src": "logo-192x192.png",
 			"type": "image/png",
 			"sizes": "192x192"
 		},
 		{
-			"src": "256x256.png",
+			"src": "logo-256x256.png",
 			"type": "image/png",
 			"sizes": "256x256"
 		},
 		{
-			"src": "512x512.png",
+			"src": "logo-512x512.png",
 			"type": "image/png",
 			"sizes": "512x512"
 		}
 	],
 	"orientation": "any",
-	"start_url": "/m",
+	"start_url": "/",
+  "scope": "/",
 	"display": "standalone",
 	"theme_color": "#ffffff",
 	"background_color": "#ffffff"
