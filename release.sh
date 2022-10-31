@@ -112,7 +112,7 @@ el:build() {
   el:icon
 
   cp -r $DIR/$configFilePath $DIR/src/config.temp.json
-  yarn build
+  yarn build_to_el
 
   wget https://saki-ui.aiiko.club/saki-ui.tgz
   tar zxvf ./saki-ui.tgz -C ./build
