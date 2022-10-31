@@ -210,6 +210,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 								v: true,
 							})
 						)
+            store.dispatch(methods.config.getDeviceType())
 						// setProgressBar(progressBar + 0.2 >= 1 ? 1 : progressBar + 0.2)
 						// setProgressBar(.6)
 					},
@@ -276,7 +277,6 @@ const IndexLayout = ({ children }: RouterProps) => {
 											el.style.display = 'none'
 											setHideLoading(true)
 
-											store.dispatch(methods.config.getDeviceType())
 										}
 									}
 								}
