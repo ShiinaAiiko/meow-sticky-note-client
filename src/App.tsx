@@ -131,7 +131,9 @@ function App() {
 		window.addEventListener('resize', () => {
 			store.dispatch(methods.config.getDeviceType())
 		})
-		store.dispatch(methods.config.getDeviceType())
+		window.addEventListener('load', () => {
+			store.dispatch(methods.config.getDeviceType())
+		})
 
 		async function isOnline() {
 			try {

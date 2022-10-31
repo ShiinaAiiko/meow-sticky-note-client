@@ -138,13 +138,25 @@ const IndexLayout = ({ children }: RouterProps) => {
 		}
 	}, [config.deviceType])
 
+	// useEffect(() => {
+	// 	// console.log('监听同步开启了', notes.isInit, config.sync)
+	// 	if (config.sync && user.isLogin && notes.isInit) {
+	// 		console.log('监听同步开启了')
+	// 		dispatch(methods.notes.GetRemoteData()).unwrap()
+	// 	}
+	// }, [config.sync])
+
 	useEffect(() => {
-		// console.log('监听同步开启了', notes.isInit, config.sync)
-		if (config.sync && user.isLogin && notes.isInit) {
-			console.log('监听同步开启了')
+		if (
+			user.isInit &&
+			user.isLogin &&
+			notes.isInit &&
+			config.sync &&
+			(location.pathname === '/' || location.pathname.indexOf('/m') === 0)
+		) {
 			dispatch(methods.notes.GetRemoteData()).unwrap()
 		}
-	}, [config.sync])
+	}, [user.isInit, user.isLogin, notes.isInit, config.sync])
 
 	useEffect(() => {
 		if (user.isInit) {
@@ -156,13 +168,10 @@ const IndexLayout = ({ children }: RouterProps) => {
 			user.isLogin &&
 			(location.pathname === '/' || location.pathname.indexOf('/m') === 0)
 		) {
-			console.log('监听同步开启了1')
-			dispatch(methods.notes.GetRemoteData()).unwrap()
 			dispatch(methods.nsocketio.Init()).unwrap()
 		} else {
 			dispatch(methods.nsocketio.Close()).unwrap()
 		}
-		// , config.networkStatus
 	}, [user.isInit, user.isLogin])
 
 	useEffect(() => {
@@ -190,7 +199,6 @@ const IndexLayout = ({ children }: RouterProps) => {
 
 	return (
 		<div className='index-layout'>
-			{window.innerWidth},{config.deviceType}
 			<Login />
 			<saki-init
 				ref={bindEvent({
@@ -267,6 +275,8 @@ const IndexLayout = ({ children }: RouterProps) => {
 										animation.onfinish = () => {
 											el.style.display = 'none'
 											setHideLoading(true)
+
+											store.dispatch(methods.config.getDeviceType())
 										}
 									}
 								}

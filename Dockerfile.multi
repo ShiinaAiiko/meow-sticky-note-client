@@ -3,6 +3,7 @@ FROM node:16.15.1 as BUILD_IMAGE
 WORKDIR /app
 
 ENV CLIENT_ENV=production
+ENV PUBLIC_URL='/'
 # ENV NODE_ENV=production
 
 COPY .yarnrc .npmrc /root/
@@ -32,7 +33,8 @@ COPY --from=BUILD_IMAGE \
   /dist
 
 RUN \ 
-  yarn global add spa-http-server --registry https://registry.npmmirror.com/
+  npm config set registry https://registry.npmmirror.com && \
+  yarn global add spa-http-server
 
 EXPOSE 16111
 

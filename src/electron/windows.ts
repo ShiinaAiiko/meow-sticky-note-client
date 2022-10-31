@@ -39,8 +39,12 @@ export const createWindow = async (
 ) => {
 	let x = await systemConfig.get(route + 'x')
 	let y = await systemConfig.get(route + 'y')
-	console.log('systemConfig', await systemConfig.get(route + 'x'))
-	console.log('systemConfig', await systemConfig.get(route + 'y'))
+	let w = await systemConfig.get(route + 'w')
+	let h = await systemConfig.get(route + 'h')
+	console.log(route + ' => x :', x)
+	console.log(route + ' => y :', y)
+	console.log(route + ' => w :', w)
+	console.log(route + ' => h :', h)
 
 	const window = new BrowserWindow({
 		...options,
@@ -59,6 +63,9 @@ export const createWindow = async (
 		window.center()
 	} else {
 		window.setPosition(x, y)
+	}
+	if (w && h) {
+		window.setSize(w, h)
 	}
 	if (options.visible) {
 		window.show()
@@ -102,6 +109,11 @@ export const createWindow = async (
 		const [x, y] = window.getPosition()
 		await systemConfig.set(route + 'x', x)
 		await systemConfig.set(route + 'y', y)
+	})
+	window.on('resize', async (e: any) => {
+		const [w, h] = window.getSize()
+		await systemConfig.set(route + 'w', w)
+		await systemConfig.set(route + 'h', h)
 	})
 	window.setMenu(null)
 	windows.set(route, window)
@@ -166,7 +178,7 @@ export const openQuickReviewWindows = async () => {
 	}
 	return await createWindow('/quickreview', {
 		title: 'Quick Review',
-		width: 800,
+		width: 960,
 		height: 600,
 		// x: 0,
 		// y: 500,

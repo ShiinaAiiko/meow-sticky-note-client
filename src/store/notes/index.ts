@@ -109,160 +109,162 @@ export const notesMethods = {
 		async (_, thunkAPI) => {
 			console.log('------GetRemoteData------')
 			const { config, notes, user } = store.getState()
-			if (config.sync) {
-				console.log('开始了同步功能')
-				if (!config.networkStatus) {
-					console.log('没网')
-					return
-				}
-				if (!user.isLogin) {
-					console.log('未登录')
-					return
-				}
-				store.dispatch(
-					configSlice.actions.setStatus({
-						type: 'syncStatus',
-						v: true,
-					})
-				)
+			if (!notes.isInit) {
+				console.log('本地還未初始化')
+				return
+			}
+			if (!config.sync) {
+				console.log('未开启同步功能')
+				return
+			}
+			if (!config.networkStatus) {
+				console.log('没网')
+				return
+			}
+			if (!user.isLogin) {
+				console.log('未登录')
+				return
+			}
+			console.log('开始了同步功能')
+			store.dispatch(
+				configSlice.actions.setStatus({
+					type: 'syncStatus',
+					v: true,
+				})
+			)
 
-				// 1、获取所有的note列表以及其url
-				// 检测准确的最新更新时间
-				let files = await api.v1.getFolderFiles({})
+			// 1、获取所有的note列表以及其url
+			// 检测准确的最新更新时间
+			let files = await api.v1.getFolderFiles({})
 
-				console.log('files', files)
-				let total: any = files.data?.total
-				if (files.code === 200) {
-					files.data?.list?.forEach((v) => {
-						if (v?.id && v.urls?.domainUrl && v.urls?.url) {
-							//
-							// console.log(notes.list)
-							let isExist = false
-							let note: NoteItem | undefined
-
-							notes.list.some((sv) => {
-								if (sv.id === v.id) {
-									isExist = true
-									note = sv
-									return true
-								}
-							})
-							console.log(
-								'localLastUpdateTime',
-								note?.lastUpdateTime,
-								v.lastUpdateTime,
-								note?.authorId
-							)
-
-							// // 本地存在\更新
-							if (isExist && note?.lastUpdateTime) {
-								//
-								if (note.authorId === user.userInfo.uid && note.isSync) {
-									// 更新时间每次和saass同步
-									console.log(
-										note.name,
-										' => 存在,版本是否一致?',
-										note?.lastUpdateTime,
-										v.lastUpdateTime,
-										Number(v.lastUpdateTime) > note.lastUpdateTime
-									)
-									if (Number(v.lastUpdateTime) > note.lastUpdateTime) {
-										console.log('远程版本大于本地', note.name)
-										getNote(v.id)
-									} else if (
-										Number(v.lastUpdateTime) === note?.lastUpdateTime
-									) {
-										console.log('已经是最新版了', note.name)
-									} else {
-										console.log('远程版本小于本地', note.name)
-										saveNote({
-											id: note.id,
-											v: note,
-											requestParams: {
-												type: 'Note',
-												methods: 'Update',
-												options: {
-													noteId: note.id,
-												},
-												data: {
-													note: note,
-												},
-											},
-										})
-									}
-								} else {
-									if (note.authorId !== user.userInfo.uid) {
-										console.log('这是其他人的日记')
-									}
-									console.log(note.name, ' => 禁用同步')
-								}
-							}
-							// 本地不存在\添加
-							else {
-								console.log('远端存在,同步到本地', v)
-								getNote(v.id)
-							}
-						} else {
-						}
-					})
-
-					notes.list.forEach((v) => {
+			console.log('files', files)
+			let total: any = files.data?.total
+			if (files.code === 200) {
+				files.data?.list?.forEach((v) => {
+					if (v?.id && v.urls?.domainUrl && v.urls?.url) {
+						//
+						// console.log(notes.list)
 						let isExist = false
-						files.data?.list?.some((sv) => {
-							if (v.id === sv.id) {
+						let note: NoteItem | undefined
+
+						notes.list.some((sv) => {
+							if (sv.id === v.id) {
 								isExist = true
+								note = sv
 								return true
 							}
 						})
-						// 本地存在\远端不存在
-						if (!isExist && v.isSync) {
-							console.log('本地存在远端不存在', 1, deepCopy(v))
-							// 如果已经上传过远端,则视为删除,没有则视为本地创建未上传
-							if (v.syncTime) {
-								thunkAPI.dispatch(
-									notesSlice.actions.deleteNote({
-										noteId: v.id,
-									})
+						console.log(
+							'localLastUpdateTime',
+							note?.lastUpdateTime,
+							v.lastUpdateTime,
+							note?.authorId
+						)
+
+						// // 本地存在\更新
+						if (isExist && note?.lastUpdateTime) {
+							//
+							if (note.authorId === user.userInfo.uid && note.isSync) {
+								// 更新时间每次和saass同步
+								console.log(
+									note.name,
+									' => 存在,版本是否一致?',
+									note?.lastUpdateTime,
+									v.lastUpdateTime,
+									Number(v.lastUpdateTime) > note.lastUpdateTime
 								)
+								if (Number(v.lastUpdateTime) > note.lastUpdateTime) {
+									console.log('远程版本大于本地', note.name)
+									getNote(v.id)
+								} else if (Number(v.lastUpdateTime) === note?.lastUpdateTime) {
+									console.log('已经是最新版了', note.name)
+								} else {
+									console.log('远程版本小于本地', note.name)
+									saveNote({
+										id: note.id,
+										v: note,
+										requestParams: {
+											type: 'Note',
+											methods: 'Update',
+											options: {
+												noteId: note.id,
+											},
+											data: {
+												note: note,
+											},
+										},
+									})
+								}
 							} else {
-								store.dispatch(
-									notesSlice.actions.setNoteLastUpdateTime({
-										id: v.id,
-										lastUpdateTime: Math.floor(new Date().getTime() / 1000),
-										syncTime: Math.floor(new Date().getTime() / 1000),
-									})
-								)
-								api.v1
-									.syncToServer({
-										type: 'Note',
-										methods: 'Add',
-										options: {
-											noteId: v.id,
-										},
-										data: {
-											note: v,
-										},
-									})
-									.then((res) => {
-										// console.log(res)
-									})
+								if (note.authorId !== user.userInfo.uid) {
+									console.log('这是其他人的日记')
+								}
+								console.log(note.name, ' => 禁用同步')
 							}
 						}
-					})
-				} else {
-					if (files.code === 10004) {
-						thunkAPI.dispatch(userSlice.actions.logout({}))
+						// 本地不存在\添加
+						else {
+							console.log('远端存在,同步到本地', v)
+							getNote(v.id)
+						}
+					} else {
 					}
-				}
-				store.dispatch(
-					configSlice.actions.setStatus({
-						type: 'syncStatus',
-						v: false,
+				})
+
+				notes.list.forEach((v) => {
+					let isExist = false
+					files.data?.list?.some((sv) => {
+						if (v.id === sv.id) {
+							isExist = true
+							return true
+						}
 					})
-				)
+					// 本地存在\远端不存在
+					if (!isExist && v.isSync) {
+						console.log('本地存在远端不存在', 1, deepCopy(v))
+						// 如果已经上传过远端,则视为删除,没有则视为本地创建未上传
+						if (v.syncTime) {
+							thunkAPI.dispatch(
+								notesSlice.actions.deleteNote({
+									noteId: v.id,
+								})
+							)
+						} else {
+							store.dispatch(
+								notesSlice.actions.setNoteLastUpdateTime({
+									id: v.id,
+									lastUpdateTime: Math.floor(new Date().getTime() / 1000),
+									syncTime: Math.floor(new Date().getTime() / 1000),
+								})
+							)
+							api.v1
+								.syncToServer({
+									type: 'Note',
+									methods: 'Add',
+									options: {
+										noteId: v.id,
+									},
+									data: {
+										note: v,
+									},
+								})
+								.then((res) => {
+									// console.log(res)
+								})
+						}
+					}
+				})
 			} else {
-				console.log('未开启同步功能')
+				if (files.code === 10004) {
+					thunkAPI.dispatch(userSlice.actions.logout({}))
+				}
 			}
+			store.dispatch(
+				configSlice.actions.setStatus({
+					type: 'syncStatus',
+					v: false,
+				})
+			)
 		}
 	),
 	AddNotebook: createAsyncThunk<

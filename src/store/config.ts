@@ -35,11 +35,13 @@ export const configMethods = {
 
 			if (window.innerWidth < 768) {
 				thunkAPI.dispatch(configSlice.actions.setDeviceType('Mobile'))
-			} else if (window.innerWidth < 1024) {
-				thunkAPI.dispatch(configSlice.actions.setDeviceType('Pad'))
-			} else {
-				thunkAPI.dispatch(configSlice.actions.setDeviceType('PC'))
+				return
 			}
+			if (window.innerWidth < 1024 && window.innerWidth >= 768) {
+				thunkAPI.dispatch(configSlice.actions.setDeviceType('Pad'))
+				return
+			}
+			thunkAPI.dispatch(configSlice.actions.setDeviceType('PC'))
 		}
 	),
 	initLanguage: createAsyncThunk(

@@ -98,7 +98,7 @@ logs() {
 }
 
 el:icon() {
-  sudo cp -r $DIR/public/logo-white-bg.png $DIR/src/electron/logo.png
+  sudo cp -r $DIR/public/logo-neko-circle-white1500.png $DIR/src/electron/logo.png
   cd ./src/electron
   yarn el:icon
   cd ../../
