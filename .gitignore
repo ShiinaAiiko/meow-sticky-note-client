@@ -35,3 +35,6 @@ config*.json
 /protos_temp
 /public/icons
 /public/saki-ui
+
+.npmrc
+.yarnrc

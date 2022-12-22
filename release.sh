@@ -40,6 +40,7 @@ gitpull() {
 dockerremove() {
   echo "-> 删除无用镜像"
   docker rm $(docker ps -q -f status=exited)
+  docker rmi -f $name
   docker rmi -f $(docker images | grep '<none>' | awk '{print $3}')
 }
 
@@ -60,7 +61,6 @@ start() {
   echo "-> 准备构建Docker"
   docker build \
     -t $name \
-    --network host \
     $(cat /etc/hosts | sed 's/^#.*//g' | grep '[0-9][0-9]' | tr "\t" " " | awk '{print "--add-host="$2":"$1 }' | tr '\n' ' ') \
     . \
     -f Dockerfile.multi
@@ -74,7 +74,6 @@ start() {
 
   docker run \
     --name=$name \
-    --network host \
     $(cat /etc/hosts | sed 's/^#.*//g' | grep '[0-9][0-9]' | tr "\t" " " | awk '{print "--add-host="$2":"$1 }' | tr '\n' ' ') \
     -p $port:$port \
     --restart=always \

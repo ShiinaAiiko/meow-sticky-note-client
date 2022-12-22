@@ -173,7 +173,11 @@ function App() {
 									: origin + sakiui.jsurl
 							}
 						></script>
-						{meowApps?.jsurl ? <></> : 'aaaaaaaaaaaaa'}
+						{/* {meowApps?.jsurl ? (
+							<div data-url={meowApps?.jsurl}></div>
+						) : (
+							'aaaaaaaaaaaaa'
+						)} */}
 
 						<script
 							type='module'
