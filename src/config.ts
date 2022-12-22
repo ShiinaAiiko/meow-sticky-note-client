@@ -22,6 +22,10 @@ let sakiui = {
 	jsurl: '',
 	esmjsurl: '',
 }
+let meowApps = {
+	jsurl: '',
+	esmjsurl: '',
+}
 
 let origin = window.location.origin
 
@@ -39,6 +43,7 @@ interface Config {
 	staticPathDomain: typeof staticPathDomain
 	networkTestUrl: typeof networkTestUrl
 	sakiui: typeof sakiui
+	meowApps: typeof meowApps
 }
 // import configJson from './config.test.json'
 try {
@@ -53,6 +58,7 @@ try {
 		staticPathDomain = configJson.staticPathDomain
 		networkTestUrl = configJson.networkTestUrl || configJson.serverApi.apiUrl
 		sakiui = configJson.sakiui
+		meowApps = configJson.meowApps
 	}
 } catch (error) {
 	console.log('未添加配置文件.')
@@ -67,4 +73,5 @@ export {
 	sakisso,
 	nsocketio,
 	origin,
+	meowApps,
 }

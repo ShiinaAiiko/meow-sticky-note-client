@@ -26,7 +26,7 @@ export const configMethods = {
 		store.dispatch(methods.config.initLanguage())
 		store.dispatch(methods.config.initAutoCloseWindowAfterCopy())
 		store.dispatch(methods.config.initSync())
-		store.dispatch(methods.config.initBackup())
+    store.dispatch(methods.config.initBackup())
 	}),
 	getDeviceType: createAsyncThunk(
 		modeName + '/getDeviceType',

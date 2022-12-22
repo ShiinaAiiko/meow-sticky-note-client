@@ -31,6 +31,8 @@ declare global {
 			'saki-transition': any
 			'saki-linear-progress-bar': any
 			'saki-loading': any
+			'saki-loading': any
+			'meow-apps-dropdown': any
 		}
 	}
 	namespace Window {

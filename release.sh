@@ -5,7 +5,8 @@ port=16111
 version=1.0.1
 branch="main"
 # configFilePath="config.dev.json"
-configFilePath="config.pro.json"
+webConfigFilePath="config.pro.web.json"
+electronConfigFilePath="config.pro.electron.json"
 registryUrl="https://registry.npmmirror.com/"
 DIR=$(cd $(dirname $0) && pwd)
 allowMethods=("el:icon el:install el:run el:build push run protos stop npmconfig install gitpull dockerremove start logs")
@@ -51,7 +52,7 @@ start() {
 
   echo "-> 正在准备相关资源"
   cp -r ../protos $DIR/protos_temp
-  cp -r ./$configFilePath $DIR/config.pro.temp.json
+  cp -r ./$webConfigFilePath $DIR/config.pro.temp.json
   # 获取npm配置
   cp -r ~/.npmrc $DIR
   cp -r ~/.yarnrc $DIR
@@ -111,12 +112,11 @@ el:icon() {
 el:build() {
   el:icon
 
-  cp -r $DIR/$configFilePath $DIR/src/config.temp.json
+  cp -r $DIR/$electronConfigFilePath $DIR/src/config.temp.json
   yarn build_to_el
 
-  wget https://saki-ui.aiiko.club/saki-ui.tgz
-  tar zxvf ./saki-ui.tgz -C ./build
-  rm -rf ./saki-ui*
+  download:saki-ui
+  download:meow-apps
 
   cp -r ./build ./src/electron/build
 
@@ -161,6 +161,18 @@ el:install() {
   # ./release.sh el:install && ./release.sh el:run
   sudo apt remove -y ${appName}
   sudo apt install -f -y ./src/electron/el-build/*.deb
+}
+
+download:saki-ui() {
+  wget https://saki-ui.aiiko.club/saki-ui.tgz
+  tar zxvf ./saki-ui.tgz -C ./build
+  rm -rf ./saki-ui*
+}
+
+download:meow-apps() {
+  wget https://apps.aiiko.club/meow-apps.tgz
+  tar zxvf ./meow-apps.tgz -C ./build
+  rm -rf ./meow-apps*
 }
 
 el:run() {

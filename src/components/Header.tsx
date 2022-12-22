@@ -278,6 +278,32 @@ const HeaderComponent = ({
 				) : (
 					''
 				)}
+				<div
+					style={{
+						margin: '0 4px 0 0',
+					}}
+				>
+					<meow-apps-dropdown
+						ref={bindEvent({
+							openUrl: (e) => {
+								switch (config.platform) {
+									case 'Electron':
+										const { shell } = window.require('electron')
+										shell.openExternal(e.detail)
+										break
+									case 'Web':
+										window.open(e.detail, '_blank')
+										break
+
+									default:
+										break
+								}
+							},
+						})}
+						disable-open-web-page
+						language={i18n.language}
+					/>
+				</div>
 				<saki-dropdown
 					visible={openSettingDropDownMenu}
 					floating-direction='Left'
@@ -458,6 +484,7 @@ const HeaderComponent = ({
 						</saki-menu>
 					</div>
 				</saki-dropdown>
+
 				<saki-dropdown
 					style={{
 						display: user.isLogin ? 'block' : 'none',

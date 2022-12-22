@@ -8,7 +8,7 @@ import routes from './routes'
 import { Provider } from 'react-redux'
 import { useParams, useLocation } from 'react-router-dom'
 import qs from 'qs'
-import { sakiui, networkTestUrl, origin } from './config'
+import { sakiui, networkTestUrl, origin, meowApps } from './config'
 import axios from 'axios'
 // NetworkStatus
 import { Debounce, deepCopy } from '@nyanyajs/utils'
@@ -151,7 +151,7 @@ function App() {
 			}
 		}
 	}, [])
-
+	console.log('meowApps?.jsurl ', meowApps?.jsurl)
 	return (
 		<Provider store={store}>
 			<HelmetProvider>
@@ -173,6 +173,26 @@ function App() {
 									: origin + sakiui.jsurl
 							}
 						></script>
+						{meowApps?.jsurl ? <></> : 'aaaaaaaaaaaaa'}
+
+						<script
+							type='module'
+							src={
+								meowApps?.esmjsurl?.indexOf('http') !== 0
+									? origin + meowApps.esmjsurl
+									: meowApps.esmjsurl
+							}
+						></script>
+
+						<script
+							noModule
+							src={
+								meowApps?.jsurl?.indexOf('http') !== 0
+									? origin + meowApps.jsurl
+									: meowApps.jsurl
+							}
+						></script>
+
 						<title></title>
 					</Helmet>
 					<RenderRoutes
