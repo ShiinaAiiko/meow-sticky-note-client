@@ -10,6 +10,7 @@ import {
 	protocol,
 	ipcRenderer,
 	Notification,
+	powerMonitor,
 } from 'electron'
 import path from 'path'
 import isDev from 'electron-is-dev'
@@ -21,13 +22,13 @@ import { initAppearance } from './appearance'
 import { createTaskMenu } from './taskMenu'
 import { initRouter } from './router/router'
 import { backup } from './modules/methods'
-import { openMainWindows } from './windows'
+import { openMainWindows, windows } from './windows'
 import * as nyanyalog from 'nyanyajs-log'
 import { t } from './modules/languages'
 
 const run = () => {
 	if (process.platform === 'win32') {
-		app.setAppUserModelId(t("appName"))
+		app.setAppUserModelId(t('appName'))
 	}
 
 	let isQuit = false
@@ -105,6 +106,33 @@ const run = () => {
 		// if (mainWindow === null) {
 		// 	createWindow()
 		// }
+	})
+
+	powerMonitor.on('suspend', () => {
+		console.log('The system is going to sleep')
+
+		windows.forEach((v) => {
+			v.webContents.send('suspend')
+		})
+	})
+	powerMonitor.on('resume', () => {
+		console.log('The system is going to sleep')
+		windows.forEach((v) => {
+			v.webContents.send('resume')
+		})
+	})
+
+	powerMonitor.on('lock-screen', () => {
+		console.log('The system is lock screen')
+		windows.forEach((v) => {
+			v.webContents.send('lock-screen')
+		})
+	})
+	powerMonitor.on('unlock-screen', () => {
+		console.log('The system is unlock screen')
+		windows.forEach((v) => {
+			v.webContents.send('unlock-screen')
+		})
 	})
 }
 

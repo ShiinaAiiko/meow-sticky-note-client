@@ -13,6 +13,8 @@ import { Debounce, deepCopy } from '@nyanyajs/utils'
 import { storage } from '../../store/storage'
 const createRouterDebounce = new Debounce()
 
+const syncRemoteDataDebounce = new Debounce()
+
 export type Event = any
 export type Arg = any[]
 export const init = () => {
@@ -52,6 +54,18 @@ export const init = () => {
 			console.log('updateData', arg)
 			// store.dispatch(methods.notes.Init()).unwrap()
 			store.dispatch(methods.user.Init())
+		})
+
+		ipcRenderer.on('focus', (event: Event, ...arg: Arg) => {
+			getRemoteData()
+		})
+
+		ipcRenderer.on('resume', (event: Event, ...arg: Arg) => {
+			getRemoteData()
+		})
+
+		ipcRenderer.on('unlock-screen', (event: Event, ...arg: Arg) => {
+			getRemoteData()
 		})
 
 		ipcRenderer.on('updateSetting', (event: Event, ...arg: Arg) => {
@@ -109,4 +123,20 @@ export const createRouter = () => {
 				break
 		}
 	}, 100)
+}
+
+const getRemoteData = () => {
+	const { user, notes, config } = store.getState()
+	if (
+		user.isInit &&
+		user.isLogin &&
+		notes.isInit &&
+		config.sync &&
+		(window.location.pathname === '/' ||
+			window.location.pathname.indexOf('/m') === 0)
+	) {
+		syncRemoteDataDebounce.increase(() => {
+			store.dispatch(methods.notes.GetRemoteData()).unwrap()
+		}, 1000)
+	}
 }

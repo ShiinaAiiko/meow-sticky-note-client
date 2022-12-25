@@ -11,6 +11,7 @@ import {
 import path from 'path'
 
 import isDev from 'electron-is-dev'
+import * as nyanyalog from 'nyanyajs-log'
 
 import { Route } from './typings/api'
 import {
@@ -100,6 +101,14 @@ export const createWindow = async (
 	})
 	window.on('show', () => {
 		console.log('show')
+	})
+	window.on('focus', () => {
+		// nyanyalog.info('focus')
+		window.webContents.send('focus')
+	})
+	window.on('blur', () => {
+		// nyanyalog.info('blur')
+		window.webContents.send('blur')
 	})
 	window.on('closed', () => {
 		console.log('closed')

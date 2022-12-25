@@ -131,7 +131,7 @@ el:build() {
   rm -rf ./el-build/*.deb
   rm -rf ./el-build/*.exe
   yarn el:build-win
-  yarn el:build-linux
+  # yarn el:build-linux
   rm -rf ./build
 
   # Meow Sticky Note Setup 1.0.1.exe

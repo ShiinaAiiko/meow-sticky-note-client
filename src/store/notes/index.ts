@@ -59,9 +59,10 @@ export const notesMethods = {
 			state: RootState
 		}
 	>('notes/Init', async (_, thunkAPI) => {
-		setInterval(() => {
-			// thunkAPI.dispatch(notesMethods.GetRemoteData()).unwrap()
-		}, 60 * 1000)
+		// console.log('InitInit')
+		// setInterval(() => {
+		// 	// thunkAPI.dispatch(notesMethods.GetRemoteData()).unwrap()
+		// }, 60 * 1000)
 		// syncRemoteDataDebounce.increase(async () => {
 		// 	const { user, config } = store.getState()
 		// 	// await store.dispatch(notesMethods.GetLocalData())

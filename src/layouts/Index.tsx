@@ -34,6 +34,7 @@ import { alert } from '@saki-ui/core'
 
 const IndexLayout = ({ children }: RouterProps) => {
 	const [debounce] = useState(new Debounce())
+	const [getRemoteDataDebounce] = useState(new Debounce())
 	const { t, i18n } = useTranslation()
 	const dispatch = useDispatch<AppDispatch>()
 	const [openSettingModal, setOpenSettingModal] = useState(false)
@@ -147,16 +148,20 @@ const IndexLayout = ({ children }: RouterProps) => {
 	// }, [config.sync])
 
 	useEffect(() => {
+		console.log('nsocketio.status', nsocketio.status)
 		if (
+			nsocketio.status === 'success' &&
 			user.isInit &&
 			user.isLogin &&
 			notes.isInit &&
 			config.sync &&
 			(location.pathname === '/' || location.pathname.indexOf('/m') === 0)
 		) {
-			dispatch(methods.notes.GetRemoteData()).unwrap()
+			getRemoteDataDebounce.increase(() => {
+				dispatch(methods.notes.GetRemoteData()).unwrap()
+			}, 300)
 		}
-	}, [user.isInit, user.isLogin, notes.isInit, config.sync])
+	}, [nsocketio.status, user.isInit, user.isLogin, notes.isInit, config.sync])
 
 	useEffect(() => {
 		if (user.isInit) {
@@ -210,7 +215,7 @@ const IndexLayout = ({ children }: RouterProps) => {
 								v: true,
 							})
 						)
-            store.dispatch(methods.config.getDeviceType())
+						store.dispatch(methods.config.getDeviceType())
 						// setProgressBar(progressBar + 0.2 >= 1 ? 1 : progressBar + 0.2)
 						// setProgressBar(.6)
 					},
@@ -276,7 +281,6 @@ const IndexLayout = ({ children }: RouterProps) => {
 										animation.onfinish = () => {
 											el.style.display = 'none'
 											setHideLoading(true)
-
 										}
 									}
 								}
